@@ -7,10 +7,11 @@
 
 import Foundation
 
-struct Song {
+struct Song :Hashable {
     var name: String
     var artist: String
     var album: String
-    var duration: Int64
+    var duration: TimeInterval
+    var isSelected: Bool
     
 }

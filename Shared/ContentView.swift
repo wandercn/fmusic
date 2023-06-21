@@ -8,14 +8,39 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State var librayList = [
+        Song(name: "阳光宅男1", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男2", artist: "周杰伦2", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男3", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男4", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男5", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男6", artist: "周杰伦", album: "我很忙2", duration: 233,isSelected: false),
+        Song(name: "阳光宅男7", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男8", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男9", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男10", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男11", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男12", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男13", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男14", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男15", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男16", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男17", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男18", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男19", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男20", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+        Song(name: "阳光宅男21", artist: "周杰伦", album: "我很忙", duration: 233,isSelected: false),
+    ]
+    
     var body: some View {
         VStack{
             Spacer()
-            ListContentView()
+            ListContentView(libraryList:self.$librayList)
             PlayerView()
             
+//            ContentView1()
         }
-        .frame(minWidth: 850, minHeight: 600 )
+                .frame(minWidth: 850, minHeight: 600 )
     }
 }
 
@@ -29,51 +54,4 @@ struct ContentView_Previews: PreviewProvider {
 
 
 
-
-struct SearchView: View {
-    @Binding var  searched :Bool
-    @State var  searchText = ""
-    var body: some View {
-        VStack {
-            HStack {
-                ZStack(alignment:.trailing) {
-                    TextField("请输入搜索内容", text:self.$searchText )
-                        .frame(width: 300)
-                    Button {
-                        
-                    } label: {
-                        Image(systemName: "magnifyingglass")
-                    }
-                    .buttonStyle(.borderless)
-                    
-                }
-                Spacer()
-                
-            }
-            Spacer()
-        }
-    }
-}
-
-struct LibraryView: View {
-    @Binding var libraryed: Bool
-    var body: some View {
-        List{
-            HStack{
-                Text("歌曲名")
-                    .padding(.trailing,100)
-                Text("艺术家")
-                    .padding(.trailing,100)
-                Text("专辑名")
-                    .padding(.trailing,100)
-                Text("时长")
-                    .padding(.trailing,100)
-            }
-            ScrollView{
-                
-            }
-        }
-    }
-    
-}
 
