@@ -12,6 +12,7 @@ struct Song :Hashable {
     var artist: String
     var album: String
     var duration: TimeInterval
+    var filePath: String
     var isSelected: Bool
     
 }
