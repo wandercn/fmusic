@@ -7,6 +7,7 @@
 
 import SwiftUI
 struct ListContentView: View {
+    @Binding var currnetSong: Song
     @State private var libraryed = false
     @State private var playListed = false
     @State var searchText = ""
@@ -24,11 +25,11 @@ struct ListContentView: View {
                     .foregroundColor(.red)
                 ){
                     NavigationLink("歌曲",isActive: self.$libraryed){
-                        LibraryView(libraryed: self.$libraryed,libraryList:self.$libraryList,searchText: self.$searchText)
+                        LibraryView(currnetSong: self.$currnetSong, libraryed: self.$libraryed,libraryList:self.$libraryList,searchText: self.$searchText)
                     }.padding(.leading, 10)
                 }
                 .headerProminence(.increased)
-                
+
                 Section(header: HStack{
                     Text("播放列表")
                     Image(systemName: "music.note.list")
@@ -101,6 +102,7 @@ struct SearchView: View {
 }
 
 struct LibraryView: View {
+    @Binding var currnetSong: Song
     @Binding var libraryed: Bool
     @Binding var libraryList: [Song]
     @Binding var searchText: String
@@ -156,7 +158,7 @@ struct LibraryView: View {
         )
         List {
             ForEach(searchResults,id: \.self) {song in
-                RowView(song:song)
+                RowView(libraryList: self.$libraryList, currnetSong: self.$currnetSong, song:song)
             }
         }
         .listStyle(.inset(alternatesRowBackgrounds: true))
@@ -169,33 +171,44 @@ struct LibraryView: View {
 
 
 struct RowView: View{
+    @Binding var libraryList: [Song]
+    @Binding var currnetSong: Song
     @State var song: Song
-    @State var isClicked: Bool = false
+//    @State var isClicked: Bool = false
     var body: some View {
         Button {
-            print(song.name)
-            self.isClicked.toggle()
+//            print(song.name)
+            self.currnetSong = song
+            song.isSelected.toggle()
+            if self.$libraryList.count > 0{
+                for index in 0..<self.$libraryList.count {
+                    if self.libraryList[index].filePath == self.currnetSong.filePath{
+                        self.libraryList[index].isSelected = true
+                    }
+                }
+//                print(self.$libraryList)
+            }
         } label: {
             HStack{
                 Text(song.name)
                     .font(.headline) // 字体
                     .fontWeight(.semibold) // 字体粗细
-                    .foregroundColor(self.isClicked ? Color.white: Color.secondary)// 前景颜
+                    .foregroundColor(song.isSelected ? Color.white: Color.secondary)// 前景颜
                     .frame(width:200,alignment: .leading)
                 Text(song.artist)
                     .font(.headline) // 字体
                     .fontWeight(.semibold) // 字体粗细
-                    .foregroundColor(self.isClicked ? Color.white: Color.secondary)// 前景颜色
+                    .foregroundColor(song.isSelected ? Color.white: Color.secondary)// 前景颜色
                     .frame(width:150,alignment: .leading)
                 Text(song.album)
                     .font(.headline) // 字体
                     .fontWeight(.semibold) // 字体粗细
-                    .foregroundColor(self.isClicked ? Color.white: Color.secondary)
+                    .foregroundColor(song.isSelected ? Color.white: Color.secondary)
                     .frame(width:150,alignment: .leading)
                 Text(durationFormat(timeInterval: song.duration))
                     .font(.headline) // 字体
                     .fontWeight(.semibold) // 字体粗细
-                    .foregroundColor(self.isClicked ? Color.white: Color.secondary)//前景颜色
+                    .foregroundColor(song.isSelected ? Color.white: Color.secondary)//前景颜色
                     .frame(width:150,alignment: .leading)
                 Spacer()
             }
@@ -203,7 +216,17 @@ struct RowView: View{
         
             
         }
+//        .buttonStyle(DoubleTapButtonStyle())
         .buttonStyle(.borderless)
-        .background(self.isClicked ? Color.purple : nil)
+        .background(song.isSelected ? Color.purple : nil)
+        
+        
     }
 }
+
+//struct DoubleTapButtonStyle: PrimitiveButtonStyle {
+//  func makeBody(configuration: Configuration) -> some View {
+//    configuration.label
+//      .gesture(TapGesture(count: 2).onEnded { configuration.trigger() })
+//  }
+//}
