@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		61E003722A48347F004EB263 /* MainMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E003712A48347F004EB263 /* MainMenuView.swift */; };
 		61E43B892A3C645B00FBF9BD /* musicApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E43B782A3C645A00FBF9BD /* musicApp.swift */; };
 		61E43B8B2A3C645B00FBF9BD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E43B792A3C645A00FBF9BD /* ContentView.swift */; };
 		61E43B8D2A3C645B00FBF9BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61E43B7A2A3C645B00FBF9BD /* Assets.xcassets */; };
@@ -19,6 +20,7 @@
 		61C4A4CA2A42A754000E3DBC /* music (iOS).entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "music (iOS).entitlements"; sourceTree = "<group>"; };
 		61C4A4CC2A42A754000E3DBC /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.5.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		61C4A4CE2A42A7D6000E3DBC /* music--macOS--Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "music--macOS--Info.plist"; sourceTree = "<group>"; };
+		61E003712A48347F004EB263 /* MainMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuView.swift; sourceTree = "<group>"; };
 		61E43B782A3C645A00FBF9BD /* musicApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = musicApp.swift; sourceTree = "<group>"; };
 		61E43B792A3C645A00FBF9BD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		61E43B7A2A3C645B00FBF9BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 			children = (
 				61E43B9B2A3C67F900FBF9BD /* PlayerView.swift */,
 				61E43B9E2A3C686A00FBF9BD /* ListContentView.swift */,
+				61E003712A48347F004EB263 /* MainMenuView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -174,6 +177,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				61E003722A48347F004EB263 /* MainMenuView.swift in Sources */,
 				61E43B992A3C660600FBF9BD /* Song.swift in Sources */,
 				61E43B8B2A3C645B00FBF9BD /* ContentView.swift in Sources */,
 				61E43B892A3C645B00FBF9BD /* musicApp.swift in Sources */,
