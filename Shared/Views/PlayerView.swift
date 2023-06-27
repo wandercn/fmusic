@@ -41,7 +41,7 @@ struct PlayerView: View {
                     Text(URL(fileURLWithPath: self.currnetSong.filePath).lastPathComponent).padding(.top,5)
                 }
                 .onChange(of: self.currnetSong.filePath) { newValue in
-//                    playAudio(path:self.currnetSong.filePath)
+                    //                    playAudio(path:self.currnetSong.filePath)
                     soudPlayer?.currentTime = 0
                     soudPlayer?.stop()
                     playAudio(path: self.currnetSong.filePath)
@@ -49,26 +49,36 @@ struct PlayerView: View {
                         self.totaltime = total
                     }
                     self.showPlayButton = false
+                    
+                    if self.$libraryList.count > 0{
+                        for index in 0..<self.$libraryList.count {
+                            if self.libraryList[index].filePath == self.currnetSong.filePath{
+                                self.libraryList[index].isPlaying = true
+                            }else{
+                                self.libraryList[index].isPlaying = false
+                            }
+                        }
+                    }
                 }
                 Spacer()
-//            }
+                //            }
                 // 播放进度条
                 HStack {
                     
-//                    ProgressView(value: self.percentage,total: 1.0)
-//                        .progressViewStyle(.linear)
-//                        .tint(Color.pink)
-                        
-
-
-                    Slider(
-                        value:self.$percentage,
-                        in: 0...1,
-                        onEditingChanged: { editing in
-                            isEditing = editing
-                        }
-                    )
-                    .onReceive(timer){_ in
+                    ProgressView(value: self.percentage,total: 1.0)
+                        .progressViewStyle(.linear)
+                        .tint(Color.pink)
+                    
+                    
+                    
+                    //                    Slider(
+                    //                        value:self.$percentage,
+                    //                        in: 0...1,
+                    //                        onEditingChanged: { editing in
+                    //                            isEditing = editing
+                    //                        }
+                    //                    )
+                        .onReceive(timer){_ in
                             if isEditing {
                                 // 手工调整播放进度
                                 soudPlayer?.currentTime = self.percentage * self.totaltime
@@ -78,27 +88,27 @@ struct PlayerView: View {
                                     self.percentage = self.currtime/self.totaltime
                                 }
                             }
-                        // 播放完成
-                        if let player = soudPlayer{
-                            let old = self.currnetSong
-                            if !player.isPlaying && self.autoPlay{
-                                print("isplaying: \(player.isPlaying)")
-                                print("autoPlay: \(self.autoPlay)")
-                                self.currnetSong = nextSong(currSong: old, playList:self.libraryList,playMode: self.playMode)
-                                // 单曲循环模式特殊处理
-                                if self.playMode == .Single{
-                                    soudPlayer?.currentTime = 0
-                                    soudPlayer?.play()
-                                    self.showPlayButton = false
+                            // 播放完成
+                            if let player = soudPlayer{
+                                let old = self.currnetSong
+                                if !player.isPlaying && self.autoPlay && !self.showPlayButton{
+                                    print("isplaying: \(player.isPlaying)")
+                                    print("autoPlay: \(self.autoPlay)")
+                                    self.currnetSong = nextSong(currSong: old, playList:self.libraryList,playMode: self.playMode)
+                                    // 单曲循环模式特殊处理
+                                    if self.playMode == .Single{
+                                        soudPlayer?.currentTime = 0
+                                        soudPlayer?.play()
+                                        self.showPlayButton = false
+                                    }
                                 }
                             }
-                        }
                             
-
+                            
                         }
                     
-//
-//
+                    //
+                    //
                     // 显示当前播放时长
                     Text(durationFormat(timeInterval:  self.currtime) + " / " + durationFormat( timeInterval: self.totaltime))
                 }.frame(width: 300)
@@ -109,7 +119,9 @@ struct PlayerView: View {
                 }) {
                     Image(systemName: self.isHeartChecked ? "heart.circle.fill" : "heart.circle")
                         .font(.largeTitle)
-                        .foregroundColor(self.isHeartChecked ?.pink : .secondary)
+                    //                        .foregroundColor(self.isHeartChecked ?.red : .secondary)
+                        .pinkBackgroundOnHover()
+                    
                     
                 }
                 .buttonStyle(.borderless)
@@ -121,33 +133,39 @@ struct PlayerView: View {
                         .font(.largeTitle)
                 }
                 .buttonStyle(.borderless)
+                .pinkBackgroundOnHover()
                 
                 Button(action:{
                     let old = self.playMode
                     print("old playMode: \(old)")
-                   ( self.playMode , self.modeImage) = nextPlayMode(mode: old)
+                    ( self.playMode , self.modeImage) = nextPlayMode(mode: old)
                     print("new playMode: \(self.playMode)")
-                }) {
-                    Image(systemName: self.modeImage)
+                }) {                    Image(systemName: self.modeImage)
                         .font(.largeTitle)
+                    
                 }
                 .buttonStyle(.borderless)
+                .pinkBackgroundOnHover()
                 // 媒体播放控制按钮
                 HStack{
                     // 上一曲按钮
-                Button(action:{
-                    self.currtime = 0
-                })  {
-                    Image(systemName: "backward.circle")
-                        .font(.largeTitle)
-                }
-                .buttonStyle(.borderless)
-
+                    Button(action:{
+                        let old = self.currnetSong
+                        self.currnetSong = prevSong(currSong: old, playList:self.libraryList,playMode: self.playMode)
+                    })  {
+                        Image(systemName: "backward.circle")
+                            .font(.largeTitle)
+                    }
+                    .buttonStyle(.borderless)
+                    .pinkBackgroundOnHover()
                     // 播放/暂停按钮
                     Button(action:{
                         if self.showPlayButton{
                             if self.currtime == 0 {
-//                                playAudio(path:"/Users/lsmiao/Downloads/ACC格式音乐/10.温暖的想念.m4a")
+                                //                                playAudio(path:"/Users/lsmiao/Downloads/ACC格式音乐/10.温暖的想念.m4a")
+                                if self.currnetSong.filePath.isEmpty && !self.libraryList.isEmpty{
+                                    self.currnetSong = self.libraryList.first!
+                                }
                                 playAudio(path:self.currnetSong.filePath)
                                 if let total =  soudPlayer?.duration{
                                     self.totaltime = total
@@ -167,14 +185,18 @@ struct PlayerView: View {
                             .font(.largeTitle)
                     }
                     .buttonStyle(.borderless)
+                    .pinkBackgroundOnHover()
+                    
                     // 下一曲按钮
                     Button(action:{
-                        self.currtime = 0
+                        let old = self.currnetSong
+                        self.currnetSong = nextSong(currSong: old, playList:self.libraryList,playMode: self.playMode)
                     })  {
                         Image(systemName: "forward.circle")
                             .font(.largeTitle)
                     }
                     .buttonStyle(.borderless)
+                    .pinkBackgroundOnHover()
                 }
             }.frame( height: 64 )
                 .padding()
@@ -185,7 +207,7 @@ struct PlayerView: View {
                 )
                 .foregroundColor(Color.secondary)
         }
-
+        
     }
 }
 
@@ -244,11 +266,46 @@ func nextSong(currSong: Song, playList:[Song] ,playMode: PlayMode) -> Song{
         print(PlayMode.Single)
         
         return currSong
-
+        
     }
     
     return currSong
+    
+}
 
+func prevSong(currSong: Song, playList:[Song] ,playMode: PlayMode) -> Song{
+    switch playMode {
+    case .Loop:
+        print(PlayMode.Loop)
+        for index in 0..<playList.count{
+            if currSong.filePath == playList[index].filePath{
+                return playList[ index - 1 < 0 ? 0 : index - 1 ]
+            }
+        }
+    case .Order:
+        print(PlayMode.Order)
+        for index in 0..<playList.count{
+            if index - 1 < 0 {
+                soudPlayer?.stop()
+            }
+            if currSong.filePath == playList[index].filePath{
+                return playList[ index - 1 < 0 ? 0 : index - 1 ]
+            }
+        }
+    case .Random:
+        print(PlayMode.Random)
+        let nextId = Int.random(in: 0...(playList.count - 1 ))
+        return playList[nextId]
+        
+    case .Single:
+        print(PlayMode.Single)
+        
+        return currSong
+        
+    }
+    
+    return currSong
+    
 }
 
 func durationFormat(timeInterval:TimeInterval) -> String{
@@ -258,3 +315,5 @@ func durationFormat(timeInterval:TimeInterval) -> String{
     formatter.zeroFormattingBehavior = [.pad]
     return formatter.string(from: timeInterval)!
 }
+
+
