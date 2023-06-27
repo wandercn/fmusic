@@ -14,5 +14,6 @@ struct Song :Hashable {
     var duration: TimeInterval
     var filePath: String
     var isSelected: Bool
+    var isPlaying: Bool
     
 }
