@@ -25,7 +25,7 @@ struct MainMenuView: Commands {
                         openPanel.urls.forEach { url in
                             let p = url.path
                             print(url.path)
-                            let s = Song(name:p , artist:"未知", album: "未知", duration: TimeInterval(300), filePath: p,isSelected: false)
+                            let s = Song(name:URL(fileURLWithPath: p).lastPathComponent , artist:"未知", album: "未知", duration: TimeInterval(300), filePath: p,isSelected: false, isPlaying: false)
                             self.libraryList.append(s)
 //                            paths.append(url.path)
                         }
