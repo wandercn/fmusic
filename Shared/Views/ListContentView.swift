@@ -159,6 +159,7 @@ struct LibraryView: View {
         List {
             ForEach(searchResults,id: \.self) {song in
                 RowView(libraryList: self.$libraryList, currnetSong: self.$currnetSong, song:song)
+                    
             }
         }
         .listStyle(.inset(alternatesRowBackgrounds: true))
@@ -193,40 +194,37 @@ struct RowView: View{
                 Text(song.name)
                     .font(.headline) // 字体
                     .fontWeight(.semibold) // 字体粗细
-                    .foregroundColor(song.isSelected ? Color.white: Color.secondary)// 前景颜
                     .frame(width:200,alignment: .leading)
                 Text(song.artist)
                     .font(.headline) // 字体
                     .fontWeight(.semibold) // 字体粗细
-                    .foregroundColor(song.isSelected ? Color.white: Color.secondary)// 前景颜色
                     .frame(width:150,alignment: .leading)
                 Text(song.album)
                     .font(.headline) // 字体
                     .fontWeight(.semibold) // 字体粗细
-                    .foregroundColor(song.isSelected ? Color.white: Color.secondary)
                     .frame(width:150,alignment: .leading)
                 Text(durationFormat(timeInterval: song.duration))
                     .font(.headline) // 字体
                     .fontWeight(.semibold) // 字体粗细
-                    .foregroundColor(song.isSelected ? Color.white: Color.secondary)//前景颜色
                     .frame(width:150,alignment: .leading)
                 Spacer()
             }
+            .foregroundColor(song.isSelected ? Color.white: Color.secondary)//前景颜色
             
         
             
         }
-//        .buttonStyle(DoubleTapButtonStyle())
         .buttonStyle(.borderless)
-        .background(song.isSelected ? Color.purple : nil)
-        
-        
+        .background(song.isSelected ? Color.purple : Color.clear)
+        .itemBackgroundOnHover()
     }
 }
 
-//struct DoubleTapButtonStyle: PrimitiveButtonStyle {
-//  func makeBody(configuration: Configuration) -> some View {
-//    configuration.label
-//      .gesture(TapGesture(count: 2).onEnded { configuration.trigger() })
-//  }
-//}
+
+// 双击按钮
+struct DoubleTapButtonStyle: PrimitiveButtonStyle {
+  func makeBody(configuration: Configuration) -> some View {
+    configuration.label
+      .gesture(TapGesture(count: 2).onEnded { configuration.trigger() })
+  }
+}
