@@ -254,6 +254,7 @@ func nextSong(currSong: Song, playList:[Song] ,playMode: PlayMode) -> Song{
                 soudPlayer?.stop()
             }
             if currSong.filePath == playList[index].filePath{
+                print(playList[ index+1 >= playList.count ? index : index+1 ].name)
                 return playList[ index+1 >= playList.count ? index : index+1 ]
             }
         }
@@ -279,17 +280,19 @@ func prevSong(currSong: Song, playList:[Song] ,playMode: PlayMode) -> Song{
         print(PlayMode.Loop)
         for index in 0..<playList.count{
             if currSong.filePath == playList[index].filePath{
-                return playList[ index - 1 < 0 ? 0 : index - 1 ]
+                return playList[ index - 1 <= 0 ? 0 : index - 1 ]
             }
         }
     case .Order:
         print(PlayMode.Order)
         for index in 0..<playList.count{
-            if index - 1 < 0 {
-                soudPlayer?.stop()
-            }
+            print(index)
+//            if index - 1 < 0 {
+//                soudPlayer?.stop()
+//            }
             if currSong.filePath == playList[index].filePath{
-                return playList[ index - 1 < 0 ? 0 : index - 1 ]
+                print(playList[ index - 1 <= 0 ? 0 : index - 1 ].name)
+                return playList[ index - 1 <= 0 ? 0 : index - 1 ]
             }
         }
     case .Random:
