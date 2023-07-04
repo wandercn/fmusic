@@ -9,18 +9,14 @@ import SwiftUI
 
 @main
 struct musicApp: App {
-//    @State var paths :[String] = []
-    @State  var libraryList:[Song] = []
-    var body: some Scene {
-        WindowGroup {
-            ContentView(libraryList:self.$libraryList)
-        }
-        .commands {
-            MainMenuView(libraryList:self.$libraryList)
-        }
-        
-
+  @State var libraryList: [Song] = []
+  var body: some Scene {
+    WindowGroup {
+      ContentView(libraryList: self.$libraryList)
     }
+    .commands {
+      MainMenuView(libraryList: self.$libraryList)
+    }
+
+  }
 }
-
-
