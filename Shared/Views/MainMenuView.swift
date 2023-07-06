@@ -44,26 +44,30 @@ func GetMusicInfo(path: String) -> (Song, Image) {
     for format in asset.availableMetadataFormats {
         print("format: \(format)")
         for metadata in asset.metadata(forFormat: format) {
-            print("key= \(String(describing: metadata.commonKey)) value = \(String(describing: metadata.value))")
             if let commonKey = metadata.commonKey {
                 let key = commonKey.rawValue.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: .symbols).lowercased()
-                switch key {
-                case "title":
-                    song.name = metadata.value as! String
-                case "albumName":
-                    song.album = metadata.value as! String
-                case "artist":
-                    song.artist = metadata.value as! String
-                case "artwork":
-                    if let value = metadata.value {
+                print("key: \(key)")
+                if let value = metadata.value {
+                    print("value: \(value)")
+                    switch key {
+                    case "title":
+                        song.name = value.description
+                    case "albumName":
+                        song.album = value.description
+                    case "artist":
+                        song.artist = value.description
+                    case "artwork":
                         img = Image(nsImage: NSImage(data: value as! Data)!)
+                    default:
+                        continue
                     }
-                default:
-                    continue
                 }
             }
         }
     }
+    song.duration = asset.duration.seconds
+    song.filePath = path
+    print("song = \(song)")
     return (song, img)
 }
 
@@ -74,14 +78,16 @@ func GetMeta(path: String) -> Song {
     var fmt_ctx = avformat_alloc_context()
     let url: [CChar] = path.cString(using: .utf8)!
     if let fmt_ctx = get_format_ctx(url) {
-        s.duration = TimeInterval(fmt_ctx.pointee.duration)
+        s.duration = TimeInterval(fmt_ctx.pointee.duration / Int64(AV_TIME_BASE))
         s.filePath = path
         while let tag = av_dict_get(fmt_ctx.pointee.metadata, "", prev, AV_DICT_IGNORE_SUFFIX) {
             let key = String(cString: tag.pointee.key).trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: .symbols).lowercased()
             let value = String(cString: tag.pointee.value).trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: .symbols)
             dict[key] = value
             prev = tag
+            print("KEY = \(key) Value= \(value)")
         }
+
         for (k, v) in dict {
             switch k {
             case "title":
@@ -92,7 +98,7 @@ func GetMeta(path: String) -> Song {
                 s.artist = v
             default: continue
             }
-            print("KEY = \(k) Value= \(v)")
+//            print("KEY = \(k) Value= \(v)")
         }
     }
     avformat_close_input(&fmt_ctx)

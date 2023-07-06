@@ -53,7 +53,6 @@ struct PlayerView: View {
                 VStack(alignment: .leading) {
                     Text("\(currnetSong.artist)")
                         .foregroundColor(.secondary)
-//                    Text(URL(fileURLWithPath: currnetSong.filePath).lastPathComponent)
                     Text("\(currnetSong.name)")
                         .padding(.top, 5)
                 }

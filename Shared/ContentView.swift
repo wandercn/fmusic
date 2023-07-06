@@ -13,7 +13,6 @@ struct ContentView: View {
     @Binding var libraryList: [Song]
     var body: some View {
         VStack {
-            Spacer()
             ListContentView(currnetSong: $currnetSong, libraryList: $libraryList)
             PlayerView(libraryList: $libraryList, currnetSong: $currnetSong)
         }
@@ -78,9 +77,9 @@ struct ItemBackgroundOnHover: ViewModifier {
             .background(isHovered ? Color.yellow : Color.clear)
 
             .clipShape(
-                Capsule()
+                Capsule(style: .circular)
             )
-            .scaleEffect(isHovered ? 0.97 : 1.0)
+            .scaleEffect(isHovered ? 0.99 : 1.0)
             .onHover { isHovered in
                 withAnimation {
                     self.isHovered = isHovered

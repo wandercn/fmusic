@@ -102,6 +102,7 @@ struct LibraryView: View {
     @Binding var libraryed: Bool
     @Binding var libraryList: [Song]
     @Binding var searchText: String
+    let titles = ["歌曲名", "艺术家", "专辑", "时长"]
 
     //    var searchResults:[Song] = []
     // 列表显示搜索结果
@@ -116,45 +117,23 @@ struct LibraryView: View {
     }
 
     var body: some View {
-        HStack {
-            Text("歌曲名")
-                .font(.headline) // 字C体
-                .fontWeight(.semibold) // 字体粗细
-                .foregroundColor(.white) // 前景颜色
-                .frame(width: 185, alignment: .leading)
-                .padding(.horizontal, 15)
-
-            Text("艺术家")
-                .font(.headline) // 字体
-                .fontWeight(.semibold) // 字体粗细
-                .foregroundColor(.white) // 前景颜色
-                .frame(width: 150, alignment: .leading)
-
-            Text("专辑名")
-                .font(.headline) // 字体
-                .fontWeight(.semibold) // 字体粗细
-                .foregroundColor(.white) // 前景颜色
-                .frame(width: 150, alignment: .leading)
-
-            Text("时长")
-                .font(.headline) // 字体
-                .fontWeight(.semibold) // 字体粗细
-                .foregroundColor(.white) // 前景颜色
-                .frame(width: 150, alignment: .leading)
-
-            Spacer()
-        }
-        .background(
-            Color.gray
-
-                .cornerRadius(5)
-        )
         List {
+            HStack {
+                ForEach(self.titles, id: \.self) { title in
+                    Text(title)
+                        .font(.headline) // 字C体
+                        .fontWeight(.semibold) // 字体粗细
+                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 10)
+                    Divider()
+                }
+            }
+
             ForEach(self.searchResults, id: \.self) { song in
                 RowView(libraryList: self.$libraryList, currnetSong: self.$currnetSong, song: song)
             }
         }
-        .listStyle(.inset(alternatesRowBackgrounds: true))
+        .listStyle(.bordered(alternatesRowBackgrounds: true))
     }
     //    func deleteItem(offsets: IndexSet){
     //        libraryList.remove(atOffsets: offsets)
@@ -168,7 +147,6 @@ struct RowView: View {
     //    @State var isClicked: Bool = false
     var body: some View {
         Button {
-            //            print(song.name)
             self.currnetSong = self.song
             self.song.isSelected.toggle()
             if self.$libraryList.count > 0 {
@@ -177,27 +155,26 @@ struct RowView: View {
                         self.libraryList[index].isSelected = true
                     }
                 }
-                //                print(self.$libraryList)
             }
         } label: {
             HStack {
-                Text(self.song.name)
-                    .font(.headline) // 字体
-                    .fontWeight(.semibold) // 字体粗细
-                    .frame(width: 200, alignment: .leading)
-                Text(self.song.artist)
-                    .font(.headline) // 字体
-                    .fontWeight(.semibold) // 字体粗细
-                    .frame(width: 150, alignment: .leading)
-                Text(self.song.album)
-                    .font(.headline) // 字体
-                    .fontWeight(.semibold) // 字体粗细
-                    .frame(width: 150, alignment: .leading)
-                Text(durationFormat(timeInterval: self.song.duration))
-                    .font(.headline) // 字体
-                    .fontWeight(.semibold) // 字体粗细
-                    .frame(width: 150, alignment: .leading)
-                Spacer()
+                Group {
+                    Text(self.song.name)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                    Text(self.song.artist)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                    Text(self.song.album)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                    Text(durationFormat(timeInterval: self.song.duration))
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                }
+                .lineLimit(1)
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 10)
             }
             .foregroundColor(self.song.isSelected ? Color.white : Color.secondary) // 前景颜色
         }
