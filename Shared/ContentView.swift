@@ -17,6 +17,15 @@ struct ContentView: View {
             PlayerView(libraryList: $libraryList, currnetSong: $currnetSong)
         }
         .frame(minWidth: 850, minHeight: 600)
+//        .onAppear {
+//            if $libraryList.count > 0, currnetSong.filePath == "" {
+//                for index in 0 ..< $libraryList.count {
+//                    if libraryList[index].isPlaying {
+//                        currnetSong = libraryList[index]
+//                    }
+//                }
+//            }
+//        }
     }
 }
 
@@ -77,7 +86,7 @@ struct ItemBackgroundOnHover: ViewModifier {
             .background(isHovered ? Color.yellow : Color.clear)
 
             .clipShape(
-                Capsule(style: .circular)
+                Rectangle()
             )
             .scaleEffect(isHovered ? 0.99 : 1.0)
             .onHover { isHovered in
@@ -91,5 +100,30 @@ struct ItemBackgroundOnHover: ViewModifier {
 extension View {
     func itemBackgroundOnHover() -> some View {
         modifier(ItemBackgroundOnHover())
+    }
+}
+
+struct ImageOnHover: ViewModifier {
+    @State private var isHovered = false
+
+    func body(content: Content) -> some View {
+        content
+            .background(isHovered ? Color.yellow : Color.clear)
+
+            .clipShape(
+                Rectangle()
+            )
+            .scaleEffect(isHovered ? 0.9 : 1.0)
+            .onHover { isHovered in
+                withAnimation {
+                    self.isHovered = isHovered
+                }
+            }
+    }
+}
+
+extension View {
+    func imageOnHover() -> some View {
+        modifier(ImageOnHover())
     }
 }

@@ -26,13 +26,13 @@ struct PlayerView: View {
     @State var modeImage: String = "list.bullet.circle"
     @State var volume: Double = 0.3
     @State var autoPlay = true
-    @State var isHeartChecked = false // 是否点击收藏
+//    @State var isHeartChecked = false // 是否点击收藏
     @State var currtime: TimeInterval = 0.0 // 当前播放时长
     @State var totaltime: TimeInterval = 0.0 // 歌曲的总时长
     @State var percentage = 0.0 // 播放进度比率
     @State var isEditing = false // 是否手工拖动进度条
     @State var showPlayButton = true // 是否显示播放按钮图标，为false时，显示暂停按钮
-    @State var progressMaxWidth = 300.0
+    @State var progressMaxWidth = 400.0
     @State var lastDragValue = 0.0
     @State var progressWidth = 0.0
     @State var img = Image(systemName: "photo")
@@ -48,13 +48,17 @@ struct PlayerView: View {
                     Image(systemName: "photo")
                         .resizable()
                         .frame(width: 64, height: 64)
+                        .imageOnHover()
                 }
 
-                VStack(alignment: .leading) {
-                    Text("\(currnetSong.artist)")
-                        .foregroundColor(.secondary)
-                    Text("\(currnetSong.name)")
-                        .padding(.top, 5)
+                VStack {
+                    HStack {
+                        Text("\(currnetSong.artist)")
+                            .foregroundColor(.secondary)
+                        Text("\(currnetSong.name)")
+                            .padding(.horizontal, 5)
+                    }
+                    Spacer()
                 }
                 .onChange(of: currnetSong.filePath) { _ in
                     (_, img) = GetMusicInfo(path: currnetSong.filePath)
@@ -152,11 +156,19 @@ struct PlayerView: View {
                     .onAppear {
                         soudPlayer?.setVolume(Float(volume), fadeDuration: 0)
                     }
+                Spacer()
                 Button(action: {
-                    isHeartChecked.toggle()
+                    currnetSong.isHeartChecked.toggle()
+                    if $libraryList.count > 0 {
+                        for index in 0..<$libraryList.count {
+                            if libraryList[index].filePath == currnetSong.filePath {
+                                libraryList[index].isHeartChecked = currnetSong.isHeartChecked
+                            }
+                        }
+                    }
                     print("点击了收藏")
                 }) {
-                    Image(systemName: isHeartChecked ? "heart.circle.fill" : "heart.circle")
+                    Image(systemName: currnetSong.isHeartChecked ? "heart.circle.fill" : "heart.circle")
                         .font(.largeTitle)
                         //                        .foregroundColor(self.isHeartChecked ?.red : .secondary)
                         .pinkBackgroundOnHover()

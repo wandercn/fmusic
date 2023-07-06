@@ -8,7 +8,9 @@
 import Foundation
 import SwiftUI
 
-struct Song: Hashable {
+struct Song: Identifiable, Hashable {
+    let id = UUID()
+
     var name: String
     var artist: String
     var album: String
@@ -16,6 +18,7 @@ struct Song: Hashable {
     var filePath: String
     var isSelected: Bool
     var isPlaying: Bool
+    var isHeartChecked: Bool
 
     init() {
         name = ""
@@ -25,5 +28,6 @@ struct Song: Hashable {
         filePath = ""
         isSelected = false
         isPlaying = false
+        isHeartChecked = false
     }
 }
