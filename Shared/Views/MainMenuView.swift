@@ -39,7 +39,7 @@ struct MainMenuView: Commands {
 func GetMusicInfo(path: String) -> (Song, Image) {
     let url = URL(fileURLWithPath: path)
     let asset = AVURLAsset(url: url)
-    var img = Image(systemName: "photo")
+    var img = Image("album")
     var song = Song()
     for format in asset.availableMetadataFormats {
         print("format: \(format)")

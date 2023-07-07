@@ -23,7 +23,7 @@ struct PlayerView: View {
     @Binding var currnetSong: Song
 
     @State var playMode: PlayMode = .Order
-    @State var modeImage: String = "list.bullet.circle"
+    @State var modeImage: String = "arrow.uturn.forward.circle"
     @State var volume: Double = 0.3
     @State var autoPlay = true
 //    @State var isHeartChecked = false // 是否点击收藏
@@ -35,30 +35,32 @@ struct PlayerView: View {
     @State var progressMaxWidth = 400.0
     @State var lastDragValue = 0.0
     @State var progressWidth = 0.0
-    @State var img = Image(systemName: "photo")
+    @State var img = Image("album")
     @State var showImage = false
     var body: some View {
-        VStack {
+        VStack(spacing: 5) {
+            Spacer()
             HStack {
                 if showImage {
                     img
                         .resizable()
                         .frame(width: 64, height: 64)
+                        .circleImage()
+                        .imageOnHover()
                 } else {
-                    Image(systemName: "photo")
+                    Image("album")
                         .resizable()
                         .frame(width: 64, height: 64)
+                        .circleImage()
                         .imageOnHover()
                 }
 
-                VStack {
-                    HStack {
-                        Text("\(currnetSong.artist)")
-                            .foregroundColor(.secondary)
-                        Text("\(currnetSong.name)")
-                            .padding(.horizontal, 5)
-                    }
-                    Spacer()
+                VStack(alignment: .leading) {
+                    Text("\(currnetSong.artist)")
+                        .foregroundColor(.secondary)
+                    Text("\(currnetSong.name)")
+                        .padding(.vertical, 5)
+                        .foregroundColor(.black)
                 }
                 .onChange(of: currnetSong.filePath) { _ in
                     (_, img) = GetMusicInfo(path: currnetSong.filePath)
@@ -156,7 +158,7 @@ struct PlayerView: View {
                     .onAppear {
                         soudPlayer?.setVolume(Float(volume), fadeDuration: 0)
                     }
-                Spacer()
+//                Spacer()
                 Button(action: {
                     currnetSong.isHeartChecked.toggle()
                     if $libraryList.count > 0 {
@@ -243,13 +245,14 @@ struct PlayerView: View {
                     .buttonStyle(.borderless)
                     .pinkBackgroundOnHover()
                 }
-            }.frame(height: 64)
+            }.frame(height: 48)
                 .padding()
                 .background(RoundedRectangle(cornerSize: CGSize.zero)
                     .fill(Color.white)
                     .cornerRadius(10)
                     .shadow(radius: 10)
                 )
+//                .opacityOnHover()
                 .foregroundColor(Color.secondary)
         }
     }
@@ -269,7 +272,7 @@ func playAudio(path: String) {
 func nextPlayMode(mode: PlayMode) -> (playMode: PlayMode, image: String) {
     switch mode {
     case .Loop:
-        return (.Order, "list.bullet.circle")
+        return (.Order, "arrow.uturn.forward.circle")
     case .Order:
         return (.Random, "shuffle.circle")
     case .Random:

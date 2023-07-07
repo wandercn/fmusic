@@ -12,7 +12,7 @@ struct ContentView: View {
     @State var currnetSong: Song = .init()
     @Binding var libraryList: [Song]
     var body: some View {
-        VStack {
+        ZStack {
             ListContentView(currnetSong: $currnetSong, libraryList: $libraryList)
             PlayerView(libraryList: $libraryList, currnetSong: $currnetSong)
         }
@@ -108,12 +108,8 @@ struct ImageOnHover: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .background(isHovered ? Color.yellow : Color.clear)
-
-            .clipShape(
-                Rectangle()
-            )
-            .scaleEffect(isHovered ? 0.9 : 1.0)
+            .scaleEffect(isHovered ? 1.5 : 1.0)
+            .offset(x: isHovered ? 20 : 0, y: isHovered ? -50 : 0)
             .onHover { isHovered in
                 withAnimation {
                     self.isHovered = isHovered
@@ -125,5 +121,20 @@ struct ImageOnHover: ViewModifier {
 extension View {
     func imageOnHover() -> some View {
         modifier(ImageOnHover())
+    }
+}
+
+struct CircleImage: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .clipShape(Circle())
+            .overlay(Circle().stroke(Color.white, lineWidth: 4))
+            .shadow(radius: 10)
+    }
+}
+
+extension View {
+    func circleImage() -> some View {
+        modifier(CircleImage())
     }
 }
