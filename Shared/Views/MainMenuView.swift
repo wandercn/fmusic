@@ -103,7 +103,6 @@ func GetMeta(path: String) -> Song {
     }
     avformat_close_input(&fmt_ctx)
     if s.name.isEmpty {
-        s.name = URL(fileURLWithPath: path).lastPathComponent
-    }
+        s.name = (URL(fileURLWithPath: path).lastPathComponent).replacingOccurrences(of: ".mp3", with: "")                 }
     return s
 }

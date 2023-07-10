@@ -1,0 +1,518 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		613F7B4E2A4D76E000F26C1B /* deps in Resources */ = {isa = PBXBuildFile; fileRef = 613F7B4D2A4D76E000F26C1B /* deps */; };
+		613F7B9C2A4D862E00F26C1B /* ffmpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = 613F7B9B2A4D862E00F26C1B /* ffmpeg.c */; };
+		615C8AA92A52AEB900EF7859 /* libxcb-shm.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6137B3BC2A4ED19C00AD6553 /* libxcb-shm.0.dylib */; };
+		615C8AAA2A52AEB900EF7859 /* libxcb-shm.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 6137B3BC2A4ED19C00AD6553 /* libxcb-shm.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AAB2A52AEB900EF7859 /* libxcb-xfixes.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6137B3992A4ED19B00AD6553 /* libxcb-xfixes.0.dylib */; };
+		615C8AAC2A52AEB900EF7859 /* libxcb-xfixes.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 6137B3992A4ED19B00AD6553 /* libxcb-xfixes.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AD32A52C60200EF7859 /* libX11.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AD22A52C60200EF7859 /* libX11.6.dylib */; };
+		615C8AD42A52C60200EF7859 /* libX11.6.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AD22A52C60200EF7859 /* libX11.6.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AD62A52C7AD00EF7859 /* libxcb.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AD52A52C7AD00EF7859 /* libxcb.1.dylib */; };
+		615C8AD72A52C7AD00EF7859 /* libxcb.1.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AD52A52C7AD00EF7859 /* libxcb.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AD92A52C7D200EF7859 /* libxcb-shape.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AD82A52C7D200EF7859 /* libxcb-shape.0.dylib */; };
+		615C8ADA2A52C7D200EF7859 /* libxcb-shape.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AD82A52C7D200EF7859 /* libxcb-shape.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8ADC2A52C7E500EF7859 /* libXau.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8ADB2A52C7E500EF7859 /* libXau.6.dylib */; };
+		615C8ADD2A52C7E500EF7859 /* libXau.6.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8ADB2A52C7E500EF7859 /* libXau.6.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8ADF2A52C7F800EF7859 /* libXdmcp.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8ADE2A52C7F800EF7859 /* libXdmcp.6.dylib */; };
+		615C8AE02A52C7F800EF7859 /* libXdmcp.6.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8ADE2A52C7F800EF7859 /* libXdmcp.6.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AE12A55578700EF7859 /* libswresample.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AB92A52AEB900EF7859 /* libswresample.4.dylib */; };
+		615C8AE22A55578700EF7859 /* libswresample.4.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AB92A52AEB900EF7859 /* libswresample.4.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AEA2A55578700EF7859 /* libavdevice.60.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AE32A55578700EF7859 /* libavdevice.60.dylib */; };
+		615C8AEB2A55578700EF7859 /* libavdevice.60.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE32A55578700EF7859 /* libavdevice.60.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AEC2A55578700EF7859 /* libavcodec.60.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AE42A55578700EF7859 /* libavcodec.60.dylib */; };
+		615C8AED2A55578700EF7859 /* libavcodec.60.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE42A55578700EF7859 /* libavcodec.60.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AEE2A55578700EF7859 /* libavformat.60.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AE52A55578700EF7859 /* libavformat.60.dylib */; };
+		615C8AEF2A55578700EF7859 /* libavformat.60.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE52A55578700EF7859 /* libavformat.60.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AF02A55578700EF7859 /* libavfilter.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AE62A55578700EF7859 /* libavfilter.9.dylib */; };
+		615C8AF12A55578700EF7859 /* libavfilter.9.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE62A55578700EF7859 /* libavfilter.9.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AF22A55578700EF7859 /* libswscale.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AE72A55578700EF7859 /* libswscale.7.dylib */; };
+		615C8AF32A55578700EF7859 /* libswscale.7.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE72A55578700EF7859 /* libswscale.7.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AF42A55578700EF7859 /* libavutil.58.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AE82A55578700EF7859 /* libavutil.58.dylib */; };
+		615C8AF52A55578700EF7859 /* libavutil.58.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE82A55578700EF7859 /* libavutil.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AF62A55578700EF7859 /* libopenjp2.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AE92A55578700EF7859 /* libopenjp2.7.dylib */; };
+		615C8AF72A55578700EF7859 /* libopenjp2.7.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE92A55578700EF7859 /* libopenjp2.7.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		61E003722A48347F004EB263 /* MainMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E003712A48347F004EB263 /* MainMenuView.swift */; };
+		61E43B892A3C645B00FBF9BD /* musicApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E43B782A3C645A00FBF9BD /* musicApp.swift */; };
+		61E43B8B2A3C645B00FBF9BD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E43B792A3C645A00FBF9BD /* ContentView.swift */; };
+		61E43B8D2A3C645B00FBF9BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61E43B7A2A3C645B00FBF9BD /* Assets.xcassets */; };
+		61E43B992A3C660600FBF9BD /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E43B972A3C660600FBF9BD /* Song.swift */; };
+		61E43B9D2A3C67F900FBF9BD /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E43B9B2A3C67F900FBF9BD /* PlayerView.swift */; };
+		61E43BA02A3C686A00FBF9BD /* ListContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E43B9E2A3C686A00FBF9BD /* ListContentView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		615C8AB72A52AEB900EF7859 /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				615C8ADD2A52C7E500EF7859 /* libXau.6.dylib in Embed Libraries */,
+				615C8AED2A55578700EF7859 /* libavcodec.60.dylib in Embed Libraries */,
+				615C8ADA2A52C7D200EF7859 /* libxcb-shape.0.dylib in Embed Libraries */,
+				615C8AF52A55578700EF7859 /* libavutil.58.dylib in Embed Libraries */,
+				615C8AAA2A52AEB900EF7859 /* libxcb-shm.0.dylib in Embed Libraries */,
+				615C8AD42A52C60200EF7859 /* libX11.6.dylib in Embed Libraries */,
+				615C8AAC2A52AEB900EF7859 /* libxcb-xfixes.0.dylib in Embed Libraries */,
+				615C8AE02A52C7F800EF7859 /* libXdmcp.6.dylib in Embed Libraries */,
+				615C8AF32A55578700EF7859 /* libswscale.7.dylib in Embed Libraries */,
+				615C8AF12A55578700EF7859 /* libavfilter.9.dylib in Embed Libraries */,
+				615C8AE22A55578700EF7859 /* libswresample.4.dylib in Embed Libraries */,
+				615C8AEF2A55578700EF7859 /* libavformat.60.dylib in Embed Libraries */,
+				615C8AEB2A55578700EF7859 /* libavdevice.60.dylib in Embed Libraries */,
+				615C8AF72A55578700EF7859 /* libopenjp2.7.dylib in Embed Libraries */,
+				615C8AD72A52C7AD00EF7859 /* libxcb.1.dylib in Embed Libraries */,
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		61FEAF732A4D30BD001EB24F /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 11;
+			files = (
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		6137B3992A4ED19B00AD6553 /* libxcb-xfixes.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libxcb-xfixes.0.dylib"; path = "Frameworks/libxcb-xfixes.0.dylib"; sourceTree = "<group>"; };
+		6137B3BC2A4ED19C00AD6553 /* libxcb-shm.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libxcb-shm.0.dylib"; path = "Frameworks/libxcb-shm.0.dylib"; sourceTree = "<group>"; };
+		613F7B4D2A4D76E000F26C1B /* deps */ = {isa = PBXFileReference; lastKnownFileType = folder; path = deps; sourceTree = "<group>"; };
+		613F7B992A4D862E00F26C1B /* music (macOS)-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "music (macOS)-Bridging-Header.h"; sourceTree = "<group>"; };
+		613F7B9A2A4D862E00F26C1B /* ffmpeg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ffmpeg.h; sourceTree = "<group>"; };
+		613F7B9B2A4D862E00F26C1B /* ffmpeg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ffmpeg.c; sourceTree = "<group>"; };
+		615C8AB92A52AEB900EF7859 /* libswresample.4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswresample.4.dylib; path = Frameworks/libswresample.4.dylib; sourceTree = "<group>"; };
+		615C8AD22A52C60200EF7859 /* libX11.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libX11.6.dylib; path = Frameworks/libX11.6.dylib; sourceTree = "<group>"; };
+		615C8AD52A52C7AD00EF7859 /* libxcb.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxcb.1.dylib; path = Frameworks/libxcb.1.dylib; sourceTree = "<group>"; };
+		615C8AD82A52C7D200EF7859 /* libxcb-shape.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libxcb-shape.0.dylib"; path = "Frameworks/libxcb-shape.0.dylib"; sourceTree = "<group>"; };
+		615C8ADB2A52C7E500EF7859 /* libXau.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libXau.6.dylib; path = Frameworks/libXau.6.dylib; sourceTree = "<group>"; };
+		615C8ADE2A52C7F800EF7859 /* libXdmcp.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libXdmcp.6.dylib; path = Frameworks/libXdmcp.6.dylib; sourceTree = "<group>"; };
+		615C8AE32A55578700EF7859 /* libavdevice.60.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavdevice.60.dylib; path = Frameworks/libavdevice.60.dylib; sourceTree = "<group>"; };
+		615C8AE42A55578700EF7859 /* libavcodec.60.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.60.dylib; path = Frameworks/libavcodec.60.dylib; sourceTree = "<group>"; };
+		615C8AE52A55578700EF7859 /* libavformat.60.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.60.dylib; path = Frameworks/libavformat.60.dylib; sourceTree = "<group>"; };
+		615C8AE62A55578700EF7859 /* libavfilter.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavfilter.9.dylib; path = Frameworks/libavfilter.9.dylib; sourceTree = "<group>"; };
+		615C8AE72A55578700EF7859 /* libswscale.7.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libswscale.7.dylib; path = Frameworks/libswscale.7.dylib; sourceTree = "<group>"; };
+		615C8AE82A55578700EF7859 /* libavutil.58.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavutil.58.dylib; path = Frameworks/libavutil.58.dylib; sourceTree = "<group>"; };
+		615C8AE92A55578700EF7859 /* libopenjp2.7.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopenjp2.7.dylib; path = Frameworks/libopenjp2.7.dylib; sourceTree = "<group>"; };
+		61C4A4CE2A42A7D6000E3DBC /* fmusic--macOS--Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "fmusic--macOS--Info.plist"; sourceTree = "<group>"; };
+		61E003712A48347F004EB263 /* MainMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuView.swift; sourceTree = "<group>"; };
+		61E43B782A3C645A00FBF9BD /* musicApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = musicApp.swift; sourceTree = "<group>"; };
+		61E43B792A3C645A00FBF9BD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		61E43B7A2A3C645B00FBF9BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		61E43B852A3C645B00FBF9BD /* fmusic.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fmusic.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		61E43B872A3C645B00FBF9BD /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
+		61E43B972A3C660600FBF9BD /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
+		61E43B9B2A3C67F900FBF9BD /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; wrapsLines = 0; };
+		61E43B9E2A3C686A00FBF9BD /* ListContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListContentView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		61E43B822A3C645B00FBF9BD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				615C8ADC2A52C7E500EF7859 /* libXau.6.dylib in Frameworks */,
+				615C8AEC2A55578700EF7859 /* libavcodec.60.dylib in Frameworks */,
+				615C8AD92A52C7D200EF7859 /* libxcb-shape.0.dylib in Frameworks */,
+				615C8AF42A55578700EF7859 /* libavutil.58.dylib in Frameworks */,
+				615C8AA92A52AEB900EF7859 /* libxcb-shm.0.dylib in Frameworks */,
+				615C8AD32A52C60200EF7859 /* libX11.6.dylib in Frameworks */,
+				615C8AAB2A52AEB900EF7859 /* libxcb-xfixes.0.dylib in Frameworks */,
+				615C8ADF2A52C7F800EF7859 /* libXdmcp.6.dylib in Frameworks */,
+				615C8AF22A55578700EF7859 /* libswscale.7.dylib in Frameworks */,
+				615C8AF02A55578700EF7859 /* libavfilter.9.dylib in Frameworks */,
+				615C8AE12A55578700EF7859 /* libswresample.4.dylib in Frameworks */,
+				615C8AEE2A55578700EF7859 /* libavformat.60.dylib in Frameworks */,
+				615C8AEA2A55578700EF7859 /* libavdevice.60.dylib in Frameworks */,
+				615C8AF62A55578700EF7859 /* libopenjp2.7.dylib in Frameworks */,
+				615C8AD62A52C7AD00EF7859 /* libxcb.1.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6137B3712A4ECE9C00AD6553 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				615C8AE42A55578700EF7859 /* libavcodec.60.dylib */,
+				615C8AE32A55578700EF7859 /* libavdevice.60.dylib */,
+				615C8AE62A55578700EF7859 /* libavfilter.9.dylib */,
+				615C8AE52A55578700EF7859 /* libavformat.60.dylib */,
+				615C8AE82A55578700EF7859 /* libavutil.58.dylib */,
+				615C8AE92A55578700EF7859 /* libopenjp2.7.dylib */,
+				615C8AE72A55578700EF7859 /* libswscale.7.dylib */,
+				615C8ADE2A52C7F800EF7859 /* libXdmcp.6.dylib */,
+				615C8ADB2A52C7E500EF7859 /* libXau.6.dylib */,
+				615C8AD82A52C7D200EF7859 /* libxcb-shape.0.dylib */,
+				615C8AD52A52C7AD00EF7859 /* libxcb.1.dylib */,
+				615C8AD22A52C60200EF7859 /* libX11.6.dylib */,
+				615C8AB92A52AEB900EF7859 /* libswresample.4.dylib */,
+				6137B3BC2A4ED19C00AD6553 /* libxcb-shm.0.dylib */,
+				6137B3992A4ED19B00AD6553 /* libxcb-xfixes.0.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		61E43B722A3C645A00FBF9BD = {
+			isa = PBXGroup;
+			children = (
+				613F7B4D2A4D76E000F26C1B /* deps */,
+				61C4A4CE2A42A7D6000E3DBC /* fmusic--macOS--Info.plist */,
+				61E43B772A3C645A00FBF9BD /* Shared */,
+				61E43B862A3C645B00FBF9BD /* macOS */,
+				61E43B802A3C645B00FBF9BD /* Products */,
+				6137B3712A4ECE9C00AD6553 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		61E43B772A3C645A00FBF9BD /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				61E43B9A2A3C67B000FBF9BD /* Views */,
+				61E43B962A3C64FD00FBF9BD /* Module */,
+				61E43B782A3C645A00FBF9BD /* musicApp.swift */,
+				61E43B792A3C645A00FBF9BD /* ContentView.swift */,
+				61E43B7A2A3C645B00FBF9BD /* Assets.xcassets */,
+				613F7B9A2A4D862E00F26C1B /* ffmpeg.h */,
+				613F7B9B2A4D862E00F26C1B /* ffmpeg.c */,
+				613F7B992A4D862E00F26C1B /* music (macOS)-Bridging-Header.h */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		61E43B802A3C645B00FBF9BD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				61E43B852A3C645B00FBF9BD /* fmusic.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		61E43B862A3C645B00FBF9BD /* macOS */ = {
+			isa = PBXGroup;
+			children = (
+				61E43B872A3C645B00FBF9BD /* macOS.entitlements */,
+			);
+			path = macOS;
+			sourceTree = "<group>";
+		};
+		61E43B962A3C64FD00FBF9BD /* Module */ = {
+			isa = PBXGroup;
+			children = (
+				61E43B972A3C660600FBF9BD /* Song.swift */,
+			);
+			path = Module;
+			sourceTree = "<group>";
+		};
+		61E43B9A2A3C67B000FBF9BD /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				61E43B9B2A3C67F900FBF9BD /* PlayerView.swift */,
+				61E43B9E2A3C686A00FBF9BD /* ListContentView.swift */,
+				61E003712A48347F004EB263 /* MainMenuView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		61E43B842A3C645B00FBF9BD /* fmusic (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 61E43B932A3C645B00FBF9BD /* Build configuration list for PBXNativeTarget "fmusic (macOS)" */;
+			buildPhases = (
+				61E43B812A3C645B00FBF9BD /* Sources */,
+				61E43B822A3C645B00FBF9BD /* Frameworks */,
+				61E43B832A3C645B00FBF9BD /* Resources */,
+				61FEAF732A4D30BD001EB24F /* Embed Libraries */,
+				615C8AB72A52AEB900EF7859 /* Embed Libraries */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "fmusic (macOS)";
+			productName = "music (macOS)";
+			productReference = 61E43B852A3C645B00FBF9BD /* fmusic.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		61E43B732A3C645A00FBF9BD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1340;
+				LastUpgradeCheck = 1340;
+				TargetAttributes = {
+					61E43B842A3C645B00FBF9BD = {
+						CreatedOnToolsVersion = 13.4.1;
+						LastSwiftMigration = 1340;
+					};
+				};
+			};
+			buildConfigurationList = 61E43B762A3C645A00FBF9BD /* Build configuration list for PBXProject "fmusic" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 61E43B722A3C645A00FBF9BD;
+			productRefGroup = 61E43B802A3C645B00FBF9BD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				61E43B842A3C645B00FBF9BD /* fmusic (macOS) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		61E43B832A3C645B00FBF9BD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				613F7B4E2A4D76E000F26C1B /* deps in Resources */,
+				61E43B8D2A3C645B00FBF9BD /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		61E43B812A3C645B00FBF9BD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				61E003722A48347F004EB263 /* MainMenuView.swift in Sources */,
+				61E43B992A3C660600FBF9BD /* Song.swift in Sources */,
+				61E43B8B2A3C645B00FBF9BD /* ContentView.swift in Sources */,
+				613F7B9C2A4D862E00F26C1B /* ffmpeg.c in Sources */,
+				61E43B892A3C645B00FBF9BD /* musicApp.swift in Sources */,
+				61E43B9D2A3C67F900FBF9BD /* PlayerView.swift in Sources */,
+				61E43BA02A3C686A00FBF9BD /* ListContentView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		61E43B8E2A3C645B00FBF9BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		61E43B8F2A3C645B00FBF9BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		61E43B942A3C645B00FBF9BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = F6AF2Z7N97;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/deps/include";
+				INFOPLIST_FILE = "fmusic--macOS--Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.ffactory.fmusic;
+				PRODUCT_NAME = fmusic;
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Shared/music (macOS)-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		61E43B952A3C645B00FBF9BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = F6AF2Z7N97;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/deps/include";
+				INFOPLIST_FILE = "fmusic--macOS--Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.ffactory.fmusic;
+				PRODUCT_NAME = fmusic;
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Shared/music (macOS)-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		61E43B762A3C645A00FBF9BD /* Build configuration list for PBXProject "fmusic" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				61E43B8E2A3C645B00FBF9BD /* Debug */,
+				61E43B8F2A3C645B00FBF9BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		61E43B932A3C645B00FBF9BD /* Build configuration list for PBXNativeTarget "fmusic (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				61E43B942A3C645B00FBF9BD /* Debug */,
+				61E43B952A3C645B00FBF9BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 61E43B732A3C645A00FBF9BD /* Project object */;
+}
