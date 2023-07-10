@@ -55,8 +55,8 @@ struct ListContentView: View {
                         Text("歌曲1")
                         Text("歌曲1")
                     }.padding(.leading, 10)
-
-                }.headerProminence(.increased)
+                }
+                .headerProminence(.increased)
 
                 Section(
                     header: HStack {
@@ -77,15 +77,29 @@ struct ListContentView: View {
                             }
                         }
                     }.padding(.leading, 10)
-                }.headerProminence(.increased)
+                }
+                .headerProminence(.increased)
                 Spacer()
             }
             .searchable(text: $searchText, placement: .sidebar, prompt: "搜索")
             .navigationTitle("music")
             // 侧边搜索栏
         }
+        .toolbar(content: {
+            ToolbarItem(placement: .automatic) {
+                Button(action: toggleSidebar, label: {
+                    Image(systemName: "sidebar.left")
+                })
+            }
+        })
         .navigationViewStyle(.columns)
     }
+}
+
+func toggleSidebar() {
+    #if os(macOS)
+    NSApp.keyWindow?.firstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
+    #endif
 }
 
 struct SearchView: View {
