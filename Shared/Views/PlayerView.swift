@@ -24,15 +24,14 @@ struct PlayerView: View {
 
     @State var playMode: PlayMode = .Order
     @State var modeImage: String = "arrow.uturn.forward.circle"
-    @State var volume: Double = 0.3
+    @State var volume: Float = 0.7
     @State var autoPlay = true
 //    @State var isHeartChecked = false // 是否点击收藏
     @State var currtime: TimeInterval = 0.0 // 当前播放时长
-    @State var totaltime: TimeInterval = 0.0 // 歌曲的总时长
     @State var percentage = 0.0 // 播放进度比率
     @State var isEditing = false // 是否手工拖动进度条
     @State var showPlayButton = true // 是否显示播放按钮图标，为false时，显示暂停按钮
-    @State var progressMaxWidth = 400.0
+    @State var progressMaxWidth = 300.0
     @State var lastDragValue = 0.0
     @State var progressWidth = 0.0
     @State var img = Image("album")
@@ -62,6 +61,7 @@ struct PlayerView: View {
                         .padding(.vertical, 5)
                         .foregroundColor(.black)
                 }
+                .frame(minWidth: 150)
                 .onChange(of: currnetSong.filePath) { _ in
                     (_, img) = GetMusicInfo(path: currnetSong.filePath)
                     showImage = true
@@ -69,7 +69,7 @@ struct PlayerView: View {
                     soudPlayer?.stop()
                     playAudio(path: currnetSong.filePath)
                     if let total = soudPlayer?.duration {
-                        totaltime = total
+                        currnetSong.duration = total
                     }
                     showPlayButton = false
                     // 切换歌曲后，进度长度重置为0
@@ -128,12 +128,12 @@ struct PlayerView: View {
                         .onReceive(timer) { _ in
                             if isEditing {
                                 // 手工调整播放进度
-                                soudPlayer?.currentTime = percentage * totaltime
+                                soudPlayer?.currentTime = percentage * currnetSong.duration
                                 print("progress3: \(percentage)")
                             } else {
                                 if let currTime = soudPlayer?.currentTime {
                                     currtime = currTime
-                                    percentage = currtime / totaltime
+                                    percentage = currtime / currnetSong.duration
                                 }
                             }
                             // 播放完成
@@ -153,11 +153,11 @@ struct PlayerView: View {
                             }
                         }
                     // 显示当前播放时长
-                    Text(durationFormat(timeInterval: currtime)+" / "+durationFormat(timeInterval: totaltime))
+                    Text(durationFormat(timeInterval: currtime)+" / "+durationFormat(timeInterval: currnetSong.duration))
                 }.frame(width: progressMaxWidth)
-                    .onAppear {
-                        soudPlayer?.setVolume(Float(volume), fadeDuration: 0)
-                    }
+//                    .onAppear {
+//                        soudPlayer?.setVolume(Float(volume), fadeDuration: 0)
+//                    }
 //                Spacer()
                 Button(action: {
                     currnetSong.isHeartChecked.toggle()
@@ -177,12 +177,12 @@ struct PlayerView: View {
                 }
                 .buttonStyle(.borderless)
 
-                Button(action: {}) {
-                    Image(systemName: "speaker.wave.2.circle")
-                        .font(.largeTitle)
-                }
-                .buttonStyle(.borderless)
-                .pinkBackgroundOnHover()
+//                Button(action: {}) {
+//                    Image(systemName: "speaker.wave.2.circle")
+//                        .font(.largeTitle)
+//                }
+//                .buttonStyle(.borderless)
+//                .pinkBackgroundOnHover()
 
                 Button(action: {
                     let old = playMode
@@ -215,7 +215,7 @@ struct PlayerView: View {
                                 }
                                 playAudio(path: currnetSong.filePath)
                                 if let total = soudPlayer?.duration {
-                                    totaltime = total
+                                    currnetSong.duration = total
                                 }
                             } else {
                                 // 当前播放时长大于0 表示暂停，恢复播放就行。
@@ -245,6 +245,21 @@ struct PlayerView: View {
                     .buttonStyle(.borderless)
                     .pinkBackgroundOnHover()
                 }
+                // 音量调整滚动条
+                HStack {
+                    Image(systemName: "speaker.fill")
+                    Slider(
+                        value: $volume,
+                        in: 0...1.0,
+                        onEditingChanged: { _ in
+                            soudPlayer?.setVolume(volume, fadeDuration: 0)
+                        }
+                    )
+                    .tint(Color.red)
+                    Image(systemName: "speaker.wave.3.fill")
+                }
+                .frame(width: 150)
+
             }.frame(height: 48)
                 .padding()
                 .background(RoundedRectangle(cornerSize: CGSize.zero)

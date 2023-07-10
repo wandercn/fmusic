@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    //    @Binding var paths: [String]
-    @State var currnetSong: Song = .init()
+    @Binding var currnetSong: Song
     @Binding var libraryList: [Song]
     var body: some View {
         ZStack {

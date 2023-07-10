@@ -10,9 +10,10 @@ import SwiftUI
 @main
 struct musicApp: App {
     @State var libraryList: [Song] = []
+    @State var currnetSong: Song = .init()
     var body: some Scene {
         WindowGroup {
-            ContentView(libraryList: $libraryList)
+            ContentView(currnetSong: $currnetSong, libraryList: $libraryList)
         }
         .commands {
             MainMenuView(libraryList: $libraryList)
