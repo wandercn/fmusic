@@ -39,7 +39,7 @@ struct PlayerView: View {
     var body: some View {
         VStack(spacing: 5) {
             Spacer()
-            HStack {
+            HStack(alignment: .center) {
                 if showImage {
                     img
                         .resizable()
@@ -61,9 +61,13 @@ struct PlayerView: View {
                         .padding(.vertical, 5)
                         .foregroundColor(.black)
                 }
-                .frame(minWidth: 150)
+                .frame(minWidth: 100)
                 .onChange(of: currnetSong.filePath) { _ in
-                    (_, img) = GetMusicInfo(path: currnetSong.filePath)
+                    if let coverjpg = GetCoverImg(path: currnetSong.filePath) {
+                        img = coverjpg
+                    } else {
+                        img = Image("album")
+                    }
                     showImage = true
                     soudPlayer?.currentTime = 0
                     soudPlayer?.stop()

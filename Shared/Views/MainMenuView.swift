@@ -36,14 +36,15 @@ struct MainMenuView: Commands {
     }
 }
 
-func GetMusicInfo(path: String) -> (Song, Image) {
+// swift 原生方法获取mp3，aac,wav等苹果默认支持的音频元信息，内嵌专辑图片
+func GetMusicInfo(path: String)->(Song, Image) {
     let url = URL(fileURLWithPath: path)
     let asset = AVURLAsset(url: url)
     var img = Image("album")
     var song = Song()
     for format in asset.availableMetadataFormats {
         print("format: \(format)")
-        for metadata in asset.metadata(forFormat: format) {
+        for metadata in asset.metadata(forFormat: .unknown) {
             if let commonKey = metadata.commonKey {
                 let key = commonKey.rawValue.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: .symbols).lowercased()
                 print("key: \(key)")
@@ -65,13 +66,15 @@ func GetMusicInfo(path: String) -> (Song, Image) {
             }
         }
     }
+
     song.duration = asset.duration.seconds
     song.filePath = path
     print("song = \(song)")
     return (song, img)
 }
 
-func GetMeta(path: String) -> Song {
+// 调用ffmpeAPI获取所有音频的元信息
+func GetMeta(path: String)->Song {
     var s = Song()
     var prev: UnsafeMutablePointer<AVDictionaryEntry>?
     var dict = [String: String]()
@@ -103,6 +106,31 @@ func GetMeta(path: String) -> Song {
     }
     avformat_close_input(&fmt_ctx)
     if s.name.isEmpty {
-        s.name = (URL(fileURLWithPath: path).lastPathComponent).replacingOccurrences(of: ".mp3", with: "")                 }
+        s.name = (URL(fileURLWithPath: path).lastPathComponent).replacingOccurrences(of: ".mp3", with: "")
+    }
     return s
+}
+
+// 调用ffmpegAPI获取音频内嵌专辑图片
+func GetCoverImg(path: String) ->Image? {
+    var pkt = av_packet_alloc()
+    var img: Image?
+    print("file: \(path)")
+    if get_cover_image(path, pkt) == -1 {
+        return nil
+    }
+    let data = pkt?.pointee.data
+    let size = pkt?.pointee.size
+    print("i-data: \(String(describing: data!))")
+
+    if data != nil {
+        let nsData = NSData(bytes: data!, length: Int(size!))
+//        print("nsData: \(nsData)")
+        // 获取的data数据格式不正确，组装NSImage可能失败
+        if let nsImage = NSImage(data: nsData as Data) {
+            img = Image(nsImage: nsImage)
+        }
+    }
+    av_packet_free(&pkt)
+    return img
 }
