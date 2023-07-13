@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:/Users/lsmiao/workspace/src/github.com/wandercn/music/fmusic.xcodeproj">
+      location = "self:">
    </FileRef>
 </Workspace>

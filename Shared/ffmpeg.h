@@ -13,5 +13,5 @@
 #include <libavformat/avformat.h>
 #include <libavutil/dict.h>
 AVFormatContext *  get_format_ctx(const char *url);
-int get_cover_image(const char *url, AVPacket *pkt);
+AVPacket get_cover_image(const char *url);
 #endif /* ffmpeg_h */

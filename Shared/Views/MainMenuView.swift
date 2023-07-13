@@ -6,6 +6,7 @@
 //
 
 import AVFoundation
+import Logging
 import SwiftUI
 
 struct MainMenuView: Commands {
@@ -38,18 +39,19 @@ struct MainMenuView: Commands {
 
 // swift 原生方法获取mp3，aac,wav等苹果默认支持的音频元信息，内嵌专辑图片
 func GetMusicInfo(path: String)->(Song, Image) {
+    flog.logLevel = .debug
     let url = URL(fileURLWithPath: path)
     let asset = AVURLAsset(url: url)
     var img = Image("album")
     var song = Song()
     for format in asset.availableMetadataFormats {
-        print("format: \(format)")
+        flog.debug("format: \(format)")
         for metadata in asset.metadata(forFormat: .unknown) {
             if let commonKey = metadata.commonKey {
                 let key = commonKey.rawValue.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: .symbols).lowercased()
-                print("key: \(key)")
+                flog.debug("key: \(key)")
                 if let value = metadata.value {
-                    print("value: \(value)")
+                    flog.debug("value: \(value)")
                     switch key {
                     case "title":
                         song.name = value.description
@@ -69,12 +71,13 @@ func GetMusicInfo(path: String)->(Song, Image) {
 
     song.duration = asset.duration.seconds
     song.filePath = path
-    print("song = \(song)")
+    flog.debug("song = \(song)")
     return (song, img)
 }
 
 // 调用ffmpeAPI获取所有音频的元信息
 func GetMeta(path: String)->Song {
+    flog.logLevel = .debug
     var s = Song()
     var prev: UnsafeMutablePointer<AVDictionaryEntry>?
     var dict = [String: String]()
@@ -88,7 +91,7 @@ func GetMeta(path: String)->Song {
             let value = String(cString: tag.pointee.value).trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: .symbols)
             dict[key] = value
             prev = tag
-            print("KEY = \(key) Value= \(value)")
+            flog.debug("KEY = \(key) Value= \(value)")
         }
 
         for (k, v) in dict {
@@ -113,24 +116,37 @@ func GetMeta(path: String)->Song {
 
 // 调用ffmpegAPI获取音频内嵌专辑图片
 func GetCoverImg(path: String) ->Image? {
-    var pkt = av_packet_alloc()
+    flog.logLevel = .debug
+    var pkt: AVPacket
     var img: Image?
     print("file: \(path)")
-    if get_cover_image(path, pkt) == -1 {
-        return nil
+    pkt = get_cover_image(path)
+    withUnsafePointer(to: pkt) { ptr in
+        flog.debug("pkt_addr4:\(ptr)")
     }
-    let data = pkt?.pointee.data
-    let size = pkt?.pointee.size
-    print("i-data: \(String(describing: data!))")
+    let data = pkt.data
+    let size = pkt.size
+    flog.debug("data: \(String(describing: pkt.data))")
+
+    flog.debug("size: \(pkt.size)")
 
     if data != nil {
-        let nsData = NSData(bytes: data!, length: Int(size!))
-//        print("nsData: \(nsData)")
+        let nsData = NSData(bytes: data, length: Int(size))
+//        do {
+//            try nsData.write(toFile: "/Users/lsmiao/Downloads/jpgtest/cover_\(URL(fileURLWithPath: path).lastPathComponent)_\(Date().ISO8601Format()).jpg")
+//        } catch {
+//            flog.info("ERROR: \(error)")
+//            return nil
+//        }
         // 获取的data数据格式不正确，组装NSImage可能失败
         if let nsImage = NSImage(data: nsData as Data) {
             img = Image(nsImage: nsImage)
+        } else {
+            flog.info("nsImage为空")
         }
     }
-    av_packet_free(&pkt)
+//    av_packet_unref(pkt)
+//        av_packet_free(&pkt)
+
     return img
 }
