@@ -119,7 +119,7 @@ func GetCoverImg(path: String) ->Image? {
     flog.logLevel = .debug
     var pkt: AVPacket
     var img: Image?
-    print("file: \(path)")
+    flog.debug("file: \(path)")
     pkt = get_cover_image(path)
     withUnsafePointer(to: pkt) { ptr in
         flog.debug("pkt_addr4:\(ptr)")
