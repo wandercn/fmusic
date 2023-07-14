@@ -117,10 +117,12 @@ func GetMeta(path: String)->Song {
 // 调用ffmpegAPI获取音频内嵌专辑图片
 func GetCoverImg(path: String) ->Image? {
     flog.logLevel = .debug
-    var pkt: AVPacket
+//    var pkt: AVPacket
     var img: Image?
     flog.debug("file: \(path)")
-    pkt = get_cover_image(path)
+    guard let pkt = get_cover_image(path)?.pointee else {
+        return nil
+    }
     withUnsafePointer(to: pkt) { ptr in
         flog.debug("pkt_addr4:\(ptr)")
     }

@@ -39,8 +39,8 @@
 		615C8AF52A55578700EF7859 /* libavutil.58.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE82A55578700EF7859 /* libavutil.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		615C8AF62A55578700EF7859 /* libopenjp2.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AE92A55578700EF7859 /* libopenjp2.7.dylib */; };
 		615C8AF72A55578700EF7859 /* libopenjp2.7.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE92A55578700EF7859 /* libopenjp2.7.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		61CEB36D2A5FFFCD006EAA62 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 61CEB36C2A5FFFCD006EAA62 /* Logging */; };
 		61CEB36F2A600000006EAA62 /* logs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61CEB36E2A600000006EAA62 /* logs.swift */; };
+		61D16A8C2A61170900FFFB89 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 61D16A8B2A61170900FFFB89 /* Logging */; };
 		61E003722A48347F004EB263 /* MainMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E003712A48347F004EB263 /* MainMenuView.swift */; };
 		61E43B892A3C645B00FBF9BD /* musicApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E43B782A3C645A00FBF9BD /* musicApp.swift */; };
 		61E43B8B2A3C645B00FBF9BD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E43B792A3C645A00FBF9BD /* ContentView.swift */; };
@@ -140,7 +140,7 @@
 				615C8AEE2A55578700EF7859 /* libavformat.60.dylib in Frameworks */,
 				615C8AEA2A55578700EF7859 /* libavdevice.60.dylib in Frameworks */,
 				615C8AF62A55578700EF7859 /* libopenjp2.7.dylib in Frameworks */,
-				61CEB36D2A5FFFCD006EAA62 /* Logging in Frameworks */,
+				61D16A8C2A61170900FFFB89 /* Logging in Frameworks */,
 				615C8AD62A52C7AD00EF7859 /* libxcb.1.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -251,7 +251,7 @@
 			);
 			name = "fmusic (macOS)";
 			packageProductDependencies = (
-				61CEB36C2A5FFFCD006EAA62 /* Logging */,
+				61D16A8B2A61170900FFFB89 /* Logging */,
 			);
 			productName = "music (macOS)";
 			productReference = 61E43B852A3C645B00FBF9BD /* fmusic.app */;
@@ -283,7 +283,7 @@
 			);
 			mainGroup = 61E43B722A3C645A00FBF9BD;
 			packageReferences = (
-				61CEB36B2A5FFFCD006EAA62 /* XCRemoteSwiftPackageReference "swift-log" */,
+				61D16A8A2A61170900FFFB89 /* XCRemoteSwiftPackageReference "swift-log" */,
 			);
 			productRefGroup = 61E43B802A3C645B00FBF9BD /* Products */;
 			projectDirPath = "";
@@ -527,9 +527,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		61CEB36B2A5FFFCD006EAA62 /* XCRemoteSwiftPackageReference "swift-log" */ = {
+		61D16A8A2A61170900FFFB89 /* XCRemoteSwiftPackageReference "swift-log" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-log/";
+			repositoryURL = "https://github.com/apple/swift-log";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.0.0;
@@ -538,9 +538,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		61CEB36C2A5FFFCD006EAA62 /* Logging */ = {
+		61D16A8B2A61170900FFFB89 /* Logging */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 61CEB36B2A5FFFCD006EAA62 /* XCRemoteSwiftPackageReference "swift-log" */;
+			package = 61D16A8A2A61170900FFFB89 /* XCRemoteSwiftPackageReference "swift-log" */;
 			productName = Logging;
 		};
 /* End XCSwiftPackageProductDependency section */
