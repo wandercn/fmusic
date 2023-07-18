@@ -263,11 +263,13 @@ struct PlayerView: View {
 func playAudio(path: String) {
     let url = URL(fileURLWithPath: path)
     do {
+        soudPlayer?.stop()
         soudPlayer = try AVAudioPlayer(contentsOf: url)
+        soudPlayer?.prepareToPlay()
         soudPlayer?.play()
 
     } catch {
-        flog.error("读取音频文件失败:\(path)")
+        flog.error("读取音频文件失败:\(path) error: \(error)")
     }
 }
 
