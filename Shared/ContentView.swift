@@ -15,6 +15,7 @@ struct ContentView: View {
             ListContentView(currnetSong: $currnetSong, libraryList: $libraryList)
             PlayerView(libraryList: $libraryList, currnetSong: $currnetSong)
         }
+
         .frame(minWidth: 850, minHeight: 600)
 //        .onAppear {
 //            if $libraryList.count > 0, currnetSong.filePath == "" {

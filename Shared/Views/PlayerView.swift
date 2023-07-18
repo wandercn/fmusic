@@ -26,7 +26,6 @@ struct PlayerView: View {
     @State var modeImage: String = "arrow.uturn.forward.circle"
     @State var volume: Float = 0.7
     @State var autoPlay = true
-//    @State var isHeartChecked = false // 是否点击收藏
     @State var currtime: TimeInterval = 0.0 // 当前播放时长
     @State var percentage = 0.0 // 播放进度比率
     @State var isEditing = false // 是否手工拖动进度条
@@ -53,17 +52,17 @@ struct PlayerView: View {
                         .circleImage()
                         .imageOnHover()
                 }
-
+                // 显示当前歌曲名和艺术家
                 VStack(alignment: .leading) {
-                    Text("\(currnetSong.artist)")
+                    Text(currnetSong.artist)
                         .foregroundColor(.secondary)
-                    Text("\(currnetSong.name)")
+                    Text(currnetSong.name)
                         .padding(.vertical, 5)
                         .foregroundColor(.black)
                 }
                 .frame(minWidth: 100)
                 .onChange(of: currnetSong.filePath) { _ in
-                    if let coverjpg = GetCoverImg(path: currnetSong.filePath) {
+                    if let coverjpg = GetAlbumCoverImage(path: currnetSong.filePath) {
                         img = coverjpg
                     } else {
                         img = Image("album")
@@ -90,6 +89,7 @@ struct PlayerView: View {
                         }
                     }
                 }
+
                 Spacer()
                 // 播放进度条
                 HStack {
@@ -113,27 +113,21 @@ struct PlayerView: View {
                                 progressWidth = progressWidth > progressMaxWidth ? progressMaxWidth : progressWidth
                                 progressWidth = progressWidth >= 0 ? progressWidth : 0
                                 lastDragValue = progressWidth
-//                                let progress = lastDragValue / progressMaxWidth
-//
-//                                percentage = progress <= 1.0 ? progress : 1
-//                                print("progress2: \(progress)")
+                                //                                let progress = lastDragValue / progressMaxWidth
+                                //
+                                //                                percentage = progress <= 1.0 ? progress : 1
+                                //                                print("progress2: \(progress)")
                                 print("isEditing2: \(isEditing)")
                                 isEditing = false
                                 print("isEditing3: \(isEditing)")
                             }
                         )
-//                    Slider(
-//                        value: $percentage,
-//                        in: 0...1,
-//                        onEditingChanged: { editing in
-//                            isEditing = editing
-//                        }
-//                    )
                         .onReceive(timer) { _ in
                             if isEditing {
                                 // 手工调整播放进度
                                 soudPlayer?.currentTime = percentage * currnetSong.duration
-                                print("progress3: \(percentage)")
+                                flog.debug("progress3: \(percentage)")
+
                             } else {
                                 if let currTime = soudPlayer?.currentTime {
                                     currtime = currTime
@@ -144,8 +138,8 @@ struct PlayerView: View {
                             if let player = soudPlayer {
                                 let old = currnetSong
                                 if !player.isPlaying, autoPlay, !showPlayButton {
-                                    print("isplaying: \(player.isPlaying)")
-                                    print("autoPlay: \(autoPlay)")
+                                    flog.debug("isplaying: \(player.isPlaying)")
+                                    flog.debug("autoPlay: \(autoPlay)")
                                     currnetSong = nextSong(currSong: old, playList: libraryList, playMode: playMode)
                                     // 单曲循环模式特殊处理
                                     if playMode == .Single {
@@ -159,10 +153,7 @@ struct PlayerView: View {
                     // 显示当前播放时长
                     Text(durationFormat(timeInterval: currtime)+" / "+durationFormat(timeInterval: currnetSong.duration))
                 }.frame(width: progressMaxWidth)
-//                    .onAppear {
-//                        soudPlayer?.setVolume(Float(volume), fadeDuration: 0)
-//                    }
-//                Spacer()
+                // 收藏按钮
                 Button(action: {
                     currnetSong.isHeartChecked.toggle()
                     if $libraryList.count > 0 {
@@ -172,27 +163,19 @@ struct PlayerView: View {
                             }
                         }
                     }
-                    print("点击了收藏")
+                    flog.debug("点击了收藏")
                 }) {
                     Image(systemName: currnetSong.isHeartChecked ? "heart.circle.fill" : "heart.circle")
                         .font(.largeTitle)
-                        //                        .foregroundColor(self.isHeartChecked ?.red : .secondary)
                         .pinkBackgroundOnHover()
                 }
                 .buttonStyle(.borderless)
 
-//                Button(action: {}) {
-//                    Image(systemName: "speaker.wave.2.circle")
-//                        .font(.largeTitle)
-//                }
-//                .buttonStyle(.borderless)
-//                .pinkBackgroundOnHover()
-
                 Button(action: {
                     let old = playMode
-                    print("old playMode: \(old)")
+                    flog.debug("old playMode: \(old)")
                     (playMode, modeImage) = nextPlayMode(mode: old)
-                    print("new playMode: \(playMode)")
+                    flog.debug("new playMode: \(playMode)")
                 }) { Image(systemName: modeImage)
                     .font(.largeTitle)
                 }
@@ -271,12 +254,12 @@ struct PlayerView: View {
                     .cornerRadius(10)
                     .shadow(radius: 10)
                 )
-//                .opacityOnHover()
                 .foregroundColor(Color.secondary)
         }
     }
 }
 
+// 播放音频文件
 func playAudio(path: String) {
     let url = URL(fileURLWithPath: path)
     do {
@@ -284,10 +267,11 @@ func playAudio(path: String) {
         soudPlayer?.play()
 
     } catch {
-        print("读取音频文件失败")
+        flog.error("读取音频文件失败:\(path)")
     }
 }
 
+// 切换播放模式，返回下一个模式和对应的图片名称
 func nextPlayMode(mode: PlayMode) -> (playMode: PlayMode, image: String) {
     switch mode {
     case .Loop:
@@ -301,69 +285,65 @@ func nextPlayMode(mode: PlayMode) -> (playMode: PlayMode, image: String) {
     }
 }
 
+// 返回下一曲的歌曲信息，根据不同的播放模式返回不同
 func nextSong(currSong: Song, playList: [Song], playMode: PlayMode) -> Song {
     switch playMode {
     case .Loop:
-        print(PlayMode.Loop)
+        flog.debug("播放模式:\(PlayMode.Loop)")
         for index in 0..<playList.count {
             if currSong.filePath == playList[index].filePath {
                 return playList[index+1 > playList.count ? 0 : index+1]
             }
         }
     case .Order:
-        print(PlayMode.Order)
+        flog.debug("播放模式:\(PlayMode.Order)")
         for index in 0..<playList.count {
             if index+1 > playList.count {
                 soudPlayer?.stop()
             }
             if currSong.filePath == playList[index].filePath {
-                print(playList[index+1 >= playList.count ? index : index+1].name)
+                flog.debug("\(playList[index+1 >= playList.count ? index : index+1].name)")
                 return playList[index+1 >= playList.count ? index : index+1]
             }
         }
     case .Random:
-        print(PlayMode.Random)
+        flog.debug("播放模式:\(PlayMode.Random)")
         let nextId = Int.random(in: 0...(playList.count - 1))
         return playList[nextId]
 
     case .Single:
-        print(PlayMode.Single)
-
+        flog.debug("播放模式:\(PlayMode.Single)")
         return currSong
     }
 
     return currSong
 }
 
+// 返回上一曲的歌曲信息，根据不同的播放模式返回不同
 func prevSong(currSong: Song, playList: [Song], playMode: PlayMode) -> Song {
     switch playMode {
     case .Loop:
-        print(PlayMode.Loop)
+        flog.debug("播放模式:\(PlayMode.Loop)")
         for index in 0..<playList.count {
             if currSong.filePath == playList[index].filePath {
                 return playList[index - 1 <= 0 ? 0 : index - 1]
             }
         }
     case .Order:
-        print(PlayMode.Order)
+        flog.debug("播放模式:\(PlayMode.Order)")
         for index in 0..<playList.count {
-            print(index)
-            //            if index - 1 < 0 {
-            //                soudPlayer?.stop()
-            //            }
             if currSong.filePath == playList[index].filePath {
-                print(playList[index - 1 <= 0 ? 0 : index - 1].name)
+                flog.debug("\(playList[index - 1 <= 0 ? 0 : index - 1].name)")
                 return playList[index - 1 <= 0 ? 0 : index - 1]
             }
         }
     case .Random:
-        print(PlayMode.Random)
+        flog.debug("播放模式:\(PlayMode.Random)")
         let nextId = Int.random(in: 0...(playList.count - 1))
         return playList[nextId]
 
     case .Single:
-        print(PlayMode.Single)
-
+        flog.debug("播放模式:\(PlayMode.Single)")
         return currSong
     }
     return currSong

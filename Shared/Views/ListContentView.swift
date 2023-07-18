@@ -128,9 +128,8 @@ struct LibraryView: View {
     @Binding var libraryed: Bool
     @Binding var libraryList: [Song]
     @Binding var searchText: String
-//    @State var searchResults: [Song]
-    let titles = ["歌曲名", "艺术家", "专辑", "时长"]
 
+    let titles = ["歌曲名", "艺术家", "专辑", "时长"]
     // 列表显示搜索结果
     var searchResults: [Song] {
         if searchText.isEmpty {
@@ -202,7 +201,6 @@ struct RowView: View {
                         Image(systemName: "livephoto.play")
                             .resizable()
                             .foregroundColor(song.isPlaying ? Color.white : Color.red)
-//                            .foregroundColor(Color.red)
                             .frame(width: 20, height: rowHeight, alignment: .leading)
                             .scaledToFit()
                     }
@@ -212,7 +210,6 @@ struct RowView: View {
                         Image(systemName: "heart.circle.fill")
                             .resizable()
                             .foregroundColor(song.isPlaying ? Color.white : Color.red)
-//                            .foregroundColor(Color.red)
                             .frame(width: 20, height: rowHeight, alignment: .leading)
                             .scaledToFill()
                     }
@@ -220,7 +217,6 @@ struct RowView: View {
             }
         }
         .foregroundColor(song.isPlaying ? Color.white : Color.black) // 前景颜色
-//        .foregroundColor(Color.black) // 前景颜色
         .buttonStyle(.borderless)
         .background(song.isPlaying ? Color.purple : Color.clear)
         .itemBackgroundOnHover()
