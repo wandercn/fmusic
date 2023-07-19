@@ -142,16 +142,23 @@ struct LibraryView: View {
     }
 
     var body: some View {
-        List {
-            HStack {
+        HStack {
+            Group {
                 ForEach(titles, id: \.self) { title in
                     Text(title)
                         .font(.headline) // 字C体
                         .fontWeight(.semibold) // 字体粗细
                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 10)
+                        .padding(.leading, title == "歌曲名" ? 28 : 0)
+                        .padding(.leading, title == "艺术家" ? 10 : 0)
                 }
             }
+        }
+        .border(.gray, width: 0.5)
+        .background(Color.white)
+        .padding(.bottom, -9)
+
+        List {
             ForEach(searchResults, id: \.self) { song in
                 RowView(libraryList: $libraryList, currnetSong: $currnetSong, song: song)
             }
