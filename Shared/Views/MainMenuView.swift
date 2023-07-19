@@ -33,7 +33,7 @@ struct MainMenuView: Commands {
                 }
             }, label: {
                 Text("添加到资料库")
-            })
+            }).keyboardShortcut("o")
         }
     }
 }
