@@ -57,13 +57,7 @@ struct PlayerView: View {
                 // 收藏按钮
                 Button(action: {
                     player.currentSong.isHeartChecked.toggle()
-                    if player.libraryList.count > 0 {
-                        for index in 0 ..< player.libraryList.count {
-                            if player.libraryList[index].filePath == player.currentSong.filePath {
-                                player.libraryList[index].isHeartChecked = player.currentSong.isHeartChecked
-                            }
-                        }
-                    }
+                    player.UpdateHeartChecked()
                     flog.debug("点击了收藏")
                 }) {
                     Image(systemName: player.currentSong.isHeartChecked ? "heart.circle.fill" : "heart.circle")
@@ -83,43 +77,7 @@ struct PlayerView: View {
                 .buttonStyle(.borderless)
                 .pinkBackgroundOnHover()
                 // 媒体播放控制按钮
-                HStack {
-                    // 上一曲按钮
-                    Button(action: {
-                        player.PlayPrev()
-                    }) {
-                        Image(systemName: "backward.circle")
-                            .font(.largeTitle)
-                    }
-                    .buttonStyle(.borderless)
-                    .pinkBackgroundOnHover()
-                    // 播放/暂停按钮
-                    Button(action: {
-                        if showPlayButton {
-                            player.Play()
-                        } else {
-                            player.Pause()
-                        }
-                        // 切换显示按钮
-                        showPlayButton.toggle()
-
-                    }) {
-                        Image(systemName: showPlayButton ? "play.circle" : "pause.circle")
-                            .font(.largeTitle)
-                    }
-                    .buttonStyle(.borderless)
-                    .pinkBackgroundOnHover()
-
-                    // 下一曲按钮
-                    Button(action: {
-                        player.PlayNext()
-                    }) {
-                        Image(systemName: "forward.circle")
-                            .font(.largeTitle)
-                    }
-                    .buttonStyle(.borderless)
-                    .pinkBackgroundOnHover()
-                }
+                PlayControlBar(player: player, showPlayButton: $showPlayButton)
                 // 音量调整滚动条
                 HStack {
                     Image(systemName: "speaker.fill")
@@ -197,6 +155,50 @@ struct ProgressBar: View {
             // 显示当前播放时长
             Text(durationFormat(timeInterval: player.CurrentTime())+" / "+durationFormat(timeInterval: player.currentSong.duration))
         }.frame(width: progressMaxWidth)
+    }
+}
+
+struct PlayControlBar: View {
+    @ObservedObject var player: AudioPlayer
+    @Binding var showPlayButton: Bool // 是否显示播放按钮图标，为false时，显示暂停按钮
+    var body: some View {
+        HStack {
+            // 上一曲按钮
+            Button(action: {
+                player.PlayPrev()
+            }) {
+                Image(systemName: "backward.circle")
+                    .font(.largeTitle)
+            }
+            .buttonStyle(.borderless)
+            .pinkBackgroundOnHover()
+            // 播放/暂停按钮
+            Button(action: {
+                if showPlayButton {
+                    player.Play()
+                } else {
+                    player.Pause()
+                }
+                // 切换显示按钮
+                showPlayButton.toggle()
+
+            }) {
+                Image(systemName: showPlayButton ? "play.circle" : "pause.circle")
+                    .font(.largeTitle)
+            }
+            .buttonStyle(.borderless)
+            .pinkBackgroundOnHover()
+
+            // 下一曲按钮
+            Button(action: {
+                player.PlayNext()
+            }) {
+                Image(systemName: "forward.circle")
+                    .font(.largeTitle)
+            }
+            .buttonStyle(.borderless)
+            .pinkBackgroundOnHover()
+        }
     }
 }
 
