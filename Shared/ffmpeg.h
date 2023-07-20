@@ -16,7 +16,12 @@
 /*
  是否启用debug日志
  */
+#if DEBUG
+int LOG_LEVEL_DEBUG = 1;
+#else
 int LOG_LEVEL_DEBUG = 0;
+#endif
+
 /*
  读取音频文件数据
  返回的 AVFormatContext *指针
