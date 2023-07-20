@@ -23,12 +23,11 @@ struct musicApp: App {
             MainMenuView(player: player)
         }
     }
-
+    
     // 设置全局日志级别
     init() {
 #if DEBUG
         flog.logLevel = .debug
-
 #endif
     }
 }
