@@ -14,18 +14,21 @@ var flog = Logger(label: "org.ffactory.fmusic")
 
 @main
 struct musicApp: App {
-    @State var libraryList: [Song] = []
-    @State var currnetSong: Song = .init()
+    @StateObject var player = AudioPlayer()
     var body: some Scene {
         WindowGroup {
-            ContentView(currnetSong: $currnetSong, libraryList: $libraryList)
+            ContentView(player: player)
         }
         .commands {
-            MainMenuView(libraryList: $libraryList)
+            MainMenuView(player: player)
         }
     }
 
     // 设置全局日志级别
-    init() { flog.logLevel = .info
+    init() {
+#if DEBUG
+        flog.logLevel = .debug
+
+#endif
     }
 }
