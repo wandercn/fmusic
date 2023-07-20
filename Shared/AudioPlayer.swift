@@ -46,6 +46,16 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         }
     }
 
+    func UpdateHeartChecked() {
+        if libraryList.count > 0 {
+            for index in 0 ..< libraryList.count {
+                if libraryList[index].filePath == currentSong.filePath {
+                    libraryList[index].isHeartChecked = currentSong.isHeartChecked
+                }
+            }
+        }
+    }
+
     func PlayFirst() {
         if currentSong.filePath.isEmpty, !libraryList.isEmpty {
             currentSong = libraryList.first!
