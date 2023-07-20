@@ -8,15 +8,9 @@ import AVFoundation
 import SwiftUI
 
 struct PlayerView: View {
-    let timer = Timer
-        .publish(every: 0.1, on: .main, in: .common)
-        .autoconnect()
     @ObservedObject var player: AudioPlayer
     @State var modeImage: String = "arrow.uturn.forward.circle"
-    @State var percentage = 0.0 // 播放进度比率
-    @State var isEditing = false // 是否手工拖动进度条
     @State var showPlayButton = true // 是否显示播放按钮图标，为false时，显示暂停按钮
-    @State var progressMaxWidth = 250.0
     @State var lastDragValue = 0.0
     @State var progressWidth = 0.0
     var body: some View {
@@ -59,45 +53,7 @@ struct PlayerView: View {
 
                 Spacer()
                 // 播放进度条
-                HStack {
-                    ProgressView(value: percentage, total: 1.0)
-                        .progressViewStyle(LinearProgressViewStyle(tint: .pink))
-                        .tint(Color.pink)
-                        // 拖拽播放进度
-                        .gesture(DragGesture(minimumDistance: 0)
-                            .onChanged { value in
-                                isEditing = true
-                                let translation = value.translation
-                                progressWidth = translation.width+lastDragValue
-                                progressWidth = progressWidth > progressMaxWidth ? progressMaxWidth : progressWidth
-                                progressWidth = progressWidth >= 0 ? progressWidth : 0
-                                let progress = progressWidth / progressMaxWidth
-                                print("progress1: \(progress)")
-                                percentage = progress <= 1.0 ? progress : 1
-                                print("isEditing1: \(isEditing)")
-                            }
-                            .onEnded { _ in
-                                progressWidth = progressWidth > progressMaxWidth ? progressMaxWidth : progressWidth
-                                progressWidth = progressWidth >= 0 ? progressWidth : 0
-                                lastDragValue = progressWidth
-                                print("isEditing2: \(isEditing)")
-                                isEditing = false
-                                print("isEditing3: \(isEditing)")
-                            }
-                        )
-                        .onReceive(timer) { _ in
-                            if isEditing {
-                                // 手工调整播放进度
-                                player.SetCurrentTime(value: percentage * player.currentSong.duration)
-                                flog.debug("progress3: \(percentage)")
-
-                            } else {
-                                percentage = player.CurrentTime() / player.Duration()
-                            }
-                        }
-                    // 显示当前播放时长
-                    Text(durationFormat(timeInterval: player.CurrentTime())+" / "+durationFormat(timeInterval: player.currentSong.duration))
-                }.frame(width: progressMaxWidth)
+                ProgressBar(player: player, lastDragValue: $lastDragValue, progressWidth: $progressWidth)
                 // 收藏按钮
                 Button(action: {
                     player.currentSong.isHeartChecked.toggle()
@@ -188,6 +144,59 @@ struct PlayerView: View {
                 )
                 .foregroundColor(Color.secondary)
         }
+    }
+}
+
+struct ProgressBar: View {
+    @ObservedObject var player: AudioPlayer
+    let timer = Timer
+        .publish(every: 0.1, on: .main, in: .common)
+        .autoconnect()
+    @State var progressMaxWidth = 250.0
+    @Binding var lastDragValue: Double
+    @Binding var progressWidth: Double
+    @State var percentage = 0.0 // 播放进度比率
+    @State var isEditing = false // 是否手工拖动进度条
+    var body: some View {
+        HStack {
+            ProgressView(value: percentage, total: 1.0)
+                .progressViewStyle(LinearProgressViewStyle(tint: .pink))
+                .tint(Color.pink)
+                // 拖拽播放进度
+                .gesture(DragGesture(minimumDistance: 0)
+                    .onChanged { value in
+                        isEditing = true
+                        let translation = value.translation
+                        progressWidth = translation.width+lastDragValue
+                        progressWidth = progressWidth > progressMaxWidth ? progressMaxWidth : progressWidth
+                        progressWidth = progressWidth >= 0 ? progressWidth : 0
+                        let progress = progressWidth / progressMaxWidth
+                        print("progress1: \(progress)")
+                        percentage = progress <= 1.0 ? progress : 1
+                        print("isEditing1: \(isEditing)")
+                    }
+                    .onEnded { _ in
+                        progressWidth = progressWidth > progressMaxWidth ? progressMaxWidth : progressWidth
+                        progressWidth = progressWidth >= 0 ? progressWidth : 0
+                        lastDragValue = progressWidth
+                        print("isEditing2: \(isEditing)")
+                        isEditing = false
+                        print("isEditing3: \(isEditing)")
+                    }
+                )
+                .onReceive(timer) { _ in
+                    if isEditing {
+                        // 手工调整播放进度
+                        player.SetCurrentTime(value: percentage * player.currentSong.duration)
+                        flog.debug("progress3: \(percentage)")
+
+                    } else {
+                        percentage = player.CurrentTime() / player.Duration()
+                    }
+                }
+            // 显示当前播放时长
+            Text(durationFormat(timeInterval: player.CurrentTime())+" / "+durationFormat(timeInterval: player.currentSong.duration))
+        }.frame(width: progressMaxWidth)
     }
 }
 
