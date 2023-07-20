@@ -90,7 +90,6 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         if playMode == .Single {
             soudPlayer?.currentTime = 0
             soudPlayer?.play()
-//            showPlayButton = false
         }
         PlayAudio(path: currentSong.filePath)
     }
@@ -106,7 +105,6 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         if playMode == .Single {
             soudPlayer?.currentTime = 0
             soudPlayer?.play()
-//            showPlayButton = false
         }
         PlayAudio(path: currentSong.filePath)
     }

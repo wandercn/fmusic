@@ -52,9 +52,3 @@ struct FavoritesView: View {
     //        libraryList.remove(atOffsets: offsets)
     //    }
 }
-
-// struct FavoritesView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        FavoritesView()
-//    }
-// }

@@ -14,7 +14,6 @@ struct ContentView: View {
             ListContentView(player: player)
             PlayerView(player: player)
         }
-
         .frame(minWidth: 800, minHeight: 600)
     }
 }
