@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PlayerView: View {
     @ObservedObject var player: AudioPlayer
-    @State var modeImage: String = "arrow.uturn.forward.circle"
+
     @State var showPlayButton = true // 是否显示播放按钮图标，为false时，显示暂停按钮
     @State var lastDragValue = 0.0
     @State var progressWidth = 0.0
@@ -54,30 +54,14 @@ struct PlayerView: View {
                 Spacer()
                 // 播放进度条
                 ProgressBar(player: player, lastDragValue: $lastDragValue, progressWidth: $progressWidth)
+                Spacer()
                 // 收藏按钮
-                Button(action: {
-                    player.currentSong.isHeartChecked.toggle()
-                    player.UpdateHeartChecked()
-                    flog.debug("点击了收藏")
-                }) {
-                    Image(systemName: player.currentSong.isHeartChecked ? "heart.circle.fill" : "heart.circle")
-                        .font(.largeTitle)
-                        .pinkBackgroundOnHover()
-                }
-                .buttonStyle(.borderless)
-
-                Button(action: {
-                    let old = player.playMode
-                    flog.debug("old playMode: \(old)")
-                    (player.playMode, modeImage) = nextPlayMode(mode: old)
-                    flog.debug("new playMode: \(player.playMode)")
-                }) { Image(systemName: modeImage)
-                    .font(.largeTitle)
-                }
-                .buttonStyle(.borderless)
-                .pinkBackgroundOnHover()
+                HeartButton(player: player)
+                // 播放模式切换按钮
+                PlayModeButton(player: player)
                 // 媒体播放控制按钮
                 PlayControlBar(player: player, showPlayButton: $showPlayButton)
+                Spacer()
                 // 音量调整滚动条
                 HStack {
                     Image(systemName: "speaker.fill")
@@ -102,6 +86,39 @@ struct PlayerView: View {
                 )
                 .foregroundColor(Color.secondary)
         }
+    }
+}
+
+struct PlayModeButton: View {
+    @ObservedObject var player: AudioPlayer
+    @State private var modeImage: String = "arrow.uturn.forward.circle"
+    var body: some View {
+        Button(action: {
+            let old = player.playMode
+            flog.debug("old playMode: \(old)")
+            (player.playMode, modeImage) = nextPlayMode(mode: old)
+            flog.debug("new playMode: \(player.playMode)")
+        }) { Image(systemName: modeImage)
+            .font(.largeTitle)
+        }
+        .buttonStyle(.borderless)
+        .pinkBackgroundOnHover()
+    }
+}
+
+struct HeartButton: View {
+    @ObservedObject var player: AudioPlayer
+    var body: some View {
+        Button(action: {
+            player.currentSong.isHeartChecked.toggle()
+            player.UpdateHeartChecked()
+            flog.debug("点击了收藏")
+        }) {
+            Image(systemName: player.currentSong.isHeartChecked ? "heart.circle.fill" : "heart.circle")
+                .font(.largeTitle)
+                .pinkBackgroundOnHover()
+        }
+        .buttonStyle(.borderless)
     }
 }
 
