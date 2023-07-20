@@ -8,12 +8,11 @@
 import SwiftUI
 
 struct ListContentView: View {
-    @Binding var currnetSong: Song
+    @ObservedObject var player: AudioPlayer
     @State private var showLibrary = true
     @State private var showPlayList = false
     @State private var showFavorites = false
     @State var searchText = ""
-    @Binding var libraryList: [Song]
     @State private var favorites: [Song] = [Song()]
     var body: some View {
         NavigationView {
@@ -29,8 +28,8 @@ struct ListContentView: View {
                 ) {
                     NavigationLink("歌曲", isActive: $showLibrary) {
                         LibraryView(
-                            currnetSong: $currnetSong, libraryed: $showLibrary,
-                            libraryList: $libraryList, searchText: $searchText
+                            player: player,
+                            searchText: $searchText
                         )
                     }.padding(.leading, 10)
                 }
@@ -67,15 +66,12 @@ struct ListContentView: View {
                     .foregroundColor(.purple)
                 ) {
                     NavigationLink("我的收藏", isActive: $showFavorites) {
-                        LibraryView(
-                            currnetSong: $currnetSong, libraryed: $showLibrary,
-                            libraryList: $favorites, searchText: $searchText
-                        )
-                        .task {
-                            favorites = libraryList.filter { song in
-                                song.isHeartChecked == true
+                        FavoritesView(player: player, favoritesList: $favorites, searchText: $searchText)
+                            .task {
+                                favorites = player.libraryList.filter { song in
+                                    song.isHeartChecked == true
+                                }
                             }
-                        }
                     }.padding(.leading, 10)
                 }
                 .headerProminence(.increased)
@@ -124,18 +120,16 @@ struct SearchView: View {
 }
 
 struct LibraryView: View {
-    @Binding var currnetSong: Song
-    @Binding var libraryed: Bool
-    @Binding var libraryList: [Song]
+    @ObservedObject var player: AudioPlayer
     @Binding var searchText: String
 
     let titles = ["歌曲名", "艺术家", "专辑", "时长"]
     // 列表显示搜索结果
     var searchResults: [Song] {
         if searchText.isEmpty {
-            return libraryList
+            return player.libraryList
         } else {
-            return libraryList.filter { x in
+            return player.libraryList.filter { x in
                 x.name.contains(searchText) || x.album.contains(searchText) || x.artist.contains(searchText)
             }
         }
@@ -160,7 +154,7 @@ struct LibraryView: View {
 
         List {
             ForEach(searchResults, id: \.self) { song in
-                RowView(libraryList: $libraryList, currnetSong: $currnetSong, song: song)
+                RowView(player: player, song: song)
             }
         }
         .listStyle(.bordered(alternatesRowBackgrounds: true))
@@ -171,20 +165,18 @@ struct LibraryView: View {
 }
 
 struct RowView: View {
-    @Binding var libraryList: [Song]
-    @Binding var currnetSong: Song
+    @ObservedObject var player: AudioPlayer
     @State var song: Song
     private let rowHeight = 20.0
-    //    @State var isClicked: Bool = false
     var body: some View {
         Button {
-            currnetSong = song
-            if $libraryList.count > 0 {
-                for index in 0 ..< $libraryList.count {
-                    if libraryList[index].filePath == currnetSong.filePath {
-                        libraryList[index].isSelected = true
+            player.currentSong = song
+            if player.libraryList.count > 0 {
+                for index in 0 ..< player.libraryList.count {
+                    if player.libraryList[index].filePath == player.currentSong.filePath {
+                        player.libraryList[index].isSelected = true
                     } else {
-                        libraryList[index].isSelected = false
+                        player.libraryList[index].isSelected = false
                     }
                 }
             }

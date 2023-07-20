@@ -10,7 +10,7 @@ import Logging
 import SwiftUI
 
 struct MainMenuView: Commands {
-    @Binding var libraryList: [Song]
+    @ObservedObject var player: AudioPlayer
     @State private var urls: [URL] = []
     var body: some Commands {
         CommandGroup(replacing: .newItem) {
@@ -27,7 +27,7 @@ struct MainMenuView: Commands {
                         flog.debug("urls: \(urls)")
                         urls.forEach { url in
                             let songs = LoadFiles(dir: url.path)
-                            libraryList.append(contentsOf: songs)
+                            player.libraryList.append(contentsOf: songs)
                         }
                     }
                 }
@@ -101,7 +101,6 @@ func LoadFiles(dir: String)->[Song] {
 
 // swift 原生方法获取mp3，aac,wav等苹果默认支持的音频元信息，内嵌专辑图片
 func GetMusicInfo(path: String)->(Song, Image) {
-//    flog.logLevel = .debug
     let url = URL(fileURLWithPath: path)
     let asset = AVURLAsset(url: url)
     var img = Image("album")
@@ -139,8 +138,6 @@ func GetMusicInfo(path: String)->(Song, Image) {
 
 // 调用ffmpeAPI获取所有音频的元信息
 func GetMetadata(path: String)->Song? {
-//    flog.logLevel = .debug
-
     var dict = [String: String]()
     var s = Song()
 

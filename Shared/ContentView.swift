@@ -8,30 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
-    @Binding var currnetSong: Song
-    @Binding var libraryList: [Song]
+    @ObservedObject var player: AudioPlayer
     var body: some View {
         ZStack {
-            ListContentView(currnetSong: $currnetSong, libraryList: $libraryList)
-            PlayerView(libraryList: $libraryList, currnetSong: $currnetSong)
+            ListContentView(player: player)
+            PlayerView(player: player)
         }
 
         .frame(minWidth: 800, minHeight: 600)
-//        .onAppear {
-//            if $libraryList.count > 0, currnetSong.filePath == "" {
-//                for index in 0 ..< $libraryList.count {
-//                    if libraryList[index].isPlaying {
-//                        currnetSong = libraryList[index]
-//                    }
-//                }
-//            }
-//        }
     }
 }
 
-// struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ContentView()
-//            .environment(\.sizeCategory, .extraSmall)
-//    }
-// }
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView(player: AudioPlayer(path: "/Users/lsmiao/Music/ACC音乐"))
+            .environment(\.sizeCategory, .extraSmall)
+    }
+}
