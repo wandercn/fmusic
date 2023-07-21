@@ -161,7 +161,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         flog.info("播放出错: \(String(describing: error))")
     }
 
-    // 返回下一曲的歌曲信息，根据不同的播放模式返回不同
+    /// 返回下一曲的歌曲信息，根据不同的播放模式返回不同
     func nextSong(currentSong: Song, playList: [Song], playMode: PlayMode) -> Song {
         if currentSong.filePath.isEmpty {
             return currentSong
@@ -198,7 +198,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         }
     }
 
-    // 返回上一曲的歌曲信息，根据不同的播放模式返回不同
+    /// 返回上一曲的歌曲信息，根据不同的播放模式返回不同
     func prevSong(currentSong: Song, playList: [Song], playMode: PlayMode) -> Song {
         if currentSong.filePath.isEmpty {
             return currentSong

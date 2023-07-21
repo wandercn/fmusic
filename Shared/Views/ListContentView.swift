@@ -5,6 +5,7 @@
 //  Created by lsmiao on 2023/6/16.
 //
 
+import AVFAudio
 import SwiftUI
 
 struct ListContentView: View {
@@ -82,12 +83,20 @@ struct ListContentView: View {
             // 侧边搜索栏
         }
         .toolbar(content: {
-            ToolbarItem(placement: .automatic) {
+            ToolbarItemGroup(placement: .automatic) {
+                Button(action: {
+                    OpenSelectFolderWindws(player: player)
+                }, label: {
+                    Image(systemName: "folder.badge.plus")
+                })
+                Spacer()
                 Button(action: toggleSidebar, label: {
                     Image(systemName: "sidebar.left")
                 })
             }
+
         })
+
         .navigationViewStyle(.columns)
     }
 }
@@ -217,6 +226,7 @@ struct RowView: View {
         }
         .foregroundColor(song.isPlaying ? Color.white : Color.black) // 前景颜色
         .buttonStyle(.borderless)
+//        .buttonStyle(DoubleTapButtonStyle())
         .background(song.isPlaying ? Color.purple : Color.clear)
         .itemBackgroundOnHover()
     }

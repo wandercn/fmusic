@@ -11,26 +11,11 @@ import SwiftUI
 
 struct MainMenuView: Commands {
     @ObservedObject var player: AudioPlayer
-    @State private var urls: [URL] = []
+
     var body: some Commands {
         CommandGroup(replacing: .newItem) {
             Button(action: {
-                let openPanel = NSOpenPanel()
-                openPanel.message = "选择音乐文件夹"
-                openPanel.canChooseDirectories = true
-                openPanel.allowsMultipleSelection = true
-                openPanel.canChooseFiles = false
-                openPanel.allowedContentTypes = [.folder]
-                openPanel.begin { response in
-                    if response == .OK {
-                        urls = openPanel.urls
-                        flog.debug("urls: \(urls)")
-                        urls.forEach { url in
-                            let songs = LoadFiles(dir: url.path)
-                            player.libraryList.append(contentsOf: songs)
-                        }
-                    }
-                }
+                OpenSelectFolderWindws(player: player)
             }, label: {
                 Text("添加到资料库")
             }).keyboardShortcut("o")
@@ -47,6 +32,27 @@ func IsAudioFileSupported(f: String)-> Bool {
         }
     }
     return false
+}
+
+/// 打开文件夹选择对话框
+func OpenSelectFolderWindws(player: AudioPlayer) {
+    let openPanel = NSOpenPanel()
+    openPanel.message = "选择音乐文件夹"
+    openPanel.canChooseDirectories = true
+    openPanel.allowsMultipleSelection = true
+    openPanel.canChooseFiles = false
+    openPanel.allowedContentTypes = [.folder]
+    openPanel.begin { response in
+        //  异步函数无法return
+        if response == .OK {
+            var songs = [Song]()
+            openPanel.urls.forEach { url in
+                let s = LoadFiles(dir: url.path)
+                songs.append(contentsOf: s)
+            }
+            player.libraryList.append(contentsOf: songs)
+        }
+    }
 }
 
 func LoadFiles(dir: String)->[Song] {

@@ -8,6 +8,7 @@
 import Foundation
 import Logging
 import SwiftUI
+import XCTest
 
 // 全局日志
 var flog = Logger(label: "org.ffactory.fmusic")
@@ -23,7 +24,7 @@ struct musicApp: App {
             MainMenuView(player: player)
         }
     }
-    
+
     // 设置全局日志级别
     init() {
 #if DEBUG

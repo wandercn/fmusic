@@ -20,7 +20,9 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(player: AudioPlayer(path: "/Users/lsmiao/Music/ACC音乐"))
-            .environment(\.sizeCategory, .extraSmall)
+        Group {
+            ContentView(player: AudioPlayer(path: "/Users/lsmiao/Music/ACC音乐"))
+                .environment(\.sizeCategory, .extraSmall)
+        }
     }
 }
