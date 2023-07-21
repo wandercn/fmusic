@@ -51,6 +51,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
             for index in 0 ..< libraryList.count {
                 if libraryList[index].filePath == currentSong.filePath {
                     libraryList[index].isHeartChecked = currentSong.isHeartChecked
+                    return
                 }
             }
         }
