@@ -8,8 +8,6 @@
 import Foundation
 import Logging
 import SwiftUI
-import XCTest
-
 // 全局日志
 var flog = Logger(label: "org.ffactory.fmusic")
 
