@@ -178,57 +178,61 @@ struct RowView: View {
     @State var song: Song
     private let rowHeight = 20.0
     var body: some View {
-        Button {
-            player.currentSong = song
-            if player.libraryList.count > 0 {
-                for index in 0 ..< player.libraryList.count {
-                    if player.libraryList[index].filePath == player.currentSong.filePath {
-                        player.libraryList[index].isSelected = true
-                    } else {
-                        player.libraryList[index].isSelected = false
-                    }
+        ZStack {
+            HStack {
+                Group {
+                    Text(song.name)
+                        .padding(.horizontal, 10)
+                    Text(song.artist)
+                    Text(song.album)
+                    Text(durationFormat(timeInterval: song.duration))
+                }
+                .lineLimit(1)
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: rowHeight, alignment: .leading)
+                .padding(.horizontal, 10)
+            }
+
+            HStack {
+                if song.isPlaying {
+                    Image(systemName: "livephoto.play")
+                        .resizable()
+                        .foregroundColor(song.isSelected ? Color.white : Color.red)
+                        .frame(width: 20, height: rowHeight, alignment: .leading)
+                        .scaledToFit()
+                }
+
+                Spacer()
+
+                if song.isHeartChecked {
+                    Image(systemName: "heart.circle.fill")
+                        .resizable()
+                        .foregroundColor(song.isPlaying ? Color.white : Color.red)
+                        .frame(width: 20, height: rowHeight, alignment: .leading)
+                        .scaledToFill()
                 }
             }
-        } label: {
-            ZStack {
-                HStack {
-                    Group {
-                        Text(song.name)
-                            .padding(.horizontal, 10)
-                        Text(song.artist)
-                        Text(song.album)
-                        Text(durationFormat(timeInterval: song.duration))
-                    }
-                    .lineLimit(1)
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: rowHeight, alignment: .leading)
-                    .padding(.horizontal, 10)
-                }
-
-                HStack {
-                    if song.isPlaying {
-                        Image(systemName: "livephoto.play")
-                            .resizable()
-                            .foregroundColor(song.isPlaying ? Color.white : Color.red)
-                            .frame(width: 20, height: rowHeight, alignment: .leading)
-                            .scaledToFit()
-                    }
-
-                    Spacer()
-                    if song.isHeartChecked {
-                        Image(systemName: "heart.circle.fill")
-                            .resizable()
-                            .foregroundColor(song.isPlaying ? Color.white : Color.red)
-                            .frame(width: 20, height: rowHeight, alignment: .leading)
-                            .scaledToFill()
+        }
+        .foregroundColor(song.isSelected ? Color.white : Color.black) // 前景颜色
+        .buttonStyle(.borderless)
+        .background(song.isSelected ? Color.purple : Color.clear)
+        .itemBackgroundOnHover()
+        .onTapGesture(count: 2) {
+            flog.debug("onTapGesture2 .......")
+            // 双击行切换歌曲播放
+            player.currentSong = song
+        }
+        .onTapGesture(count: 1) {
+            flog.debug("onTapGesture1 .......")
+            // 选中行改变背景色
+            if player.libraryList.count > 0 {
+                for index in 0 ..< player.libraryList.count {
+                    if player.libraryList[index].id == song.id {
+                        player.libraryList[index].isSelected.toggle()
+                        return
                     }
                 }
             }
         }
-        .foregroundColor(song.isPlaying ? Color.white : Color.black) // 前景颜色
-        .buttonStyle(.borderless)
-//        .buttonStyle(DoubleTapButtonStyle())
-        .background(song.isPlaying ? Color.purple : Color.clear)
-        .itemBackgroundOnHover()
     }
 }
 
