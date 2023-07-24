@@ -18,6 +18,7 @@ struct musicApp: App {
         WindowGroup {
             ContentView(player: player)
         }
+        .windowStyle(.hiddenTitleBar)
         .commands {
             MainMenuView(player: player)
         }
