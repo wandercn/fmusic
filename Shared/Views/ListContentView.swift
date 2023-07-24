@@ -89,10 +89,13 @@ struct ListContentView: View {
                 }, label: {
                     Image(systemName: "folder.badge.plus")
                 })
+                .help("导入音乐文件夹")
+
                 Spacer()
                 Button(action: toggleSidebar, label: {
                     Image(systemName: "sidebar.left")
                 })
+                .help("隐藏左侧导航栏")
             }
 
         })

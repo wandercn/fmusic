@@ -57,8 +57,10 @@ struct PlayerView: View {
                 Spacer()
                 // 收藏按钮
                 HeartButton(player: player)
+                    .help("点击收藏")
                 // 播放模式切换按钮
                 PlayModeButton(player: player)
+                    .help("播放模式")
                 // 媒体播放控制按钮
                 PlayControlBar(player: player, showPlayButton: $showPlayButton)
                 Spacer()
@@ -76,6 +78,7 @@ struct PlayerView: View {
                     Image(systemName: "speaker.wave.3.fill")
                 }
                 .frame(width: 120)
+                .help("调节音量大小")
 
             }.frame(height: 48)
                 .padding()
@@ -172,6 +175,7 @@ struct ProgressBar: View {
             // 显示当前播放时长
             Text(durationFormat(timeInterval: player.CurrentTime())+" / "+durationFormat(timeInterval: player.currentSong.duration))
         }.frame(width: progressMaxWidth)
+            .help("鼠标拖拽进度")
     }
 }
 
@@ -189,6 +193,8 @@ struct PlayControlBar: View {
             }
             .buttonStyle(.borderless)
             .pinkBackgroundOnHover()
+            .help("上一曲")
+
             // 播放/暂停按钮
             Button(action: {
                 if showPlayButton {
@@ -205,6 +211,7 @@ struct PlayControlBar: View {
             }
             .buttonStyle(.borderless)
             .pinkBackgroundOnHover()
+            .help(showPlayButton ? "播放" : "暂停")
 
             // 下一曲按钮
             Button(action: {
@@ -215,6 +222,7 @@ struct PlayControlBar: View {
             }
             .buttonStyle(.borderless)
             .pinkBackgroundOnHover()
+            .help("下一曲")
         }
     }
 }
