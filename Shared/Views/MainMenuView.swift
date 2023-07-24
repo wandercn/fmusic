@@ -17,7 +17,7 @@ struct MainMenuView: Commands {
             Button(action: {
                 OpenSelectFolderWindws(player: player)
             }, label: {
-                Text("添加到资料库")
+                Text("导入音乐文件夹")
             }).keyboardShortcut("o")
         }
     }
@@ -62,6 +62,7 @@ func LoadFiles(dir: String)->[Song] {
 
     let manager = FileManager.default
     do {
+        // 获取指定路径下的子目录，不递归。
         subDirs = try manager.contentsOfDirectory(atPath: dir)
     } catch {
         flog.error("contentsOfDirectory\(dir) file: \(error)")
@@ -72,6 +73,7 @@ func LoadFiles(dir: String)->[Song] {
         let absPath = dir + "/" + sub
         if URL(fileURLWithPath: absPath).hasDirectoryPath {
             do {
+                // 递归遍历读取子目录中的所有文件
                 var files = try manager.subpathsOfDirectory(atPath: absPath)
                 files = files.filter { x in
                     IsAudioFileSupported(f: x)
