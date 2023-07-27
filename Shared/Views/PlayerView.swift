@@ -74,7 +74,9 @@ struct PlayerView: View {
                             player.SetVolume(value: player.volume)
                         }
                     )
-                    .tint(Color.red)
+
+//                    .tint(Color.red) // macOS 12.0
+
                     Image(systemName: "speaker.wave.3.fill")
                 }
                 .frame(width: 120)
@@ -138,8 +140,8 @@ struct ProgressBar: View {
     var body: some View {
         HStack {
             ProgressView(value: percentage, total: 1.0)
-                .progressViewStyle(LinearProgressViewStyle(tint: .pink))
-                .tint(Color.pink)
+                .progressViewStyle(.linear)
+//                .tint(Color.pink)
                 // 拖拽播放进度
                 .gesture(DragGesture(minimumDistance: 0)
                     .onChanged { value in

@@ -50,7 +50,7 @@ func OpenSelectFolderWindws(player: AudioPlayer) {
                 let s = LoadFiles(dir: url.path)
                 songs.append(contentsOf: s)
             }
-            player.libraryList.append(contentsOf: songs)
+            player.playList.append(contentsOf: songs)
         }
     }
 }

@@ -18,7 +18,7 @@ enum PlayMode {
 
 class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published private var soudPlayer: AVAudioPlayer?
-    @Published var libraryList: [Song] = .init()
+    @Published var playList: [Song] = .init()
     @Published var isfinished: Bool = false
     @Published var currentSong = Song()
     @Published var playMode: PlayMode = .Order
@@ -30,27 +30,27 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
 
     init(path: String) {
         super.init()
-        libraryList = LoadFiles(dir: path)
-        currentSong = libraryList.first!
+        playList = LoadFiles(dir: path)
+        currentSong = playList.first!
     }
 
     func UpdatePlaying() {
-        if libraryList.count > 0 {
-            for index in 0 ..< libraryList.count {
-                if libraryList[index].filePath == currentSong.filePath {
-                    libraryList[index].isPlaying = true
+        if playList.count > 0 {
+            for index in 0 ..< playList.count {
+                if playList[index].filePath == currentSong.filePath {
+                    playList[index].isPlaying = true
                 } else {
-                    libraryList[index].isPlaying = false
+                    playList[index].isPlaying = false
                 }
             }
         }
     }
 
     func UpdateHeartChecked() {
-        if libraryList.count > 0 {
-            for index in 0 ..< libraryList.count {
-                if libraryList[index].filePath == currentSong.filePath {
-                    libraryList[index].isHeartChecked = currentSong.isHeartChecked
+        if playList.count > 0 {
+            for index in 0 ..< playList.count {
+                if playList[index].filePath == currentSong.filePath {
+                    playList[index].isHeartChecked = currentSong.isHeartChecked
                     return
                 }
             }
@@ -58,8 +58,8 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     }
 
     func PlayFirst() {
-        if currentSong.filePath.isEmpty, !libraryList.isEmpty {
-            currentSong = libraryList.first!
+        if currentSong.filePath.isEmpty, !playList.isEmpty {
+            currentSong = playList.first!
         }
         PlayAudio(path: currentSong.filePath)
         if let total = soudPlayer?.duration {
@@ -86,7 +86,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
             return
         }
         let old = currentSong
-        currentSong = nextSong(currentSong: old, playList: libraryList, playMode: playMode)
+        currentSong = nextSong(currentSong: old, playList: playList, playMode: playMode)
         // 单曲循环模式特殊处理
         if playMode == .Single {
             soudPlayer?.currentTime = 0
@@ -101,7 +101,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
             return
         }
         let old = currentSong
-        currentSong = prevSong(currentSong: old, playList: libraryList, playMode: playMode)
+        currentSong = prevSong(currentSong: old, playList: playList, playMode: playMode)
         // 单曲循环模式特殊处理
         if playMode == .Single {
             soudPlayer?.currentTime = 0

@@ -18,6 +18,19 @@ struct ListContentView: View {
     var body: some View {
         NavigationView {
             List {
+                HStack {
+                    TextField("搜索", text: $searchText)
+                        .font(.headline)
+                        .overlay(
+                            Image(systemName: "magnifyingglass")
+                                .foregroundColor(Color.gray)
+                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .trailing)
+                                .padding(.trailing, 5)
+                        )
+
+                        .textFieldStyle(.roundedBorder)
+                }
+
                 Section(
                     header:
                     HStack {
@@ -34,7 +47,7 @@ struct ListContentView: View {
                         )
                     }.padding(.leading, 10)
                 }
-                .headerProminence(.increased)
+//                .headerProminence(.increased)
 
                 Section(
                     header: HStack {
@@ -56,7 +69,7 @@ struct ListContentView: View {
                         Text("歌曲1")
                     }.padding(.leading, 10)
                 }
-                .headerProminence(.increased)
+//                .headerProminence(.increased)
 
                 Section(
                     header: HStack {
@@ -67,18 +80,28 @@ struct ListContentView: View {
                     .foregroundColor(.purple)
                 ) {
                     NavigationLink("我的收藏", isActive: $showFavorites) {
-                        FavoritesView(player: player, favoritesList: $favorites, searchText: $searchText)
-                            .task {
-                                favorites = player.libraryList.filter { song in
-                                    song.isHeartChecked == true
+                        if #available(macOS 12.0, *) {
+                            FavoritesView(player: player, favoritesList: $favorites, searchText: $searchText)
+                                .task {
+                                    favorites = player.playList.filter { song in
+                                        song.isHeartChecked == true
+                                    }
                                 }
-                            }
+                        } else {
+                            FavoritesView(player: player, favoritesList: $favorites, searchText: $searchText)
+                                .onAppear {
+                                    favorites = player.playList.filter { song in
+                                        song.isHeartChecked == true
+                                    }
+                                }
+                        }
                     }.padding(.leading, 10)
                 }
-                .headerProminence(.increased)
+//                .headerProminence(.increased)
                 Spacer()
             }
-            .searchable(text: $searchText, placement: .sidebar, prompt: "搜索")
+
+//            .searchable(text: $searchText, placement: .sidebar, prompt: "搜索")
             .navigationTitle("music")
             // 侧边搜索栏
         }
@@ -100,7 +123,7 @@ struct ListContentView: View {
 
         })
 
-        .navigationViewStyle(.columns)
+        .navigationViewStyle(.automatic)
     }
 }
 
@@ -139,9 +162,9 @@ struct LibraryView: View {
     // 列表显示搜索结果
     var searchResults: [Song] {
         if searchText.isEmpty {
-            return player.libraryList
+            return player.playList
         } else {
-            return player.libraryList.filter { x in
+            return player.playList.filter { x in
                 x.name.contains(searchText) || x.album.contains(searchText) || x.artist.contains(searchText)
             }
         }
@@ -163,13 +186,17 @@ struct LibraryView: View {
         .border(.gray, width: 0.5)
         .background(Color.white)
         .padding(.bottom, -9)
-
-        List {
-            ForEach(searchResults, id: \.self) { song in
-                RowView(player: player, song: song)
+        if searchResults.isEmpty {
+            EmpetyListView()
+        } else {
+            List {
+                ForEach(searchResults, id: \.self) { song in
+                    let index = searchResults.firstIndex(of: song)!
+                    RowView(player: player, song: song, index: index)
+                }
             }
         }
-        .listStyle(.bordered(alternatesRowBackgrounds: true))
+//        .listStyle(.bordered(alternatesRowBackgrounds: true))
     }
     //    func deleteItem(offsets: IndexSet){
     //        libraryList.remove(atOffsets: offsets)
@@ -180,6 +207,7 @@ struct RowView: View {
     @ObservedObject var player: AudioPlayer
     @State var song: Song
     private let rowHeight = 20.0
+    @State var index: Int
     var body: some View {
         ZStack {
             HStack {
@@ -218,6 +246,8 @@ struct RowView: View {
         .foregroundColor(song.isSelected ? Color.white : Color.black) // 前景颜色
         .buttonStyle(.borderless)
         .background(song.isSelected ? Color.purple : Color.clear)
+        // 隔行变化背景颜色
+        .background(index % 2 == 0 ? Color("lightGrey") : Color.clear)
         .itemBackgroundOnHover()
         .onTapGesture(count: 2) {
             flog.debug("onTapGesture2 .......")
@@ -227,15 +257,16 @@ struct RowView: View {
         .onTapGesture(count: 1) {
             flog.debug("onTapGesture1 .......")
             // 选中行改变背景色
-            if player.libraryList.count > 0 {
-                for index in 0 ..< player.libraryList.count {
-                    if player.libraryList[index].id == song.id {
-                        player.libraryList[index].isSelected.toggle()
+            if player.playList.count > 0 {
+                for index in 0 ..< player.playList.count {
+                    if player.playList[index].id == song.id {
+                        player.playList[index].isSelected.toggle()
                         return
                     }
                 }
             }
         }
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight: rowHeight, alignment: .leading)
     }
 }
 

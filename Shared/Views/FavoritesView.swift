@@ -38,15 +38,17 @@ struct FavoritesView: View {
             }
         }
         .border(.gray, width: 0.5)
-        .background(Color.white)
         .padding(.bottom, -9)
-
-        List {
-            ForEach(searchResults, id: \.self) { song in
-                RowView(player: player, song: song)
+        if searchResults.isEmpty {
+            EmpetyListView()
+        } else {
+            List {
+                ForEach(searchResults, id: \.self) { song in
+                    let index = searchResults.firstIndex(of: song)!
+                    RowView(player: player, song: song, index: index)
+                }
             }
         }
-        .listStyle(.bordered(alternatesRowBackgrounds: true))
     }
     //    func deleteItem(offsets: IndexSet){
     //        libraryList.remove(atOffsets: offsets)
