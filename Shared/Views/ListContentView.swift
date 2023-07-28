@@ -244,7 +244,6 @@ struct RowView: View {
             }
         }
         .foregroundColor(song.isSelected ? Color.white : Color.black) // 前景颜色
-        .buttonStyle(.borderless)
         .background(song.isSelected ? Color.purple : Color.clear)
         // 隔行变化背景颜色
         .background(index % 2 == 0 ? Color("lightGrey") : Color.clear)
