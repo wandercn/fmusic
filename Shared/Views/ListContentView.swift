@@ -237,7 +237,7 @@ struct RowView: View {
                 if song.isHeartChecked {
                     Image(systemName: "heart.circle.fill")
                         .resizable()
-                        .foregroundColor(song.isPlaying ? Color.white : Color.red)
+                        .foregroundColor(song.isSelected ? Color.white : Color.red)
                         .frame(width: 20, height: rowHeight, alignment: .leading)
                         .scaledToFill()
                 }
