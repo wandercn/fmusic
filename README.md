@@ -1,7 +1,7 @@
 # fmusic
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/wandercn/fmusic?color=peru)](https://github.com/wandercn/fmusic/releases/latest)
 [![Lines of code](https://img.shields.io/tokei/lines/github/wandercn/fmusic.svg?color=beige)](#)
-[![Downloads of releases](https://img.shields.io/github/wandercn/fmusic/total.svg?color=lavender)](https://github.com/wandercn/fmusic/releases/latest)
+[![Downloads of releases](https://img.shields.io/github/downloads/wandercn/fmusic/total.svg?color=lavender)](https://github.com/wandercn/fmusic/releases/latest)
 [![GPL3 licensed](https://img.shields.io/github/license/wandercn/fmusic.svg)](./LICENSE)
 
 
