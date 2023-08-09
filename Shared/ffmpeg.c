@@ -73,4 +73,3 @@ AVPacket *  get_album_cover_image(const char *filename){
     av_log(NULL, AV_LOG_DEBUG, "[%d]<%s>%s ptk_addr: %p\n",LOG_HEAD,pkt);
     return pkt;
 }
-

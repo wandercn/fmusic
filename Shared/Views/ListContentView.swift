@@ -114,6 +114,12 @@ struct ListContentView: View {
                 })
                 .help("导入音乐文件夹")
 
+                Button(action: {
+                    player.playList.removeAll()
+                }, label: {
+                    Image(systemName: "trash")
+                })
+                .help("清空资料库")
                 Spacer()
                 Button(action: toggleSidebar, label: {
                     Image(systemName: "sidebar.left")

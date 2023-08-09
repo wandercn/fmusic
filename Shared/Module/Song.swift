@@ -19,6 +19,7 @@ struct Song: Identifiable, Hashable {
     var isSelected: Bool
     var isPlaying: Bool
     var isHeartChecked: Bool
+    var track: Int
 
     init() {
         name = ""
@@ -29,5 +30,6 @@ struct Song: Identifiable, Hashable {
         isSelected = false
         isPlaying = false
         isHeartChecked = false
+        track = 0
     }
 }
