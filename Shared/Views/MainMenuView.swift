@@ -19,6 +19,11 @@ struct MainMenuView: Commands {
             }, label: {
                 Text("导入音乐文件夹")
             }).keyboardShortcut("o")
+            Button(action: {
+                player.playList.removeAll()
+            }, label: {
+                Text("清空资料库")
+            }).keyboardShortcut("d")
         }
     }
 }
@@ -50,7 +55,14 @@ func OpenSelectFolderWindws(player: AudioPlayer) {
                 let s = LoadFiles(dir: url.path)
                 songs.append(contentsOf: s)
             }
-            player.playList.append(contentsOf: songs)
+            player.playList.append(contentsOf: songs.sorted(by: { s1, s2 in
+                // 专辑名一样按专辑内音轨track排序
+                if s1.album == s2.album {
+                    return s1.track < s2.track
+                } else {
+                    return s1.album < s2.album
+                }
+            }))
         }
     }
 }
@@ -176,6 +188,8 @@ func GetMetadata(path: String)->Song? {
             s.album = v
         case "artist":
             s.artist = v
+        case "track":
+            s.track = (v as NSString).integerValue
         default:
             continue
         }
