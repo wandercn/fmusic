@@ -41,6 +41,12 @@ func IsAudioFileSupported(f: String)-> Bool {
 
 /// 打开文件夹选择对话框
 func OpenSelectFolderWindws(player: AudioPlayer) {
+//    var s = Song()
+//    s.filePath = "/Users/lsmiao/Music/下载音乐/小城夏天 - LBI利比.mp3"
+//    s.artist = "LBI利比"
+//    s.album = "小城夏天"
+//    s.name = "小城夏天"
+//    _ = UpdateSongMeta(song: s)
     let openPanel = NSOpenPanel()
     openPanel.message = "选择音乐文件夹"
     openPanel.canChooseDirectories = true
@@ -237,4 +243,24 @@ func GetAlbumCoverImage(path: String) ->Image? {
     av_packet_unref(pkt)
     av_free(pkt)
     return img
+}
+
+// 修改音频文件的元信息
+func UpdateSongMeta(song: Song)-> Bool {
+    let filename = URL(fileURLWithPath: song.filePath).lastPathComponent
+    let tmpFile = URL(fileURLWithPath: song.filePath).path.replacingOccurrences(of: filename, with: "") + "new" + filename
+    flog.debug("tmpFile: \(tmpFile)")
+    var newMetaData = new_dict()
+    av_dict_set(&newMetaData, "title", song.name, 0)
+    av_dict_set(&newMetaData, "album", song.album, 0)
+    av_dict_set(&newMetaData, "artist", song.artist, 0)
+    if modify_meta(song.filePath, tmpFile, newMetaData) != 0 {
+        flog.error("modify_meta fail!")
+        return false
+    }
+    if replace_file(song.filePath, tmpFile) != 0 {
+        flog.error("replace_file fail!")
+        return false
+    }
+    return true
 }

@@ -12,7 +12,6 @@
 #include <libavutil/avutil.h>
 #include <libavformat/avformat.h>
 #include <libavutil/dict.h>
-#include <libavutil/dict.h>
 /*
  是否启用debug日志
  */
@@ -37,4 +36,12 @@ AVPacket * get_album_cover_image(const char *filename);
  初始化一个dict结构体指针
  */
 AVDictionary * new_dict(void);
+/*
+ 打开一个音频文件，修改元信息生成另一个文件。
+ */
+int modify_meta(const char* in_filename,const char* out_filename ,AVDictionary * new_metadata);
+/*
+ 替换文件
+ */
+int replace_file(const char *dst , const char *src);
 #endif /* ffmpeg_h */
