@@ -51,6 +51,7 @@
 		61E43B992A3C660600FBF9BD /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E43B972A3C660600FBF9BD /* Song.swift */; };
 		61E43B9D2A3C67F900FBF9BD /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E43B9B2A3C67F900FBF9BD /* PlayerView.swift */; };
 		61E43BA02A3C686A00FBF9BD /* ListContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E43B9E2A3C686A00FBF9BD /* ListContentView.swift */; };
+		61F9D14A2A8C9FB300F41970 /* MetaDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61F9D1492A8C9FB300F41970 /* MetaDataView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -125,6 +126,7 @@
 		61E43B972A3C660600FBF9BD /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
 		61E43B9B2A3C67F900FBF9BD /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		61E43B9E2A3C686A00FBF9BD /* ListContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListContentView.swift; sourceTree = "<group>"; };
+		61F9D1492A8C9FB300F41970 /* MetaDataView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetaDataView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -231,6 +233,7 @@
 		61E43B9A2A3C67B000FBF9BD /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				61F9D1492A8C9FB300F41970 /* MetaDataView.swift */,
 				61E43B9B2A3C67F900FBF9BD /* PlayerView.swift */,
 				61E43B9E2A3C686A00FBF9BD /* ListContentView.swift */,
 				61E003712A48347F004EB263 /* MainMenuView.swift */,
@@ -321,6 +324,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				617083AA2A68E80A00D87AC8 /* FavoritesView.swift in Sources */,
+				61F9D14A2A8C9FB300F41970 /* MetaDataView.swift in Sources */,
 				61E003722A48347F004EB263 /* MainMenuView.swift in Sources */,
 				61E43B992A3C660600FBF9BD /* Song.swift in Sources */,
 				61E43B8B2A3C645B00FBF9BD /* ContentView.swift in Sources */,
