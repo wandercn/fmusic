@@ -8,27 +8,56 @@
 import SwiftUI
 
 struct MetaDataView: View {
-//    @ObservedObject private var song: Song
-//    @Binding private var isShowed = false
-    @State var str = "test"
+    @Binding var song: Song
+    @Binding var isShowMeta: Bool
     var body: some View {
-        VStack {
-//                Form {
-//                    TextField("歌曲名", text: song.name)
-//                    TextField("专辑", text: song.album)
-//                    TextField("艺术家", text: song.artist)
-//
-//                }
-            TextField("歌曲名", text: $str)
-            TextField("专辑", text: $str)
-            TextField("艺术家", text: $str)
-        }
-        .zIndex(10)
-    }
-}
+        List {
+            Section(header:
+                HStack {
+                    Text("编辑元信息")
+                    Image(systemName: "square.and.pencil")
+                }
+                .font(.headline)
+                .foregroundColor(.orange)
+            ) {
+                VStack(alignment: .leading) {
+                    Form {
+                        TextField("歌曲名", text: $song.name)
+                            .font(.body)
+                            .padding(.vertical, 5)
+                            .foregroundColor(.black)
+                        TextField("专辑", text: $song.album)
+                            .font(.body)
+                            .padding(.vertical, 5)
+                            .foregroundColor(.black)
 
-struct MetaDataView_Previews: PreviewProvider {
-    static var previews: some View {
-        MetaDataView()
+                        TextField("艺术家", text: $song.artist)
+                            .font(.body)
+                            .padding(.vertical, 5)
+                            .foregroundColor(.black)
+                        HStack {
+                            Button {
+                                isShowMeta = false
+                                _ = UpdateSongMeta(song: song)
+                            } label: {
+                                Text("保存".uppercased())
+                                    .font(.headline) // 字体
+                                    .fontWeight(.semibold) // 字体粗细
+                            }
+                            Spacer()
+                            Button {
+                                isShowMeta = false
+                            } label: {
+                                Text("取消".uppercased())
+                                    .font(.headline) // 字体
+                                    .fontWeight(.semibold) // 字体粗细
+                            }
+                        }
+                    }
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+            }
+        }
+        .frame(width: 280, height: 300)
     }
 }

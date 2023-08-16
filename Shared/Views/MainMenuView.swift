@@ -41,12 +41,6 @@ func IsAudioFileSupported(f: String)-> Bool {
 
 /// 打开文件夹选择对话框
 func OpenSelectFolderWindws(player: AudioPlayer) {
-//    var s = Song()
-//    s.filePath = "/Users/lsmiao/Music/下载音乐/小城夏天 - LBI利比.mp3"
-//    s.artist = "LBI利比"
-//    s.album = "小城夏天"
-//    s.name = "小城夏天"
-//    _ = UpdateSongMeta(song: s)
     let openPanel = NSOpenPanel()
     openPanel.message = "选择音乐文件夹"
     openPanel.canChooseDirectories = true
@@ -62,12 +56,7 @@ func OpenSelectFolderWindws(player: AudioPlayer) {
                 songs.append(contentsOf: s)
             }
             player.playList.append(contentsOf: songs.sorted(by: { s1, s2 in
-                // 专辑名一样按专辑内音轨track排序
-                if s1.album == s2.album {
-                    return s1.track < s2.track
-                } else {
-                    return s1.album < s2.album
-                }
+                s1.album > s2.album
             }))
         }
     }

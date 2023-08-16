@@ -214,6 +214,7 @@ struct RowView: View {
     @State var song: Song
     private let rowHeight = 20.0
     @State var index: Int
+    @State var isShowMeta = false
     var body: some View {
         ZStack {
             HStack {
@@ -227,6 +228,23 @@ struct RowView: View {
                 .lineLimit(1)
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: rowHeight, alignment: .leading)
                 .padding(.horizontal, 10)
+                .onTapGesture(count: 2) {
+                    flog.debug("onTapGesture2 .......")
+                    // 双击行切换歌曲播放
+                    player.currentSong = song
+                }
+                .onTapGesture(count: 1) {
+                    flog.debug("onTapGesture1 .......")
+                    // 选中行改变背景色
+                    if player.playList.count > 0 {
+                        for index in 0 ..< player.playList.count {
+                            if player.playList[index].id == song.id {
+                                player.playList[index].isSelected.toggle()
+                                return
+                            }
+                        }
+                    }
+                }
             }
 
             HStack {
@@ -247,30 +265,35 @@ struct RowView: View {
                         .frame(width: 20, height: rowHeight, alignment: .leading)
                         .scaledToFill()
                 }
+                Image(systemName: "ellipsis")
+                    .foregroundColor(song.isSelected ? Color.white : Color.red)
+                    .scaledToFill()
+                    .contextMenu {
+                        Button {
+                            isShowMeta = true
+                            flog.debug("song: \(song)")
+                        } label: {
+//                            HStack {
+//                                Text("编辑元信息")
+                            Image(systemName: "square.and.pencil")
+//                            }
+                        }
+
+//                        Button {} label: {
+//                            Text("简介")
+//                        }
+                    }
             }
         }
+        .sheet(isPresented: $isShowMeta, content: {
+            MetaDataView(song: $song, isShowMeta: $isShowMeta)
+        })
         .foregroundColor(song.isSelected ? Color.white : Color.black) // 前景颜色
         .background(song.isSelected ? Color.purple : Color.clear)
         // 隔行变化背景颜色
         .background(index % 2 == 0 ? Color("lightGrey") : Color.clear)
         .itemBackgroundOnHover()
-        .onTapGesture(count: 2) {
-            flog.debug("onTapGesture2 .......")
-            // 双击行切换歌曲播放
-            player.currentSong = song
-        }
-        .onTapGesture(count: 1) {
-            flog.debug("onTapGesture1 .......")
-            // 选中行改变背景色
-            if player.playList.count > 0 {
-                for index in 0 ..< player.playList.count {
-                    if player.playList[index].id == song.id {
-                        player.playList[index].isSelected.toggle()
-                        return
-                    }
-                }
-            }
-        }
+
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: rowHeight, alignment: .leading)
     }
 }
