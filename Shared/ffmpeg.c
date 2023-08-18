@@ -97,10 +97,6 @@ int modify_meta(const char* in_filename,const char* out_filename ,AVDictionary *
         goto end;
     }
     
-    av_find_best_stream(ifmt_ctx, AVMEDIA_TYPE_VIDEO, -1, -1, &video_dec, 0);
-    av_find_best_stream(ifmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, &audio_dec, 0);
-    
-    
     if ((ret = avformat_find_stream_info(ifmt_ctx, 0)) < 0) {
         av_log(NULL, AV_LOG_ERROR, "[%d]<%s>%s Failed to retrieve input stream information\n",LOG_HEAD);
         goto end;
@@ -127,11 +123,6 @@ int modify_meta(const char* in_filename,const char* out_filename ,AVDictionary *
         goto end;
     }
     
-    printf("ofmart: %s\n",oformat->name);
-    printf("ofmart: %s\n",&oformat->extensions[0]);
-    printf("ofmart: %s\n",oformat->mime_type);
-    printf("ofmart: %d\n",oformat->subtitle_codec);
-    printf("ofmart: %d\n",oformat->audio_codec);
     for (i = 0; i < ifmt_ctx->nb_streams; i++) {
         AVStream *out_stream;
         AVStream *in_stream = ifmt_ctx->streams[i];
@@ -158,7 +149,7 @@ int modify_meta(const char* in_filename,const char* out_filename ,AVDictionary *
             av_log(NULL, AV_LOG_ERROR, "[%d]<%s>%s Failed to copy codec parameters\n",LOG_HEAD);
             goto end;
         }
-        //        out_stream->codecpar->codec_tag = 0;
+        out_stream->codecpar->codec_tag = 0;
         // copy 每个stream中的metaData
         ret = av_dict_copy(&out_stream->metadata, in_stream->metadata, AV_DICT_DONT_OVERWRITE);
         
@@ -167,14 +158,6 @@ int modify_meta(const char* in_filename,const char* out_filename ,AVDictionary *
             goto end;
         }
         
-        if (in_stream->codecpar->codec_type == AVMEDIA_TYPE_VIDEO){
-            ret = av_packet_copy_props(&out_stream->attached_pic, &in_stream->attached_pic);
-            if (ret < 0) {
-                av_log(NULL, AV_LOG_ERROR, "[%d]<%s>%s Failed to copy attached_pic\n",LOG_HEAD);
-                goto end;
-            }
-            
-        }
         out_stream->av_class = in_stream->av_class;
         out_stream->disposition = in_stream->disposition;
         out_stream->duration = in_stream->duration;
@@ -185,7 +168,29 @@ int modify_meta(const char* in_filename,const char* out_filename ,AVDictionary *
         out_stream->codecpar = in_stream->codecpar;
         out_stream->time_base = in_stream ->time_base;
         out_stream->pts_wrap_bits = in_stream->pts_wrap_bits;
-        
+        if (in_stream->codecpar->codec_type == AVMEDIA_TYPE_VIDEO){
+            ret = av_packet_copy_props(&out_stream->attached_pic, &in_stream->attached_pic);
+            if (ret < 0) {
+                av_log(NULL, AV_LOG_ERROR, "[%d]<%s>%s Failed to copy attached_pic\n",LOG_HEAD);
+                goto end;
+            }
+            int in_width= in_stream->codecpar->width;
+            int in_height= in_stream->codecpar->height;
+            printf("in_width:%d\n",in_width);
+            printf("in_height:%d\n",in_height);
+            if (in_width == 0){
+                in_width = 1024;
+            }
+            if (in_height == 0) {
+                in_height = 1024;
+            }
+            out_stream->codecpar->width = in_width;
+            out_stream->codecpar->height = in_height;
+            
+        }
+
+        printf("in_width:%d\n",out_stream->codecpar->width);
+        printf("in_height:%d\n",out_stream->codecpar->height);
         
     }
     // copy 原始的元信息
@@ -203,11 +208,13 @@ int modify_meta(const char* in_filename,const char* out_filename ,AVDictionary *
     ofmt_ctx->nb_streams = ifmt_ctx->nb_streams;
     ofmt_ctx->chapters = ifmt_ctx->chapters;
     ofmt_ctx->nb_chapters = ifmt_ctx->nb_chapters;
-    av_dict_set(&ofmt_ctx->metadata, "duration", NULL, 0);
-    av_dict_set(&ofmt_ctx->metadata, "creation_time", NULL, 0);
-    av_dict_set(&ofmt_ctx->metadata, "company_name", NULL, 0);
-    av_dict_set(&ofmt_ctx->metadata, "product_name", NULL, 0);
-    av_dict_set(&ofmt_ctx->metadata, "product_version", NULL, 0);
+    ofmt_ctx->avio_flags = ifmt_ctx->avio_flags;
+    ofmt_ctx->av_class = ifmt_ctx->av_class;
+//    av_dict_set(&ofmt_ctx->metadata, "duration", NULL, 0);
+//    av_dict_set(&ofmt_ctx->metadata, "creation_time", NULL, 0);
+//    av_dict_set(&ofmt_ctx->metadata, "company_name", NULL, 0);
+//    av_dict_set(&ofmt_ctx->metadata, "product_name", NULL, 0);
+//    av_dict_set(&ofmt_ctx->metadata, "product_version", NULL, 0);
     const AVDictionaryEntry *next = NULL;
     // 设置新的元信息
     while ((next = av_dict_iterate(new_metadata, next))){
@@ -225,9 +232,9 @@ int modify_meta(const char* in_filename,const char* out_filename ,AVDictionary *
             goto end;
         }
     }
-    avformat_queue_attached_pictures(ofmt_ctx);
+    //    avformat_queue_attached_pictures(ofmt_ctx);
     
-    ret = avformat_write_header(ofmt_ctx, &new_metadata);
+    ret = avformat_write_header(ofmt_ctx, NULL);
     if (ret < 0) {
         av_log(NULL, AV_LOG_ERROR, "[%d]<%s>%s Error occurred when opening output file\n",LOG_HEAD);
         goto end;
@@ -246,7 +253,6 @@ int modify_meta(const char* in_filename,const char* out_filename ,AVDictionary *
             av_packet_unref(pkt);
             continue;
         }
-        
         pkt->stream_index = stream_mapping[pkt->stream_index];
         out_stream = ofmt_ctx->streams[pkt->stream_index];
         
