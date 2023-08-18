@@ -273,10 +273,10 @@ struct RowView: View {
                             isShowMeta = true
                             flog.debug("song: \(song)")
                         } label: {
-//                            HStack {
-//                                Text("编辑元信息")
+                            HStack {
+                                Text("编辑元信息")
                             Image(systemName: "square.and.pencil")
-//                            }
+                            }
                         }
 
 //                        Button {} label: {
