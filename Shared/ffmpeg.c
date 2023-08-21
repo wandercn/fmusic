@@ -173,6 +173,7 @@ int modify_meta(const char* in_filename,const char* out_filename ,AVDictionary *
                 av_log(NULL, AV_LOG_ERROR, "[%d]<%s>%s Failed to copy attached_pic\n",LOG_HEAD);
                 goto end;
             }
+// fix #1
             int in_width= in_stream->codecpar->width;
             int in_height= in_stream->codecpar->height;
 
