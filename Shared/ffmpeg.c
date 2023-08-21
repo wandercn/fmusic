@@ -81,7 +81,6 @@ int modify_meta(const char* in_filename,const char* out_filename ,AVDictionary *
     const AVOutputFormat *oformat = NULL;
     AVFormatContext *ifmt_ctx = NULL, *ofmt_ctx = NULL;
     AVPacket *pkt = NULL;
-    const AVCodec *audio_dec = NULL, *video_dec = NULL;
     int ret, i;
     int stream_index = 0;
     int *stream_mapping = NULL;
@@ -176,8 +175,7 @@ int modify_meta(const char* in_filename,const char* out_filename ,AVDictionary *
             }
             int in_width= in_stream->codecpar->width;
             int in_height= in_stream->codecpar->height;
-            printf("in_width:%d\n",in_width);
-            printf("in_height:%d\n",in_height);
+
             if (in_width == 0){
                 in_width = 1024;
             }
@@ -186,11 +184,9 @@ int modify_meta(const char* in_filename,const char* out_filename ,AVDictionary *
             }
             out_stream->codecpar->width = in_width;
             out_stream->codecpar->height = in_height;
+            out_stream->codecpar->codec_type = AVMEDIA_TYPE_VIDEO;
             
         }
-
-        printf("in_width:%d\n",out_stream->codecpar->width);
-        printf("in_height:%d\n",out_stream->codecpar->height);
         
     }
     // copy 原始的元信息
@@ -205,7 +201,6 @@ int modify_meta(const char* in_filename,const char* out_filename ,AVDictionary *
     ofmt_ctx->start_time = ifmt_ctx->start_time;
     ofmt_ctx->bit_rate = ifmt_ctx->bit_rate;
     ofmt_ctx->flags = ifmt_ctx->flags;
-    ofmt_ctx->nb_streams = ifmt_ctx->nb_streams;
     ofmt_ctx->chapters = ifmt_ctx->chapters;
     ofmt_ctx->nb_chapters = ifmt_ctx->nb_chapters;
     ofmt_ctx->avio_flags = ifmt_ctx->avio_flags;
@@ -232,14 +227,15 @@ int modify_meta(const char* in_filename,const char* out_filename ,AVDictionary *
             goto end;
         }
     }
-    //    avformat_queue_attached_pictures(ofmt_ctx);
     
+//    ofmt_ctx->streams[0]->codecpar->codec_type = AVMEDIA_TYPE_AUDIO;
+    ofmt_ctx->nb_streams = ifmt_ctx->nb_streams;
     ret = avformat_write_header(ofmt_ctx, NULL);
     if (ret < 0) {
         av_log(NULL, AV_LOG_ERROR, "[%d]<%s>%s Error occurred when opening output file\n",LOG_HEAD);
         goto end;
     }
-    
+//    ofmt_ctx->nb_streams ++;
     while (1) {
         AVStream *in_stream, *out_stream;
         
