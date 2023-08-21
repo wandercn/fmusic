@@ -215,6 +215,7 @@ struct RowView: View {
     private let rowHeight = 20.0
     @State var index: Int
     @State var isShowMeta = false
+    @State var isShowDetails = false
     var body: some View {
         ZStack {
             HStack {
@@ -275,7 +276,16 @@ struct RowView: View {
                         } label: {
                             HStack {
                                 Text("编辑元信息")
-                            Image(systemName: "square.and.pencil")
+                                Image(systemName: "square.and.pencil")
+                            }
+                        }
+                        Button {
+                            isShowDetails = true
+                            flog.debug("song: \(song)")
+                        } label: {
+                            HStack {
+                                Text("文件详情")
+                                Image(systemName: "info.circle")
                             }
                         }
 
@@ -288,6 +298,10 @@ struct RowView: View {
         .sheet(isPresented: $isShowMeta, content: {
             MetaDataView(song: $song, isShowMeta: $isShowMeta)
         })
+        .sheet(isPresented: $isShowDetails, content: {
+            DetailsView(song: $song, isShowDetails: $isShowDetails)
+        })
+
         .foregroundColor(song.isSelected ? Color.white : Color.black) // 前景颜色
         .background(song.isSelected ? Color.purple : Color.clear)
         // 隔行变化背景颜色
