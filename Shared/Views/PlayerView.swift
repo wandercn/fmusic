@@ -13,6 +13,7 @@ struct PlayerView: View {
     @State var showPlayButton = true // 是否显示播放按钮图标，为false时，显示暂停按钮
     @State var lastDragValue = 0.0
     @State var progressWidth = 0.0
+    @State var playModeHelp = "顺序播放"
     var body: some View {
         VStack(spacing: 5) {
             Spacer()
@@ -59,8 +60,8 @@ struct PlayerView: View {
                 HeartButton(player: player)
                     .help("点击收藏")
                 // 播放模式切换按钮
-                PlayModeButton(player: player)
-                    .help("播放模式")
+                PlayModeButton(player: player, helpStr: $playModeHelp)
+                    .help(playModeHelp)
                 // 媒体播放控制按钮
                 PlayControlBar(player: player, showPlayButton: $showPlayButton)
                 Spacer()
@@ -96,12 +97,13 @@ struct PlayerView: View {
 
 struct PlayModeButton: View {
     @ObservedObject var player: AudioPlayer
-    @State private var modeImage: String = "arrow.uturn.forward.circle"
+    @State private var modeImage: String = "list.bullet.circle"
+    @Binding var helpStr: String
     var body: some View {
         Button(action: {
             let old = player.playMode
             flog.debug("old playMode: \(old)")
-            (player.playMode, modeImage) = nextPlayMode(mode: old)
+            (player.playMode, modeImage, helpStr) = nextPlayMode(mode: old)
             flog.debug("new playMode: \(player.playMode)")
         }) { Image(systemName: modeImage)
             .font(.largeTitle)
@@ -230,16 +232,16 @@ struct PlayControlBar: View {
 }
 
 // 切换播放模式，返回下一个模式和对应的图片名称
-func nextPlayMode(mode: PlayMode) -> (playMode: PlayMode, image: String) {
+func nextPlayMode(mode: PlayMode) -> (playMode: PlayMode, image: String, helpStr: String) {
     switch mode {
     case .Loop:
-        return (.Order, "arrow.uturn.forward.circle")
+        return (.Order, "list.bullet.circle", "顺序播放")
     case .Order:
-        return (.Random, "shuffle.circle")
+        return (.Random, "shuffle.circle", "随机播放")
     case .Random:
-        return (.Single, "repeat.1.circle")
+        return (.Single, "repeat.1.circle", "单曲循环")
     case .Single:
-        return (.Loop, "repeat.circle")
+        return (.Loop, "repeat.circle", "列表循环")
     }
 }
 
