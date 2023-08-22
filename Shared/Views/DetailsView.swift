@@ -110,7 +110,23 @@ struct DetailsView: View {
                             Text("." + URL(fileURLWithPath: song.filePath).pathExtension)
                         }
                         Spacer()
-                        HStack {
+                        HStack(alignment: .firstTextBaseline, spacing: 10) {
+                            Button {
+                                var list: [String] = []
+                                list.append(String(song.track))
+                                list.append(song.name)
+                                list.append(song.album)
+                                list.append(song.artist)
+                                newName = list.joined(separator: "-")
+                            }
+                            label: {
+                                Text("获取标准文件名")
+                                    .font(.headline)
+                                    .underline()
+                                    .foregroundColor(Color.purple)
+                            }
+                            .buttonStyle(.borderless)
+                            Spacer()
                             Button {
                                 var old = URL(fileURLWithPath: song.filePath).pathComponents
                                 let ext = URL(fileURLWithPath: song.filePath).pathExtension
@@ -143,6 +159,8 @@ struct DetailsView: View {
                                       dismissButton: .default(Text("返回")))
                             }
                             .buttonStyle(.borderless)
+                            Spacer()
+                            Spacer()
                         }
                     }
 
