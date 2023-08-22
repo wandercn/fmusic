@@ -266,33 +266,49 @@ struct RowView: View {
                         .frame(width: 20, height: rowHeight, alignment: .leading)
                         .scaledToFill()
                 }
-                Image(systemName: "ellipsis")
-                    .foregroundColor(song.isSelected ? Color.white : Color.red)
-                    .scaledToFill()
-                    .contextMenu {
-                        Button {
-                            isShowMeta = true
-                            flog.debug("song: \(song)")
-                        } label: {
-                            HStack {
-                                Text("编辑元信息")
-                                Image(systemName: "square.and.pencil")
-                            }
-                        }
-                        Button {
-                            isShowDetails = true
-                            flog.debug("song: \(song)")
-                        } label: {
-                            HStack {
-                                Text("文件详情")
-                                Image(systemName: "info.circle")
-                            }
-                        }
-
-//                        Button {} label: {
-//                            Text("简介")
+//                Image(systemName: "ellipsis")
+//                    .foregroundColor(song.isSelected ? Color.white : Color.red)
+//                    .scaledToFill()
+//                    .contextMenu {
+//                        Button {
+//                            isShowMeta = true
+//                            flog.debug("song: \(song)")
+//                        } label: {
+//                            HStack {
+//                                Text("编辑元信息")
+//                                Image(systemName: "square.and.pencil")
+//                            }
 //                        }
-                    }
+//                        Button {
+//                            isShowDetails = true
+//                            flog.debug("song: \(song)")
+//                        } label: {
+//                            HStack {
+//                                Text("文件详情")
+//                                Image(systemName: "info.circle")
+//                            }
+//                        }
+//                    }
+            }
+        }
+        .contextMenu {
+            Button {
+                isShowMeta = true
+                flog.debug("song: \(song)")
+            } label: {
+                HStack {
+                    Text("编辑元信息")
+                    Image(systemName: "square.and.pencil")
+                }
+            }
+            Button {
+                isShowDetails = true
+                flog.debug("song: \(song)")
+            } label: {
+                HStack {
+                    Text("文件详情")
+                    Image(systemName: "info.circle")
+                }
             }
         }
         .sheet(isPresented: $isShowMeta, content: {
@@ -310,6 +326,10 @@ struct RowView: View {
 
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: rowHeight, alignment: .leading)
     }
+
+    func openInPreview() {}
+
+    func saveAsPDF() {}
 }
 
 // 双击按钮
