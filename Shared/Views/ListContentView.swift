@@ -296,10 +296,10 @@ struct RowView: View {
             }
         }
         .sheet(isPresented: $isShowMeta, content: {
-            MetaDataView(song: $song, isShowMeta: $isShowMeta)
+            MetaDataView(player: player, song: $song, isShowMeta: $isShowMeta)
         })
         .sheet(isPresented: $isShowDetails, content: {
-            DetailsView(song: $song, isShowDetails: $isShowDetails)
+            DetailsView(player: player, song: $song, isShowDetails: $isShowDetails)
         })
 
         .foregroundColor(song.isSelected ? Color.white : Color.black) // 前景颜色

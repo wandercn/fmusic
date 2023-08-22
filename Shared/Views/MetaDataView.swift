@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MetaDataView: View {
+    @ObservedObject var player: AudioPlayer
     @Binding var song: Song
     @Binding var isShowMeta: Bool
     var body: some View {
@@ -38,7 +39,9 @@ struct MetaDataView: View {
                         HStack {
                             Button {
                                 isShowMeta = false
-                                _ = UpdateSongMeta(song: song)
+                                if UpdateSongMeta(song: song) {
+                                    player.ChangeMetaDataOneOfList(changeOne: song)
+                                }
                             } label: {
                                 Text("保存".uppercased())
                                     .font(.headline) // 字体

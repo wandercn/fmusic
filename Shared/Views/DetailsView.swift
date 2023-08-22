@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct DetailsView: View {
+    @ObservedObject var player: AudioPlayer
     @Binding var song: Song
     @Binding var isShowDetails: Bool
     @State private var newName: String = ""
@@ -120,6 +121,7 @@ struct DetailsView: View {
                                 if rename(song.filePath, newFile) == 0 {
                                     isShowDetails = false
                                     song.filePath = newFile
+                                    player.ChangeMetaDataOneOfList(changeOne: song)
                                 } else {
                                     isShowAlert = true
                                 }

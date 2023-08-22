@@ -57,6 +57,16 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         }
     }
 
+    func ChangeMetaDataOneOfList(changeOne: Song) {
+        let current = playList.firstIndex { song in
+            song.id == changeOne.id
+        }
+        guard let index = current else {
+            return
+        }
+        playList[index] = changeOne
+    }
+
     func PlayFirst() {
         if currentSong.filePath.isEmpty, !playList.isEmpty {
             currentSong = playList.first!
