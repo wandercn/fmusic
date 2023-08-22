@@ -174,7 +174,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
             return currentSong
         }
         // 计算下一歌曲的索引
-        var next = index+1 > playList.count ? 0 : index+1
+        var next = index+1 >= playList.count ? 0 : index+1
         let ordernext = index+1 >= playList.count ? index : index+1
 
         switch playMode {
