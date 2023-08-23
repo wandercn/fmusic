@@ -23,6 +23,10 @@ struct MetaDataView: View {
             ) {
                 VStack(alignment: .leading) {
                     Form {
+                        TextField("track", value: $song.track, formatter: NumberFormatter())
+                            .font(.body)
+                            .padding(.vertical, 5)
+                            .foregroundColor(.black)
                         TextField("歌曲名", text: $song.name)
                             .font(.body)
                             .padding(.vertical, 5)
