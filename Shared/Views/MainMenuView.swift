@@ -56,7 +56,14 @@ func OpenSelectFolderWindws(player: AudioPlayer) {
                 songs.append(contentsOf: s)
             }
             player.playList.append(contentsOf: songs.sorted(by: { s1, s2 in
-                s1.album > s2.album
+                // 排序优先级 艺术家 > 专辑 > 音轨序号
+                if s1.artist == s2.artist {
+                    if s1.album == s2.album {
+                        return s1.track < s2.track
+                    }
+                    return s1.album < s2.album
+                }
+                return s1.artist < s2.artist
             }))
         }
     }
@@ -240,6 +247,7 @@ func UpdateSongMeta(song: Song)-> Bool {
     let tmpFile = URL(fileURLWithPath: song.filePath).path.replacingOccurrences(of: filename, with: "") + "new" + filename
     flog.debug("tmpFile: \(tmpFile)")
     var newMetaData = new_dict()
+    av_dict_set(&newMetaData, "track", String(song.track), 0)
     av_dict_set(&newMetaData, "title", song.name, 0)
     av_dict_set(&newMetaData, "album", song.album, 0)
     av_dict_set(&newMetaData, "artist", song.artist, 0)
