@@ -13,6 +13,7 @@ var flog = Logger(label: "org.ffactory.fmusic")
 
 @main
 struct musicApp: App {
+    @NSApplicationDelegateAdaptor(AboutDelegate.self) var aboutDelegate
     @StateObject var player = AudioPlayer()
     var body: some Scene {
         WindowGroup {
@@ -21,6 +22,13 @@ struct musicApp: App {
         .windowStyle(.hiddenTitleBar)
         .commands {
             MainMenuView(player: player)
+        }
+        .commands {
+            CommandGroup(replacing: .appInfo) {
+                Button("About fmusic") {
+                    aboutDelegate.showAboutPanel()
+                }
+            }
         }
     }
 

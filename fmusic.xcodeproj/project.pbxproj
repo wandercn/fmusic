@@ -52,6 +52,8 @@
 		61E43B9D2A3C67F900FBF9BD /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E43B9B2A3C67F900FBF9BD /* PlayerView.swift */; };
 		61E43BA02A3C686A00FBF9BD /* ListContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E43B9E2A3C686A00FBF9BD /* ListContentView.swift */; };
 		61F03E1F2A9332B70024CA07 /* DetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61F03E1E2A9332B70024CA07 /* DetailsView.swift */; };
+		61F03E232A95FCF30024CA07 /* AboutDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61F03E222A95FCF30024CA07 /* AboutDelegate.swift */; };
+		61F03E252A95FD920024CA07 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61F03E242A95FD920024CA07 /* AboutView.swift */; };
 		61F9D14A2A8C9FB300F41970 /* MetaDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61F9D1492A8C9FB300F41970 /* MetaDataView.swift */; };
 /* End PBXBuildFile section */
 
@@ -128,6 +130,8 @@
 		61E43B9B2A3C67F900FBF9BD /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		61E43B9E2A3C686A00FBF9BD /* ListContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListContentView.swift; sourceTree = "<group>"; };
 		61F03E1E2A9332B70024CA07 /* DetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsView.swift; sourceTree = "<group>"; };
+		61F03E222A95FCF30024CA07 /* AboutDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutDelegate.swift; sourceTree = "<group>"; };
+		61F03E242A95FD920024CA07 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		61F9D1492A8C9FB300F41970 /* MetaDataView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MetaDataView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -204,6 +208,7 @@
 				613F7B9B2A4D862E00F26C1B /* ffmpeg.c */,
 				613F7B992A4D862E00F26C1B /* music (macOS)-Bridging-Header.h */,
 				617083A72A67E6D300D87AC8 /* AudioPlayer.swift */,
+				61F03E222A95FCF30024CA07 /* AboutDelegate.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -243,6 +248,7 @@
 				617083A92A68E80A00D87AC8 /* FavoritesView.swift */,
 				6118689C2A7274AB006335DD /* EmpetyListView.swift */,
 				61F03E1E2A9332B70024CA07 /* DetailsView.swift */,
+				61F03E242A95FD920024CA07 /* AboutView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -330,10 +336,12 @@
 				61F9D14A2A8C9FB300F41970 /* MetaDataView.swift in Sources */,
 				61E003722A48347F004EB263 /* MainMenuView.swift in Sources */,
 				61E43B992A3C660600FBF9BD /* Song.swift in Sources */,
+				61F03E252A95FD920024CA07 /* AboutView.swift in Sources */,
 				61E43B8B2A3C645B00FBF9BD /* ContentView.swift in Sources */,
 				617083A82A67E6D300D87AC8 /* AudioPlayer.swift in Sources */,
 				61F03E1F2A9332B70024CA07 /* DetailsView.swift in Sources */,
 				617083A62A6798FC00D87AC8 /* ModifiersView.swift in Sources */,
+				61F03E232A95FCF30024CA07 /* AboutDelegate.swift in Sources */,
 				613F7B9C2A4D862E00F26C1B /* ffmpeg.c in Sources */,
 				61E43B892A3C645B00FBF9BD /* musicApp.swift in Sources */,
 				6118689D2A7274AB006335DD /* EmpetyListView.swift in Sources */,
@@ -476,7 +484,7 @@
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/deps/include";
 				INFOPLIST_FILE = "fmusic--macOS--Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 wander@ffactory.org. All rights reserved.";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
@@ -511,7 +519,7 @@
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/deps/include";
 				INFOPLIST_FILE = "fmusic--macOS--Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 wander@ffactory.org. All rights reserved.";
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
