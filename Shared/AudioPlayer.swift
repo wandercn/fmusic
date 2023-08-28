@@ -24,6 +24,11 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var playMode: PlayMode = .Order
     @Published var volume: Float = 0.7
     @Published var albumCover = Image("album")
+    @Published var lyricsParser = LyricsParser()
+    @Published var currentLyrics = ""
+    @Published var offsetTime: Double = 0
+    @Published var curId: UUID = .init()
+
     override init() {
         super.init()
     }
