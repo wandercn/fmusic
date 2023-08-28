@@ -9,12 +9,21 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var player: AudioPlayer
+    @State var isShowLyrics: Bool = false
     var body: some View {
-        ZStack {
-            ListContentView(player: player)
-            PlayerView(player: player)
+        HSplitView {
+            ZStack {
+                ListContentView(player: player, isShowLyrics: $isShowLyrics)
+                PlayerView(player: player)
+            }
+            .frame(minWidth: 800, minHeight: 600)
+            if isShowLyrics {
+                LyricsView(player: player)
+            }
+        }.onAppear {
+            let str = try! ReadFile(named: "/Users/lsmiao/Music/LyricsX/东风破 - 周杰伦.lrcx")
+            player.lyricsParser = LyricsParser(lyrics: str)
         }
-        .frame(minWidth: 800, minHeight: 600)
     }
 }
 
