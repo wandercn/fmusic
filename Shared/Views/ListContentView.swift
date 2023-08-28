@@ -13,6 +13,7 @@ struct ListContentView: View {
     @State private var showLibrary = true
     @State private var showPlayList = false
     @State private var showFavorites = false
+    @Binding var isShowLyrics: Bool
     @State var searchText = ""
     @State private var favorites: [Song] = [Song()]
     var body: some View {
@@ -121,6 +122,12 @@ struct ListContentView: View {
                 })
                 .help("清空资料库")
                 Spacer()
+                Button {
+                    isShowLyrics.toggle()
+                } label: {
+                    Image(systemName: "text.bubble")
+                }
+
                 Button(action: toggleSidebar, label: {
                     Image(systemName: "sidebar.left")
                 })

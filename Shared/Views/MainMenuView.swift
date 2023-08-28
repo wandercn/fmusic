@@ -6,6 +6,7 @@
 //
 
 import AVFoundation
+import Foundation
 import Logging
 import SwiftUI
 
@@ -30,7 +31,7 @@ struct MainMenuView: Commands {
 
 // 根据文件扩展判断音频文件是否支持
 let exts = [".flac", ".mp3", ".wav", ".m4a", ".aif", ".m4r"]
-func IsAudioFileSupported(f: String)-> Bool {
+func IsAudioFileSupported(f: String) -> Bool {
     for ext in exts {
         if f.hasSuffix(ext) {
             return true
@@ -69,7 +70,7 @@ func OpenSelectFolderWindws(player: AudioPlayer) {
     }
 }
 
-func LoadFiles(dir: String)->[Song] {
+func LoadFiles(dir: String) -> [Song] {
     var songs: [Song] = []
     var filePaths: [String] = []
     var subDirs: [String] = []
@@ -122,7 +123,7 @@ func LoadFiles(dir: String)->[Song] {
 }
 
 // swift 原生方法获取mp3，aac,wav等苹果默认支持的音频元信息，内嵌专辑图片
-func GetMusicInfo(path: String)->(Song, Image) {
+func GetMusicInfo(path: String) -> (Song, Image) {
     let url = URL(fileURLWithPath: path)
     let asset = AVURLAsset(url: url)
     var img = Image("album")
@@ -159,7 +160,7 @@ func GetMusicInfo(path: String)->(Song, Image) {
 }
 
 // 调用ffmpeAPI获取所有音频的元信息
-func GetMetadata(path: String)->Song? {
+func GetMetadata(path: String) -> Song? {
     var dict = [String: String]()
     var s = Song()
 
@@ -212,7 +213,7 @@ func GetMetadata(path: String)->Song? {
 }
 
 // 调用ffmpegAPI获取音频内嵌专辑图片
-func GetAlbumCoverImage(path: String) ->Image? {
+func GetAlbumCoverImage(path: String) -> Image? {
     var img: Image?
     flog.debug("file: \(path)")
     guard let pkt = get_album_cover_image(path) else {
@@ -242,7 +243,7 @@ func GetAlbumCoverImage(path: String) ->Image? {
 }
 
 // 修改音频文件的元信息
-func UpdateSongMeta(song: Song)-> Bool {
+func UpdateSongMeta(song: Song) -> Bool {
     let filename = URL(fileURLWithPath: song.filePath).lastPathComponent
     let tmpFile = URL(fileURLWithPath: song.filePath).path.replacingOccurrences(of: filename, with: "") + "new" + filename
     flog.debug("tmpFile: \(tmpFile)")
@@ -260,4 +261,10 @@ func UpdateSongMeta(song: Song)-> Bool {
         return false
     }
     return true
+}
+
+func ReadFile(named name: String) throws -> String {
+    let file = try FileHandle(forReadingAtPath: name)?.readToEnd()
+    let data = try String(data: file!, encoding: .utf8)
+    return data!
 }

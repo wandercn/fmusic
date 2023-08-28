@@ -30,6 +30,9 @@ struct PlayerView: View {
                     Text(player.currentSong.name)
                         .padding(.vertical, 5)
                         .foregroundColor(.black)
+                    Text(player.currentLyrics)
+                        .foregroundColor(.black)
+                        .animation(.spring())
                 }
                 .frame(minWidth: 100)
                 .onChange(of: player.currentSong.filePath) { _ in
@@ -175,6 +178,15 @@ struct ProgressBar: View {
                     } else {
                         percentage = player.CurrentTime() / player.Duration()
                     }
+                    let curTime = player.CurrentTime()
+                    let index = player.lyricsParser.lyrics.firstIndex { item in
+                        curTime+player.offsetTime < item.time
+                    } ?? 0
+                    player.curId = player.lyricsParser.lyrics[index].id
+                    player.currentLyrics = player.lyricsParser.lyrics[index].text
+//                    if index > 7 {
+//                        player.lyricsParser.lyrics.remove(at: index - 7)
+//                    }
                 }
             // 显示当前播放时长
             Text(durationFormat(timeInterval: player.CurrentTime())+" / "+durationFormat(timeInterval: player.currentSong.duration))
