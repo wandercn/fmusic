@@ -178,15 +178,14 @@ struct ProgressBar: View {
                     } else {
                         percentage = player.CurrentTime() / player.Duration()
                     }
+                    // 更新当前应该显示哪一行歌词和对应的UUID
                     let curTime = player.CurrentTime()
                     let index = player.lyricsParser.lyrics.firstIndex { item in
                         curTime+player.offsetTime < item.time
                     } ?? 0
+                    player.curLyricsIndex = index
                     player.curId = player.lyricsParser.lyrics[index].id
                     player.currentLyrics = player.lyricsParser.lyrics[index].text
-//                    if index > 7 {
-//                        player.lyricsParser.lyrics.remove(at: index - 7)
-//                    }
                 }
             // 显示当前播放时长
             Text(durationFormat(timeInterval: player.CurrentTime())+" / "+durationFormat(timeInterval: player.currentSong.duration))

@@ -9,51 +9,72 @@ import SwiftUI
 struct LyricsView: View {
     @ObservedObject var player: AudioPlayer
     var body: some View {
-        ZStack {
-            VStack {
-                HStack {
-                    Text("时间偏移:")
-                        .foregroundColor(Color.white)
-                    Slider(value: $player.offsetTime, in: -30 ... 30, step: 0.5)
-                    Text("\(player.offsetTime)")
-                        .foregroundColor(.white)
-                }.background(Color.orange)
-
-                Spacer()
+        VStack {
+            HStack {
+                Text("\(player.lyricsParser.header.title ?? "")")
+                    .font(.headline)
+                    .foregroundColor(.white)
             }
-            .zIndex(10)
-            ScrollView {
-                ForEach(player.lyricsParser.lyrics, id: \.self) { line in
-                    LineView(line: line, curId: $player.curId)
-                        .lineSpacing(20)
+            .frame(height: 50)
+            // 歌词滚动显示区域
+            ScrollViewReader { proxy in
+                ScrollView(showsIndicators: false) {
+                    // id: \.offset 获取数组索引
+                    ForEach(Array(player.lyricsParser.lyrics.enumerated()), id: \.offset) { index, line in
+
+                        LineView(line: line, index: index, curId: $player.curId)
+                            .lineSpacing(20)
+                    }
+                    Spacer().frame(height: 200)
+                }
+                .onAppear {
+                    proxy.scrollTo(0, anchor: .top)
                 }
 
-                .offset(x: 0, y: -((player.CurrentTime() / player.Duration() * 800.0) / 10).rounded() * 10)
+                .onChange(of: player.curLyricsIndex) { _ in
+                    flog.debug("curLyricsIndex \(player.curLyricsIndex)")
+                    proxy.scrollTo(player.curLyricsIndex + 2, anchor: .center)
+                }
+            }
+            .frame(minWidth: 300, maxWidth: .infinity)
+        }
+        .background(Color("lybgColor"))
+        .toolbar {
+            ToolbarItemGroup(placement: .automatic) {
+                // 歌词时间偏移调整
+                HStack(spacing: 0) {
+                    Image(systemName: "timer")
+                    Slider(value: $player.offsetTime, in: -30 ... 30, step: 0.1)
+                    Text(String(format: "%.1fs", player.offsetTime))
+                }.frame(minWidth: 250, maxWidth: .infinity)
+                    .help("调整歌词显示时间")
+                    .padding(.horizontal, 10)
             }
         }
-
-        .background(Color.gray)
-        .frame(minWidth: 300, maxWidth: .infinity)
     }
 }
 
 struct LineView: View {
     @State var line: LyricsItem
+    @State var index: Int
     @Binding var curId: UUID
     var body: some View {
         HStack {
             if line.id == curId {
                 Text(line.text)
                     .font(.title3)
-                    .foregroundColor(Color.white)
-                    .background(Rectangle().fill(Color.yellow))
-                    .animation(.linear)
+                    .foregroundColor(.white)
+//                    .underline()
+                    .bold()
+                    .animation(.spring())
+                    .id(index)
             } else {
                 Text(line.text)
-                    .frame(height: 15)
+                    .id(index)
                     .font(.title3)
-                    .foregroundColor(Color.white)
+                    .foregroundColor(Color("lyfgColor"))
             }
         }
+        .frame(height: 30)
     }
 }

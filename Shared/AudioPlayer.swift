@@ -28,6 +28,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var currentLyrics = ""
     @Published var offsetTime: Double = 0
     @Published var curId: UUID = .init()
+    @Published var curLyricsIndex = 0
 
     override init() {
         super.init()

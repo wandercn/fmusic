@@ -25,5 +25,4 @@ public class LyricsItem: Identifiable, Hashable {
     public var id = UUID()
     public var time: TimeInterval
     public var text: String
-    public var isNow = false
 }
