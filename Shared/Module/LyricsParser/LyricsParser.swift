@@ -84,13 +84,14 @@ public class LyricsParser {
     }
     
     private func parseLine(line: String) {
-//        guard let line = line.trimmingCharacters(in: .whitespaces) else {
-//            return
-//        }
+        // 每行歌词，逐字高亮显示时间，咱不处理
         if line.contains("[tt]") {
             return
         }
-        let line = line.trimmingCharacters(in: .whitespaces)
+        let line = line.trimmingCharacters(in: .whitespacesAndNewlines)
+        if line.isEmpty {
+            return
+        }
         if let title = parseHeader(prefix: "ti", line: line) {
             header.title = title
             return
