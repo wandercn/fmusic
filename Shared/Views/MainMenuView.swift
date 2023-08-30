@@ -264,7 +264,14 @@ func UpdateSongMeta(song: Song) -> Bool {
 }
 
 func ReadFile(named name: String) throws -> String {
-    let file = try FileHandle(forReadingAtPath: name)?.readToEnd()
-    let data = try String(data: file!, encoding: .utf8)
-    return data!
+    guard let file = try FileHandle(forReadingAtPath: name)?.readToEnd() else {
+        flog.debug("\(name) file not exist!")
+        return ""
+    }
+
+    guard let data = String(data: file, encoding: .utf8) else {
+        flog.debug("\(name) file context encode to utf8 failed!")
+        return ""
+    }
+    return data
 }

@@ -27,7 +27,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var lyricsParser = LyricsParser()
     @Published var currentLyrics = ""
     @Published var offsetTime: Double = 0
-    @Published var curId: UUID = .init()
+    @Published var curId = UUID()
     @Published var curLyricsIndex = 0
 
     override init() {
@@ -93,6 +93,17 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
             soudPlayer?.delegate = self
         } catch {
             flog.error("读取音频文件失败:\(path) error: \(error)")
+        }
+        // 更换歌曲，歌词时间偏移量重置为0
+        offsetTime = 0
+        currentLyrics = ""
+        // 读取歌词文件
+        let str = try? ReadFile(named: "/Users/lsmiao/Music/LyricsX/\(currentSong.name) - \(currentSong.artist).lrcx")
+        if let lrcx = str {
+            lyricsParser = LyricsParser(lyrics: lrcx)
+
+        } else {
+            flog.debug("\(currentSong.name) - \(currentSong.artist).lrcx 歌词文件不存在")
         }
     }
 

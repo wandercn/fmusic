@@ -13,18 +13,17 @@ struct LyricsView: View {
             HStack {
                 Text("\(player.lyricsParser.header.title ?? "")")
                     .font(.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(.yellow)
             }
             .frame(height: 50)
             // 歌词滚动显示区域
             ScrollViewReader { proxy in
                 ScrollView(showsIndicators: false) {
-                    // id: \.offset 获取数组索引
-                    ForEach(Array(player.lyricsParser.lyrics.enumerated()), id: \.offset) { index, line in
-
-                        LineView(line: line, index: index, curId: $player.curId)
+                    ForEach(player.lyricsParser.lyrics, id: \.id) { line in
+                        LineView(line: line, curId: $player.curId)
                             .lineSpacing(20)
                     }
+
                     Spacer().frame(height: 200)
                 }
                 .onAppear {
@@ -33,7 +32,7 @@ struct LyricsView: View {
 
                 .onChange(of: player.curLyricsIndex) { _ in
                     flog.debug("curLyricsIndex \(player.curLyricsIndex)")
-                    proxy.scrollTo(player.curLyricsIndex + 2, anchor: .center)
+                    proxy.scrollTo(player.curId, anchor: .center)
                 }
             }
             .frame(minWidth: 300, maxWidth: .infinity)
@@ -56,7 +55,6 @@ struct LyricsView: View {
 
 struct LineView: View {
     @State var line: LyricsItem
-    @State var index: Int
     @Binding var curId: UUID
     var body: some View {
         HStack {
@@ -64,15 +62,14 @@ struct LineView: View {
                 Text(line.text)
                     .font(.title3)
                     .foregroundColor(.white)
-//                    .underline()
                     .bold()
                     .animation(.spring())
-                    .id(index)
+                    .id(curId)
             } else {
                 Text(line.text)
-                    .id(index)
                     .font(.title3)
                     .foregroundColor(Color("lyfgColor"))
+                    .id(line.id)
             }
         }
         .frame(height: 30)

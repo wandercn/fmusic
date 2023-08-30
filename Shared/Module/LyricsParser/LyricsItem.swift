@@ -16,13 +16,14 @@ public class LyricsItem: Identifiable, Hashable {
     public init(time: TimeInterval, text: String = "") {
         self.time = time
         self.text = text
+        self.id = UUID()
     }
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
 
-    public var id = UUID()
+    public var id: UUID
     public var time: TimeInterval
     public var text: String
 }

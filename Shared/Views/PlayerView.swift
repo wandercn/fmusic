@@ -53,6 +53,7 @@ struct PlayerView: View {
 
                     // 更新播放列表中当前正在播放的歌曲
                     player.UpdatePlaying()
+
                 }
 
                 Spacer()
@@ -180,12 +181,14 @@ struct ProgressBar: View {
                     }
                     // 更新当前应该显示哪一行歌词和对应的UUID
                     let curTime = player.CurrentTime()
-                    let index = player.lyricsParser.lyrics.firstIndex { item in
-                        curTime+player.offsetTime < item.time
-                    } ?? 0
-                    player.curLyricsIndex = index
-                    player.curId = player.lyricsParser.lyrics[index].id
-                    player.currentLyrics = player.lyricsParser.lyrics[index].text
+                    if player.lyricsParser.lyrics.isEmpty {} else {
+                        let index = player.lyricsParser.lyrics.firstIndex { item in
+                            curTime+player.offsetTime < item.time
+                        } ?? 0
+                        player.curLyricsIndex = index
+                        player.curId = player.lyricsParser.lyrics[index].id
+                        player.currentLyrics = player.lyricsParser.lyrics[index].text
+                    }
                 }
             // 显示当前播放时长
             Text(durationFormat(timeInterval: player.CurrentTime())+" / "+durationFormat(timeInterval: player.currentSong.duration))

@@ -20,9 +20,6 @@ struct ContentView: View {
             if isShowLyrics {
                 LyricsView(player: player)
             }
-        }.onAppear {
-            let str = try! ReadFile(named: "/Users/lsmiao/Music/LyricsX/东风破 - 周杰伦.lrcx")
-            player.lyricsParser = LyricsParser(lyrics: str)
         }
     }
 }
