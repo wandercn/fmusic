@@ -53,7 +53,6 @@ struct PlayerView: View {
 
                     // 更新播放列表中当前正在播放的歌曲
                     player.UpdatePlaying()
-
                 }
 
                 Spacer()
@@ -182,12 +181,29 @@ struct ProgressBar: View {
                     // 更新当前应该显示哪一行歌词和对应的UUID
                     let curTime = player.CurrentTime()
                     if player.lyricsParser.lyrics.isEmpty {} else {
-                        let index = player.lyricsParser.lyrics.firstIndex { item in
-                            curTime+player.offsetTime < item.time
-                        } ?? 0
-                        player.curLyricsIndex = index
-                        player.curId = player.lyricsParser.lyrics[index].id
-                        player.currentLyrics = player.lyricsParser.lyrics[index].text
+//                        let next = player.lyricsParser.lyrics.firstIndex { item in
+//                            curTime+player.offsetTime < item.time
+//                        } ?? 0
+                        let next = player.curLyricsIndex+1
+                        if next > player.lyricsParser.lyrics.count - 1 {
+                            flog.debug("第\(next)行不存在")
+                            return
+                        }
+                        // 开始从0索引歌词开始显示
+                        if player.curLyricsIndex == 0 {
+                            player.curLyricsIndex = 0
+                            player.curId = player.lyricsParser.lyrics[0].id
+                            player.currentLyrics = player.lyricsParser.lyrics[0].text
+                            player.curLyricsIndex = next
+                            flog.debug("第0行\(player.curLyricsIndex) - \(next) - \(player.currentLyrics)")
+                        }
+                        // 每次取下一行时间，比较当前歌曲播放时间是否大于下一行时间，大于的情况就高亮切换到下一行。
+                        if curTime+player.offsetTime >= player.lyricsParser.lyrics[next].time, player.curLyricsIndex != 0 {
+                            player.curLyricsIndex = next
+                            player.curId = player.lyricsParser.lyrics[next].id
+                            player.currentLyrics = player.lyricsParser.lyrics[next].text
+                            flog.debug("下一行\(player.curLyricsIndex) - \(next) - \(player.currentLyrics)")
+                        }
                     }
                 }
             // 显示当前播放时长

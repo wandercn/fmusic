@@ -83,6 +83,13 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         }
     }
 
+    func reset() {
+        // 更换歌曲，歌词时间偏移量重置为0
+        offsetTime = 0
+        currentLyrics = ""
+        curLyricsIndex = 0
+    }
+
     func PlayAudio(path: String) {
         let url = URL(fileURLWithPath: path)
         do {
@@ -94,9 +101,8 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         } catch {
             flog.error("读取音频文件失败:\(path) error: \(error)")
         }
-        // 更换歌曲，歌词时间偏移量重置为0
-        offsetTime = 0
-        currentLyrics = ""
+        // 重置记录数据
+        reset()
         // 读取歌词文件
         let str = try? ReadFile(named: "\(lyricsDir)/\(currentSong.name) - \(currentSong.artist).lrcx")
         if let lrcx = str {
