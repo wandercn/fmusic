@@ -103,9 +103,9 @@ struct ListContentView: View {
             }
 
 //            .searchable(text: $searchText, placement: .sidebar, prompt: "搜索")
-            .navigationTitle("music")
-            // 侧边搜索栏
+            // 侧边搜索x栏
         }
+        .navigationTitle("music")
         .toolbar(content: {
             ToolbarItemGroup(placement: .automatic) {
                 Button(action: {
@@ -142,6 +142,7 @@ struct ListContentView: View {
 
 func toggleSidebar() {
     #if os(macOS)
+    flog.debug("隐藏侧边栏")
     NSApp.keyWindow?.firstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
     #endif
 }
