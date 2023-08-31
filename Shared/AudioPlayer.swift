@@ -29,7 +29,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var offsetTime: Double = 0
     @Published var curId = UUID()
     @Published var curLyricsIndex = 0
-
+    @Published var lyricsDir = NSHomeDirectory()+"/Music/Lyrics"
     override init() {
         super.init()
     }
@@ -98,7 +98,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         offsetTime = 0
         currentLyrics = ""
         // 读取歌词文件
-        let str = try? ReadFile(named: "/Users/lsmiao/Music/LyricsX/\(currentSong.name) - \(currentSong.artist).lrcx")
+        let str = try? ReadFile(named: "\(lyricsDir)/\(currentSong.name) - \(currentSong.artist).lrcx")
         if let lrcx = str {
             lyricsParser = LyricsParser(lyrics: lrcx)
 
