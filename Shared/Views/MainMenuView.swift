@@ -248,10 +248,10 @@ func UpdateSongMeta(song: Song) -> Bool {
     let tmpFile = URL(fileURLWithPath: song.filePath).path.replacingOccurrences(of: filename, with: "") + "new" + filename
     flog.debug("tmpFile: \(tmpFile)")
     var newMetaData = new_dict()
-    av_dict_set(&newMetaData, "track", String(song.track), 0)
-    av_dict_set(&newMetaData, "title", song.name, 0)
-    av_dict_set(&newMetaData, "album", song.album, 0)
-    av_dict_set(&newMetaData, "artist", song.artist, 0)
+    av_dict_set(&newMetaData, "track", String(song.track).trimmingCharacters(in: .whitespaces), 0)
+    av_dict_set(&newMetaData, "title", song.name.trimmingCharacters(in: .whitespaces), 0)
+    av_dict_set(&newMetaData, "album", song.album.trimmingCharacters(in: .whitespaces), 0)
+    av_dict_set(&newMetaData, "artist", song.artist.trimmingCharacters(in: .whitespaces), 0)
     if modify_meta(song.filePath, tmpFile, newMetaData) != 0 {
         flog.error("modify_meta fail!")
         return false
