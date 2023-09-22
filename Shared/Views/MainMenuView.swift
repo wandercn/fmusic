@@ -57,14 +57,14 @@ func OpenSelectFolderWindws(player: AudioPlayer) {
                 songs.append(contentsOf: s)
             }
             player.playList.append(contentsOf: songs.sorted(by: { s1, s2 in
-                // 排序优先级 专辑> 艺术家 > 音轨序号
-                if s1.album == s2.album {
-                    if s1.artist == s2.artist {
+                // 排序优先级 艺术家 > 专辑 > 音轨序号
+                if s1.artist == s2.artist {
+                    if s1.album == s2.album {
                         return s1.track < s2.track
                     }
-                    return s1.artist < s2.artist
+                    return s1.album < s2.album
                 }
-                return s1.album < s2.album
+                return s1.artist < s2.artist
             }))
         }
     }
