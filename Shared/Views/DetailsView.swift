@@ -115,7 +115,6 @@ struct DetailsView: View {
                                 var list: [String] = []
                                 list.append(String(song.track))
                                 list.append(song.name)
-                                list.append(song.album)
                                 list.append(song.artist)
                                 newName = list.joined(separator: "-")
                             }
