@@ -6,7 +6,9 @@
 //
 
 import AVFoundation
+import Cocoa
 import Foundation
+import LyricsService
 import SwiftUI
 
 enum PlayMode {
@@ -29,7 +31,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var offsetTime: Double = 0
     @Published var curId = UUID()
     @Published var curLyricsIndex = 0
-    @Published var lyricsDir = NSHomeDirectory()+"/Music/Lyrics"
+    @Published var lyricsDir = "/"+NSHomeDirectory().split(separator: "/")[0 ... 1].joined(separator: "/")+"/Music/Lyrics" // ~/Music
     override init() {
         super.init()
     }
@@ -103,8 +105,27 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         }
         // 重置记录数据
         reset()
+        // 下载歌词
+        let lyricsFileName = "\(lyricsDir)/\(currentSong.name) - \(currentSong.artist).lrcx"
+        if !fileExists(atPath: lyricsFileName) {
+            flog.debug("下载歌词: \(lyricsFileName)")
+            let docs = downloadLyrics(song: currentSong.name, artist: currentSong.artist, timeout: 225.2)
+            if docs.count > 0 {
+                let myData = docs[0].description
+                do {
+                    let url = URL(fileURLWithPath: lyricsFileName)
+                    let outputStream = OutputStream(url: url, append: true)
+
+                    outputStream?.open()
+                    try outputStream?.write(myData, maxLength: myData.lengthOfBytes(using: .utf8))
+                    flog.debug("数据已成功写入文件")
+                } catch {
+                    flog.error("无法写入文件:\(error)")
+                }
+            }
+        }
         // 读取歌词文件
-        let str = try? ReadFile(named: "\(lyricsDir)/\(currentSong.name) - \(currentSong.artist).lrcx")
+        let str = try? ReadFile(named: lyricsFileName)
         if let lrcx = str {
             lyricsParser = LyricsParser(lyrics: lrcx)
 
@@ -222,7 +243,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
             return playList[ordernext]
         case .Random:
             flog.debug("随机播放模式:\(PlayMode.Random)")
-            next = Int.random(in: 0...(playList.count - 1))
+            next = Int.random(in: 0 ... (playList.count - 1))
             return playList[next]
 
         case .Single:
@@ -256,11 +277,33 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         case .Random:
             flog.debug("随机播放模式:\(PlayMode.Random)")
             // 随机播放模式
-            prev = Int.random(in: 0...(playList.count - 1))
+            prev = Int.random(in: 0 ... (playList.count - 1))
             return playList[prev]
         case .Single:
             flog.debug("单曲循环播放模式:\(PlayMode.Single)")
             return currentSong
         }
     }
+}
+
+func fileExists(atPath path: String) -> Bool {
+    let fileManager = FileManager.default
+
+    if let attributes = try? fileManager.attributesOfItem(atPath: path) {
+        return attributes[.type] as? FileAttributeType == FileAttributeType.typeRegular
+    }
+    return false
+}
+
+func downloadLyrics(song: String, artist: String, timeout: Double) -> [Lyrics] {
+    let searchReq = LyricsSearchRequest(searchTerm: .info(title: song, artist: artist), duration: timeout)
+
+    let provider = LyricsProviders.Group()
+    var list: [Lyrics] = []
+    let cancelable = provider.lyricsPublisher(request: searchReq).sink { doc in
+        list.append(doc)
+    }
+    sleep(1)
+    cancelable.cancel()
+    return list
 }

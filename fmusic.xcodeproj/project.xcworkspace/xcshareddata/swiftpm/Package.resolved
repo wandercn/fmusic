@@ -1,12 +1,75 @@
 {
   "pins" : [
     {
+      "identity" : "cxextensions",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/cx-org/CXExtensions",
+      "state" : {
+        "revision" : "4790ecd6a6c0e796d776a28a820b552f7e8f6abd",
+        "version" : "0.4.0"
+      }
+    },
+    {
+      "identity" : "cxshim",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/cx-org/CXShim",
+      "state" : {
+        "revision" : "82fecc246c7ca9f0ac1656b8199b7956e64d68f3",
+        "version" : "0.4.0"
+      }
+    },
+    {
+      "identity" : "cxtest",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/cx-org/CXTest",
+      "state" : {
+        "revision" : "929ce7cbd3005bc9356ae826bb65ee2611379b17",
+        "version" : "0.4.0"
+      }
+    },
+    {
+      "identity" : "gzipswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/1024jp/GzipSwift",
+      "state" : {
+        "revision" : "7a7f17761c76a932662ab77028a4329f67d645a4",
+        "version" : "5.2.0"
+      }
+    },
+    {
+      "identity" : "lyricskit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ddddxxx/LyricsKit",
+      "state" : {
+        "branch" : "master",
+        "revision" : "8a61b97cfc853858537e4ff0890d0ba16f20ebc9"
+      }
+    },
+    {
+      "identity" : "regex",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ddddxxx/Regex",
+      "state" : {
+        "revision" : "c0ad0a7e9a48989d9688c2b524a1e69b6293b733",
+        "version" : "1.0.1"
+      }
+    },
+    {
       "identity" : "swift-log",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log",
       "state" : {
         "revision" : "32e8d724467f8fe623624570367e3d50c5638e46",
         "version" : "1.5.2"
+      }
+    },
+    {
+      "identity" : "swiftcf",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ddddxxx/SwiftCF",
+      "state" : {
+        "revision" : "72775c4b4dfceba8f6f43820d50f9286dc97160d",
+        "version" : "0.2.1"
       }
     }
   ],

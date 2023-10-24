@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		610F74342AC520D50081E070 /* LyricsKit in Frameworks */ = {isa = PBXBuildFile; productRef = 610F74332AC520D50081E070 /* LyricsKit */; };
 		6118689D2A7274AB006335DD /* EmpetyListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6118689C2A7274AB006335DD /* EmpetyListView.swift */; };
 		612493F12A975CC5000662AB /* LyricsHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 612493F02A975CC5000662AB /* LyricsHeader.swift */; };
 		612493F32A975CF0000662AB /* LyricsItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 612493F22A975CF0000662AB /* LyricsItem.swift */; };
@@ -150,6 +151,7 @@
 			files = (
 				615C8ADC2A52C7E500EF7859 /* libXau.6.dylib in Frameworks */,
 				615C8AEC2A55578700EF7859 /* libavcodec.60.dylib in Frameworks */,
+				610F74342AC520D50081E070 /* LyricsKit in Frameworks */,
 				615C8AD92A52C7D200EF7859 /* libxcb-shape.0.dylib in Frameworks */,
 				615C8AF42A55578700EF7859 /* libavutil.58.dylib in Frameworks */,
 				615C8AA92A52AEB900EF7859 /* libxcb-shm.0.dylib in Frameworks */,
@@ -293,6 +295,7 @@
 			name = "fmusic (macOS)";
 			packageProductDependencies = (
 				61D16A8B2A61170900FFFB89 /* Logging */,
+				610F74332AC520D50081E070 /* LyricsKit */,
 			);
 			productName = "music (macOS)";
 			productReference = 61E43B852A3C645B00FBF9BD /* fmusic.app */;
@@ -325,6 +328,7 @@
 			mainGroup = 61E43B722A3C645A00FBF9BD;
 			packageReferences = (
 				61D16A8A2A61170900FFFB89 /* XCRemoteSwiftPackageReference "swift-log" */,
+				610F74322AC520D50081E070 /* XCRemoteSwiftPackageReference "LyricsKit" */,
 			);
 			productRefGroup = 61E43B802A3C645B00FBF9BD /* Products */;
 			projectDirPath = "";
@@ -581,6 +585,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		610F74322AC520D50081E070 /* XCRemoteSwiftPackageReference "LyricsKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ddddxxx/LyricsKit";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		61D16A8A2A61170900FFFB89 /* XCRemoteSwiftPackageReference "swift-log" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-log";
@@ -592,6 +604,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		610F74332AC520D50081E070 /* LyricsKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 610F74322AC520D50081E070 /* XCRemoteSwiftPackageReference "LyricsKit" */;
+			productName = LyricsKit;
+		};
 		61D16A8B2A61170900FFFB89 /* Logging */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 61D16A8A2A61170900FFFB89 /* XCRemoteSwiftPackageReference "swift-log" */;
