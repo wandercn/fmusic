@@ -31,7 +31,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var offsetTime: Double = 0
     @Published var curId = UUID()
     @Published var curLyricsIndex = 0
-    @Published var lyricsDir = "/"+NSHomeDirectory().split(separator: "/")[0 ... 1].joined(separator: "/")+"/Music/Lyricstest" // ~/Music
+    @Published var lyricsDir = "/"+NSHomeDirectory().split(separator: "/")[0 ... 1].joined(separator: "/")+"/Music/Lyrics" // ~/Music
     override init() {
         super.init()
     }
