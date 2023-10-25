@@ -31,7 +31,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var offsetTime: Double = 0
     @Published var curId = UUID()
     @Published var curLyricsIndex = 0
-    @Published var lyricsDir = "/"+NSHomeDirectory().split(separator: "/")[0 ... 1].joined(separator: "/")+"/Music/Lyrics" // ~/Music
+    @Published var lyricsDir = "/"+NSHomeDirectory().split(separator: "/")[0 ... 1].joined(separator: "/")+"/Music/Lyricstest" // ~/Music
     override init() {
         super.init()
     }
@@ -300,10 +300,19 @@ func downloadLyrics(song: String, artist: String, timeout: Double) -> [Lyrics] {
 
     let provider = LyricsProviders.Group()
     var list: [Lyrics] = []
+    var count = 0
     let cancelable = provider.lyricsPublisher(request: searchReq).sink { doc in
         list.append(doc)
+        count = count+1
     }
-    sleep(1)
+    var retry = 0 // 最多重试2次，2秒钟,待优化provider是异步的，不等待1秒会返回空
+    while count < 1 {
+        sleep(1)
+        retry += 1
+        if retry > 1 {
+            count = 1
+        }
+    }
     cancelable.cancel()
     return list
 }

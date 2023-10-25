@@ -128,10 +128,10 @@ struct ListContentView: View {
                     Image(systemName: "text.bubble")
                 }
 
-                Button(action: toggleSidebar, label: {
-                    Image(systemName: "sidebar.left")
-                })
-                .help("隐藏左侧导航栏")
+//                Button(action: toggleSidebar, label: {
+//                    Image(systemName: "sidebar.left")
+//                })
+//                .help("隐藏左侧导航栏")
             }
 
         })
@@ -143,7 +143,8 @@ struct ListContentView: View {
 func toggleSidebar() {
     #if os(macOS)
     flog.debug("隐藏侧边栏")
-    NSApp.keyWindow?.firstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
+    NSApp.keyWindow?.initialFirstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
+
     #endif
 }
 
