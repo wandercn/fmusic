@@ -105,23 +105,22 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         }
         // 重置记录数据
         reset()
+        // 检查创建歌词存储目录
+        checkAndCreateDir(dir: lyricsDir)
         // 下载歌词
         let lyricsFileName = "\(lyricsDir)/\(currentSong.name) - \(currentSong.artist).lrcx"
         if !fileExists(atPath: lyricsFileName) {
-            flog.debug("下载歌词: \(lyricsFileName)")
-            let docs = downloadLyrics(song: currentSong.name, artist: currentSong.artist, timeout: 225.2)
+            flog.debug("正在下载歌词: \(lyricsFileName)")
+            let docs = searchLyrics(song: currentSong.name, artist: currentSong.artist, timeout: 225.2)
             if docs.count > 0 {
                 let myData = docs[0].description
-                do {
-                    let url = URL(fileURLWithPath: lyricsFileName)
-                    let outputStream = OutputStream(url: url, append: true)
-
-                    outputStream?.open()
-                    try outputStream?.write(myData, maxLength: myData.lengthOfBytes(using: .utf8))
-                    flog.debug("数据已成功写入文件")
-                } catch {
-                    flog.error("无法写入文件:\(error)")
-                }
+                let url = URL(fileURLWithPath: lyricsFileName)
+                let outputStream = OutputStream(url: url, append: true)
+                outputStream?.open()
+                outputStream?.write(myData, maxLength: myData.lengthOfBytes(using: .utf8))
+                flog.debug("数据已成功写入文件")
+            } else {
+                flog.error("没有搜索到歌词:\(currentSong.name) - \(currentSong.artist)")
             }
         }
         // 读取歌词文件
@@ -295,7 +294,20 @@ func fileExists(atPath path: String) -> Bool {
     return false
 }
 
-func downloadLyrics(song: String, artist: String, timeout: Double) -> [Lyrics] {
+func checkAndCreateDir(dir: String) {
+    if FileManager.default.fileExists(atPath: dir) {
+        flog.debug("\(dir)目录已存在")
+    } else {
+        do {
+            try FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true, attributes: nil)
+            flog.debug("\(dir)目录创建成功")
+        } catch {
+            flog.error("无法创建目录,错误：\(error)")
+        }
+    }
+}
+
+func searchLyrics(song: String, artist: String, timeout: Double) -> [Lyrics] {
     let searchReq = LyricsSearchRequest(searchTerm: .info(title: song, artist: artist), duration: timeout)
 
     let provider = LyricsProviders.Group()
