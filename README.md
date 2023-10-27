@@ -5,7 +5,7 @@
 [![GPL3 licensed](https://img.shields.io/github/license/wandercn/fmusic.svg)](./LICENSE)
 
 
- <img src="logo/logo.png" width = "100" height = "100" alt="HiPoster" align=center />
+ <img src="logo/logo.png" width = "100" height = "100" alt="fmusic" align=center />
  
 
 基于SwiftUI开发的本地音乐播放器,系统最低要求macos 11.0,开发环境Xcode Version 13.4.1 
