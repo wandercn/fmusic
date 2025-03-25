@@ -7,10 +7,10 @@
 
 import AVFoundation
 import Cocoa
+import Combine
 import Foundation
 import LyricsService
 import SwiftUI
-
 enum PlayMode {
     case Loop
     case Order
@@ -90,6 +90,8 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         offsetTime = 0
         currentLyrics = ""
         curLyricsIndex = 0
+        // 切换歌曲，歌词重置为空
+        lyricsParser = LyricsParser()
     }
 
     func PlayAudio(path: String) {
@@ -109,27 +111,43 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         checkAndCreateDir(dir: lyricsDir)
         // 下载歌词
         let lyricsFileName = "\(lyricsDir)/\(currentSong.name) - \(currentSong.artist).lrcx"
+        // 1. 歌词文件不存在，等下载完成，再读取歌词文件
         if !fileExists(atPath: lyricsFileName) {
             flog.debug("正在下载歌词: \(lyricsFileName)")
-            let docs = searchLyrics(song: currentSong.name, artist: currentSong.artist, timeout: 225.2)
-            if docs.count > 0 {
-                let myData = docs[0].description
-                let url = URL(fileURLWithPath: lyricsFileName)
-                let outputStream = OutputStream(url: url, append: true)
-                outputStream?.open()
-                outputStream?.write(myData, maxLength: myData.lengthOfBytes(using: .utf8))
-                flog.debug("数据已成功写入文件")
-            } else {
-                flog.error("没有搜索到歌词:\(currentSong.name) - \(currentSong.artist)")
-            }
-        }
-        // 读取歌词文件
-        let str = try? ReadFile(named: lyricsFileName)
-        if let lrcx = str {
-            lyricsParser = LyricsParser(lyrics: lrcx)
+            searchLyrics(song: currentSong.name, artist: currentSong.artist, timeout: 225.2) { [self] docs in
+                if let docs = docs {
+                    let myData = docs[0].description
+                    let url = URL(fileURLWithPath: lyricsFileName)
+                    let outputStream = OutputStream(url: url, append: true)
+                    outputStream?.open()
+                    outputStream?.write(myData, maxLength: myData.lengthOfBytes(using: .utf8))
+                    flog.debug("数据已成功写入文件:\(lyricsFileName)")
+                    // 当前在异步函数中等歌词下载完成，再读取歌词文件
+                    let currentSongLyricsFileName = "\(lyricsDir)/\(currentSong.name) - \(currentSong.artist).lrcx"
+                    // 多次切歌，只有当当前播放歌曲的歌词下载好了，才加载歌词
+                    if lyricsFileName == currentSongLyricsFileName {
+                        flog.debug("读取歌词文件:\(lyricsFileName)")
+                        let str = try? ReadFile(named: lyricsFileName)
+                        if let lrcx = str {
+                            lyricsParser = LyricsParser(lyrics: lrcx)
 
+                        } else {
+                            flog.debug("\(currentSong.name) - \(currentSong.artist).lrcx 歌词文件不存在")
+                        }
+                    }
+                } else {
+                    flog.error("没有搜索到歌词:\(currentSong.name) - \(currentSong.artist)")
+                }
+            }
         } else {
-            flog.debug("\(currentSong.name) - \(currentSong.artist).lrcx 歌词文件不存在")
+            // 2.歌词文件存在马上加载歌词
+            let str = try? ReadFile(named: lyricsFileName)
+            if let lrcx = str {
+                lyricsParser = LyricsParser(lyrics: lrcx)
+
+            } else {
+                flog.debug("\(currentSong.name) - \(currentSong.artist).lrcx 歌词文件不存在")
+            }
         }
     }
 
@@ -307,24 +325,36 @@ func checkAndCreateDir(dir: String) {
     }
 }
 
-func searchLyrics(song: String, artist: String, timeout: Double) -> [Lyrics] {
+func searchLyrics(song: String, artist: String, timeout: Double, completion: @escaping ([Lyrics]?) -> Void) {
     let searchReq = LyricsSearchRequest(searchTerm: .info(title: song, artist: artist), duration: timeout)
 
     let provider = LyricsProviders.Group()
-    var list: [Lyrics] = []
-    var count = 0
-    let cancelable = provider.lyricsPublisher(request: searchReq).sink { doc in
-        list.append(doc)
-        count = count+1
-    }
-    var retry = 0 // 最多重试2次，2秒钟,待优化provider是异步的，不等待1秒会返回空
-    while count < 1 {
-        sleep(1)
-        retry += 1
-        if retry > 1 {
-            count = 1
+    var lyricsList: [Lyrics] = []
+    // 创建一个发布者，用于在指定时间内收集结果
+    let limitedTimePublisher = provider.lyricsPublisher(request: searchReq)
+        .timeout(.seconds(timeout), scheduler: RunLoop.main)
+
+    // 订阅发布者
+    let subscription = limitedTimePublisher.sink(
+        receiveCompletion: { result in
+            switch result {
+            case .finished:
+                // 正常完成，返回收集到的歌词
+                completion(lyricsList)
+            case .failure(let error):
+                // 发生错误或超时，返回空
+                print("Error: \(error)")
+                completion(nil)
+            }
+        },
+        receiveValue: { lyrics in
+            // 将每一条歌词添加到数组中
+            lyricsList.append(lyrics)
         }
+    )
+
+    // 保留订阅，确保异步操作不会被提前释放
+    DispatchQueue.global().asyncAfter(deadline: .now()+timeout) {
+        subscription.cancel()
     }
-    cancelable.cancel()
-    return list
 }
