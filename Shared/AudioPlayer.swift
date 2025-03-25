@@ -335,24 +335,23 @@ func searchLyrics(song: String, artist: String, timeout: Double, completion: @es
         .timeout(.seconds(timeout), scheduler: RunLoop.main)
 
     // 订阅发布者
-    let subscription = limitedTimePublisher
-        .sink(
-            receiveCompletion: { result in
-                switch result {
-                case .finished:
-                    // 正常完成，返回收集到的歌词
-                    completion(lyricsList)
-                case .failure(let error):
-                    // 发生错误或超时，返回空
-                    print("Error: \(error)")
-                    completion(nil)
-                }
-            },
-            receiveValue: { lyrics in
-                // 将每一条歌词添加到数组中
-                lyricsList.append(lyrics)
+    let subscription = limitedTimePublisher.sink(
+        receiveCompletion: { result in
+            switch result {
+            case .finished:
+                // 正常完成，返回收集到的歌词
+                completion(lyricsList)
+            case .failure(let error):
+                // 发生错误或超时，返回空
+                print("Error: \(error)")
+                completion(nil)
             }
-        )
+        },
+        receiveValue: { lyrics in
+            // 将每一条歌词添加到数组中
+            lyricsList.append(lyrics)
+        }
+    )
 
     // 保留订阅，确保异步操作不会被提前释放
     DispatchQueue.global().asyncAfter(deadline: .now()+timeout) {
