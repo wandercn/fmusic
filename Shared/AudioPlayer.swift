@@ -32,6 +32,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var curId = UUID()
     @Published var curLyricsIndex = 0
     @Published var lyricsDir = "/"+NSHomeDirectory().split(separator: "/")[0 ... 1].joined(separator: "/")+"/Music/Lyrics" // ~/Music
+    @Published var lyricsSearchCancellable: AnyCancellable?
     override init() {
         super.init()
     }
@@ -95,7 +96,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     }
 
     func PlayAudio(path: String) {
-        var cancellable: AnyCancellable?
+//        var cancellable: AnyCancellable?
         let searchTimeOut: Double = 2
         let url = URL(fileURLWithPath: path)
         do {
@@ -126,7 +127,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         // 2. 歌词文件不存在，等下载完成，再读取歌词文件
         flog.debug("正在下载歌词: \(lyricsFileName)")
         // 网络搜索歌词
-        cancellable = searchLyrics(song: currentSong.name, artist: currentSong.artist, timeout: 2) { [self] docs in
+        lyricsSearchCancellable = searchLyrics(song: currentSong.name, artist: currentSong.artist, timeout: searchTimeOut) { [self] docs in
             guard let docs = docs else {
                 flog.error("没有搜索到歌词:\(currentSong.name) - \(currentSong.artist)")
                 return
@@ -166,11 +167,6 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
                 return
             }
             lyricsParser = LyricsParser(lyrics: str)
-        }
-        // 保留订阅，确保异步操作不会被提前释放(异步取消时间cancelTimeOut 必须大于searchTimeOut
-        let cancelTimeOut = searchTimeOut+1
-        DispatchQueue.global().asyncAfter(deadline: .now()+cancelTimeOut) {
-            cancellable?.cancel()
         }
     }
 
@@ -323,6 +319,12 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
             flog.debug("单曲循环播放模式:\(PlayMode.Single)")
             return currentSong
         }
+    }
+
+    deinit {
+        // 取消订阅
+        lyricsSearchCancellable?.cancel()
+        print("AudioPlayer deinit, cancelling search task.")
     }
 }
 
