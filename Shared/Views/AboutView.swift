@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AboutView: View {
     private var github: String = "https://github.com/wandercn/fmusic"
-    private var email: String = "wander@ffactory.org"
+    private var email: String = "wander@rustpub.com"
     private var website: URL { URL(string: github)! }
     private var authorEmail: URL { URL(string: "mailto:\(email)")! }
     var body: some View {
