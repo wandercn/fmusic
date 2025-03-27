@@ -10,8 +10,6 @@ import Combine
 import LyricsService // Assuming this import is needed for searchLyrics
 import SwiftUI
 
-// MARK: - Helper Functions & Placeholders (Ensure these exist and are correct)
-
 enum PlayMode {
     case Loop // 列表循环
     case Order // 顺序播放（播完停止或根据 nextSong 逻辑）
@@ -19,37 +17,36 @@ enum PlayMode {
     case Single // 单曲循环
 }
 
-// Placeholder for time formatting
+// 时间格式化
 func durationFormat(timeInterval: TimeInterval) -> String {
     let time = max(0, timeInterval)
-    if !time.isFinite { return "00:00" }
+    if !time.isFinite { return "00:00" } // 非有限值返回 "00:00"
     let interval = Int(time)
-    let seconds = interval % 60
-    let minutes = (interval / 60) % 60
-    return String(format: "%02d:%02d", minutes, seconds)
+    let seconds = interval % 60 // 秒
+    let minutes = (interval / 60) % 60 // 分
+    return String(format: "%02d:%02d", minutes, seconds) // 格式化时间
 }
 
-// Placeholder for fileExists check
+// 检查文件是否存在
 func fileExists(atPath path: String) -> Bool {
-    FileManager.default.fileExists(atPath: path)
+    FileManager.default.fileExists(atPath: path) // 文件存在性检查
 }
 
-// Placeholder for checkAndCreateDir
+// 检查并创建目录
 func checkAndCreateDir(dir: String) {
-    // Implementation provided by user, seems okay
     if FileManager.default.fileExists(atPath: dir) {
-        flog.debug("\(dir)目录已存在")
+        flog.debug("\(dir)目录已存在") // 目录存在
     } else {
         do {
             try FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true, attributes: nil)
-            flog.debug("\(dir)目录创建成功")
+            flog.debug("\(dir)目录创建成功") // 目录创建成功
         } catch {
-            flog.error("无法创建目录,错误：\(error)")
+            flog.error("无法创建目录,错误：\(error)") // 目录创建失败
         }
     }
 }
 
-// Placeholder for nextSong / prevSong (ensure implementations are correct)
+// 下一首
 private func nextSong(currentSong: Song, playList: [Song], playMode: PlayMode) -> Song {
     // 1. 处理播放列表为空的情况
     guard !playList.isEmpty else {
@@ -102,6 +99,7 @@ private func nextSong(currentSong: Song, playList: [Song], playMode: PlayMode) -
     }
 }
 
+// 上一首
 private func prevSong(currentSong: Song, playList: [Song], playMode: PlayMode) -> Song {
     // 1. 处理播放列表为空的情况
     guard !playList.isEmpty else {
@@ -154,13 +152,11 @@ private func prevSong(currentSong: Song, playList: [Song], playMode: PlayMode) -
     }
 }
 
-// Placeholder for searchLyrics external function
-// Ensure Lyrics, LyricsSearchRequest, LyricsProviders are defined correctly via LyricsService
+// 歌词搜索函数
 func searchLyrics(song: String, artist: String, timeout: Double, completion: @escaping ([Lyrics]?) -> Void) -> AnyCancellable? {
-    flog.debug("Initiating lyrics search for \(song) - \(artist) (external function)")
-    // --- User's Implementation ---
+    flog.debug("正在为 \(song) - \(artist) 发起歌词搜索LyricsSearchRequest")
     let searchReq = LyricsSearchRequest(searchTerm: .info(title: song, artist: artist), duration: timeout)
-    let provider = LyricsProviders.Group(service: [.syair, .gecimi, .kugou, .netease, .qq])
+    let provider = LyricsProviders.Group(service: [.kugou, .syair, .gecimi, .netease, .qq])
     var lyricsList: [Lyrics] = []
     let limitedTimePublisher = provider.lyricsPublisher(request: searchReq)
         .timeout(.seconds(timeout), scheduler: DispatchQueue.main)
@@ -169,90 +165,143 @@ func searchLyrics(song: String, artist: String, timeout: Double, completion: @es
         receiveCompletion: { result in
             switch result {
             case .finished:
-                flog.debug("Lyrics search finished normally. Count: \(lyricsList.count)")
-                completion(lyricsList.isEmpty ? nil : lyricsList) // Return nil if empty for consistency?
+                flog.debug("歌词搜索正常完成。数量: \(lyricsList.count)")
+                completion(lyricsList.isEmpty ? nil : lyricsList) // 如果为空返回 nil 以保持一致性？
             case .failure(let error):
-                flog.error("Lyrics search failed or timed out: \(error)")
+                flog.error("歌词搜索失败或超时: \(error)")
                 completion(nil)
             }
         },
         receiveValue: { lyrics in
-            flog.debug("Received lyrics fragment.")
+            flog.debug("接收到歌词片段。")
             lyricsList.append(lyrics)
         }
     )
     return cancellable
-    // --- End User's Implementation ---
 }
 
-// MARK: - AudioPlayer Class
-
 class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
-    // --- Player Instance ---
-    // @Published private var soudPlayer: AVAudioPlayer? // Publishing AVAudioPlayer directly can be tricky, make it private
+    // --- 播放器实例 ---
+    // @Published private var soudPlayer: AVAudioPlayer? // 直接发布 AVAudioPlayer 可能会有问题，设为 private
     private var soudPlayer: AVAudioPlayer?
 
-    // --- Playback State & Info ---
-    @Published var playList: [Song] = .init()
-    @Published var isPlaying: Bool = false
-    @Published var isfinished: Bool = false // Consider if this is needed, delegate handles finish
-    @Published var currentSong = Song()
-    @Published var playMode: PlayMode = .Order
-    @Published var volume: Float = 0.7 {
-        didSet { // Update player volume when this changes
+    // --- 播放状态与信息 ---
+    @Published var playList: [Song] = .init() // 播放列表
+    @Published var isPlaying: Bool = false // 是否正在播放
+    @Published var isfinished: Bool = false // 考虑是否需要，委托方法会处理播放完成
+    @Published var currentSong = Song() // 当前播放的歌曲
+    @Published var playMode: PlayMode = .Order // 播放模式
+    @Published var volume: Float = 0.7 { // 音量
+        didSet { // 当音量变化时更新播放器音量
             soudPlayer?.volume = volume
         }
     }
 
-    @Published var albumCover = Image("album") // Ensure "album" image exists in Assets
+    @Published var albumCover = Image("album") // 确保 "album" 图片存在于 Assets 中
 
-    // --- Duration Handling ---
-    @Published var currentSongDuration: TimeInterval? = nil // Published duration
+    // --- 时长处理 ---
+    @Published var currentSongDuration: TimeInterval? = nil // 当前歌曲时长
 
-    // --- Lyrics ---
-    @Published var lyricsParser = LyricsParser()
-    @Published var currentLyrics = "" // Currently highlighted lyric text
-    @Published var offsetTime: Double = 0 // Lyrics time offset
-    @Published var curId = UUID() // ID of the currently highlighted lyric line
-    @Published var curLyricsIndex = -1 // Index of the currently highlighted lyric line (-1 for none)
-    @Published var lyricsDir = NSHomeDirectory() + "/Music/Lyrics" // Simplified path
+    // --- 歌词 ---
+    @Published var lyricsParser = LyricsParser() // 歌词解析器
+    @Published var currentLyrics = "" // 当前高亮的歌词文本
+    @Published var offsetTime: Double = 0 // 歌词时间偏移
+    @Published var curId = UUID() // 当前高亮歌词行的 ID
+    @Published var curLyricsIndex = -1 // 当前高亮歌词行的索引（-1 表示无）
+    @Published var lyricsDir = NSHomeDirectory() + "/Music/Lyrics" // 简化路径
+    @Published var currentWordIndex: Int? = nil // 当前高亮歌词行中，高亮到哪个字的索引
+    @Published var currentWordProgress: Double = 0.0 // 当前高亮字已进行的进度 (0.0 到 1.0)
 
     // --- Combine ---
-    private var updateTimer: Timer?
-    private let currentTimeSubject = PassthroughSubject<TimeInterval, Never>()
-    private var cancellables = Set<AnyCancellable>() // Set to manage subscriptions
+    private var updateTimer: Timer? // 定时器
+    private let currentTimeSubject = PassthroughSubject<TimeInterval, Never>() // 当前时间发布者
+    private var cancellables = Set<AnyCancellable>() // 用于管理订阅的集合
 
     var currentTimePublisher: AnyPublisher<TimeInterval, Never> {
         currentTimeSubject
-            .receive(on: DispatchQueue.main) // Ensure subscribers receive on main thread
+            .receive(on: DispatchQueue.main) // 确保订阅者在主线程接收
             .eraseToAnyPublisher()
     }
 
-    // --- Initialization ---
+    // --- 初始化 ---
     override init() {
         super.init()
-        // Initial volume setting if needed, although didSet handles changes
-        // soudPlayer?.volume = volume
-        flog.debug("AudioPlayer initialized.")
     }
 
-    // Convenience initializer (ensure LoadFiles is implemented)
     init(path: String) {
         super.init()
-        playList = LoadFiles(dir: path)
+        playList = LoadFiles(dir: path) // 从指定路径加载播放列表
         if let firstSong = playList.first {
-            currentSong = firstSong
+            currentSong = firstSong // 将第一首歌曲设为当前播放歌曲
         }
-        flog.debug("AudioPlayer initialized with path: \(path)")
+        flog.debug("AudioPlayer 已初始化，路径: \(path)")
     }
 
     deinit {
-        flog.debug("AudioPlayer deinit.")
-        stopAndCleanup() // Ensure cleanup on deinit
-        // No need to manually cancel items in `cancellables` set
+        flog.debug("AudioPlayer 析构。")
+        stopAndCleanup() // 在析构时确保清理
     }
 
-    // MARK: - Playback Control Methods
+    // 计算卡拉OK进度的方法 ---
+    private func updateKaraokeProgress(currentTime: TimeInterval) {
+        // 检查当前是否有高亮的歌词行 (curLyricsIndex 有效)
+        let currentLineIndex = curLyricsIndex
+        guard
+            currentLineIndex >= 0, // 确保索引有效
+            currentLineIndex < lyricsParser.lyrics.count // 确保在范围内
+        else {
+            // 如果没有当前行，重置卡拉OK状态
+            if currentWordIndex != nil || currentWordProgress != 0.0 {
+                currentWordIndex = nil
+                currentWordProgress = 0.0
+            }
+            return
+        }
+
+        let currentLine = lyricsParser.lyrics[currentLineIndex]
+        let wordInfos = currentLine.wordInfos // 获取当前行的逐字信息
+
+        // 如果当前行没有逐字信息，也重置卡拉OK状态
+        guard !wordInfos.isEmpty else {
+            if currentWordIndex != nil || currentWordProgress != 0.0 {
+                currentWordIndex = nil
+                currentWordProgress = 0.0
+            }
+            return
+        }
+
+        // 计算相对于当前行开始的时间
+        let timeWithinLine = currentTime - currentLine.time + offsetTime // 加上歌词偏移
+
+        // 查找当前时间应该高亮到哪个字/词
+        var newWordIndex: Int? = nil
+        var newWordProgress = 0.0
+
+        // 从后往前找第一个 startTime <= timeWithinLine 的字
+        if let foundIndex = wordInfos.lastIndex(where: { $0.startTime <= timeWithinLine }) {
+            newWordIndex = foundIndex
+            let currentWordInfo = wordInfos[foundIndex]
+            // 计算该字已经进行的进度
+            if currentWordInfo.duration > 0 { // 防止除以零
+                let timeInWord = timeWithinLine - currentWordInfo.startTime
+                newWordProgress = min(max(0.0, timeInWord / currentWordInfo.duration), 1.0) // 限制在 0.0 到 1.0
+            } else {
+                // 如果持续时间为 0，则认为已完成
+                newWordProgress = timeWithinLine >= currentWordInfo.startTime ? 1.0 : 0.0
+            }
+        } else {
+            // 时间在第一个字开始之前
+            newWordIndex = nil
+            newWordProgress = 0.0
+        }
+
+        // 只有在状态变化时才更新 @Published 属性
+        if currentWordIndex != newWordIndex || currentWordProgress != newWordProgress {
+            // flog.debug("Karaoke Update: WordIndex=\(String(describing: newWordIndex)), Progress=\(newWordProgress)") // 详细日志
+            currentWordIndex = newWordIndex
+            currentWordProgress = newWordProgress
+        }
+    }
 
     func PlayFirst() {
         if currentSong.filePath.isEmpty, let firstSong = playList.first {
@@ -351,243 +400,289 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     }
 
     func Duration() -> TimeInterval {
-        // Use the published duration property
-        currentSongDuration ?? 1.0 // Default to 1.0 to avoid division by zero
+        // 使用已发布的 duration 属性
+        currentSongDuration ?? 1.0 // 默认返回 1.0，避免除以零错误
     }
 
     func SetVolume(value: Float) {
-        // Use the published volume property with didSet
-        volume = min(max(value, 0.0), 1.0) // Clamp volume between 0 and 1
+        // 使用带有 didSet 的已发布 volume 属性
+        volume = min(max(value, 0.0), 1.0) // 将音量限制在 0 到 1 之间
     }
 
-    // Internal seek function
+    // 内部跳转函数
     private func seek(to time: TimeInterval) {
         guard let player = soudPlayer else { return }
-        let duration = player.duration // Use player's duration for clamping seek time
-        let validTime = max(0, min(time, duration))
+        let duration = player.duration // 使用播放器的时长来限制跳转时间
+        let validTime = max(0, min(time, duration)) // 确保跳转时间在有效范围内
         player.currentTime = validTime
-        flog.debug("Seeked to time: \(validTime)")
-        // Send immediate time update after seeking
-        if !isPlaying { // If paused, send update manually as timer isn't running
+        flog.debug("跳转到时间: \(validTime)")
+        // 跳转后立即发送时间更新
+        if !isPlaying { // 如果暂停，手动发送更新，因为定时器未运行
             currentTimeSubject.send(validTime)
         }
-        // If playing, timer will send update shortly
+        // 跳转后立即更新卡拉OK状态
+        updateKaraokeProgress(currentTime: validTime)
+        // 如果正在播放，定时器会稍后发送更新
     }
 
-    // MARK: - Core Audio Loading & Lyrics Handling
-
+    // 加载并播放指定的音频文件
     func PlayAudio(path: String) {
+        // 1. 验证路径
         guard !path.isEmpty, fileExists(atPath: path) else {
-            flog.error("PlayAudio failed: Path is empty or file does not exist at \(path)")
-            // Optionally play next song or stop?
+            flog.error("播放音频失败：路径为空或文件不存在于 \(path)")
+            // 可选：播放下一首或停止？
             return
         }
 
-        let searchTimeOut: Double = 2
-        let url = URL(fileURLWithPath: path)
+        let searchTimeOut: Double = 2 // 歌词搜索超时时间
+        let url = URL(fileURLWithPath: path) // 创建文件 URL
 
-        stopAndCleanup() // Stop previous player and timer first
-        reset() // Reset lyrics state etc. for the new song
+        // 2. 停止并清理之前的播放器和定时器
+        stopAndCleanup()
 
+        // 3. 重置歌词等状态以准备播放新歌曲
+        reset()
+
+        // 4. 初始化并准备 AVAudioPlayer
         do {
             soudPlayer = try AVAudioPlayer(contentsOf: url)
-            soudPlayer?.delegate = self
-            soudPlayer?.volume = volume // Apply current volume setting
+            soudPlayer?.delegate = self // 设置代理
+            soudPlayer?.volume = volume // 应用当前的音量设置
+
+            // 尝试准备播放并获取时长
             if soudPlayer?.prepareToPlay() == true {
                 let playerDuration = soudPlayer?.duration ?? 0.0
                 if playerDuration > 0 {
-                    currentSongDuration = playerDuration // Update published duration
-                    flog.debug("AVAudioPlayer prepared. Duration = \(playerDuration)")
+                    currentSongDuration = playerDuration // 更新发布的总时长
+                    flog.debug("AVAudioPlayer 已准备好。时长 = \(playerDuration)")
                 } else {
-                    // Use song's potentially pre-loaded duration if player's isn't ready
+                    // 如果播放器准备好了但时长为0（可能发生在某些格式或流），尝试使用歌曲预存的时长
                     currentSongDuration = currentSong.duration > 0 ? currentSong.duration : nil
-                    flog.debug("AVAudioPlayer prepared, but duration not immediately available. Using: \(String(describing: currentSongDuration))")
+                    flog.debug("AVAudioPlayer 已准备好，但时长为 0。使用歌曲预存时长: \(String(describing: currentSongDuration))")
                 }
             } else {
-                flog.error("AVAudioPlayer failed to prepare after init.")
-                currentSongDuration = currentSong.duration > 0 ? currentSong.duration : nil // Fallback duration
+                // 准备播放失败
+                flog.error("AVAudioPlayer 初始化后准备播放失败。")
+                currentSongDuration = currentSong.duration > 0 ? currentSong.duration : nil // 仍然尝试使用预存时长
             }
 
-            // Start playing *after* setup
+            // 5. 尝试开始播放
             if soudPlayer?.play() == true {
-                isPlaying = true
-                startUpdateTimer() // Start timer only after successful play
-                flog.debug("AVAudioPlayer playing: \(path)")
-                UpdatePlaying() // Update highlight in playlist
+                isPlaying = true // 更新播放状态
+                startUpdateTimer() // 启动定时器
+                flog.debug("AVAudioPlayer 正在播放: \(path)")
+                UpdatePlaying() // 更新播放列表中的高亮状态
             } else {
-                flog.error("AVAudioPlayer failed to play after prepare.")
+                flog.error("AVAudioPlayer 在准备后启动播放失败。")
                 isPlaying = false
-                stopUpdateTimer()
+                stopUpdateTimer() // 确保定时器停止
             }
 
         } catch {
-            flog.error("Failed to initialize or play AVAudioPlayer for path \(path): \(error)")
+            // AVAudioPlayer 初始化失败
+            flog.error("初始化或播放 AVAudioPlayer 失败，路径 \(path): \(error)")
             soudPlayer = nil
             isPlaying = false
             stopUpdateTimer()
-            currentSongDuration = nil // Reset duration if loading failed
-            return // Exit if player failed to load
+            currentSongDuration = nil // 重置时长
+            return // 如果播放器加载失败则退出
         }
 
-        // --- Lyrics Handling ---
-        checkAndCreateDir(dir: lyricsDir)
-        let lyricsFileName = "\(lyricsDir)/\(currentSong.name) - \(currentSong.artist).lrcx"
+        // --- 6. 处理歌词 ---
+        checkAndCreateDir(dir: lyricsDir) // 确保歌词目录存在
+        let lyricsFileName = "\(lyricsDir)/\(currentSong.name) - \(currentSong.artist).lrcx" // 构造歌词文件名
 
         if fileExists(atPath: lyricsFileName) {
+            // 如果本地文件存在，直接加载
             loadLyricsFromFile(path: lyricsFileName)
         } else {
-            flog.debug("Lyrics file not found, attempting download: \(lyricsFileName)")
-            // Cancel previous search if any
-            cancellables.removeAll() // Example: Need a way to identify the lyrics search cancellable if stored in the set, or keep it separate. Let's keep it separate for simplicity here.
-            // Alternative: Keep lyricsSearchCancellable separate if easier
-            // lyricsSearchCancellable?.cancel() // Cancel previous one
+            // 如果本地文件不存在，尝试下载
+            flog.debug("歌词文件未找到，尝试下载: \(lyricsFileName)")
 
+            // 取消之前的歌词搜索任务
+            cancellables.removeAll() // 示例：简单地清空所有之前的订阅（假设只有一个搜索任务需要管理）
+            // 备选方案：如果更容易，可以单独保留 lyricsSearchCancellable
+            // lyricsSearchCancellable?.cancel() // 取消上一个
+
+            // 调用外部的 searchLyrics 函数
             searchLyrics(song: currentSong.name, artist: currentSong.artist, timeout: searchTimeOut) { [weak self] docs in
-                guard let self = self else { return }
+                guard let self = self else { return } // 安全解包 weak self
 
-                // Check if we are still playing the same song for which lyrics were requested
+                // **检查当前歌曲是否已改变**
+                // 因为这是异步回调，用户可能已经切歌了
                 let currentSongFileNameCheck = "\(self.lyricsDir)/\(self.currentSong.name) - \(self.currentSong.artist).lrcx"
                 guard lyricsFileName == currentSongFileNameCheck else {
-                    flog.debug("Lyrics arrived, but song has changed. Discarding.")
-                    return
+                    flog.debug("歌词数据返回，但歌曲已切换。丢弃。")
+                    return // 如果歌曲不匹配，则不处理下载的歌词
                 }
 
+                // 检查搜索结果
                 guard let firstDoc = docs?.first else {
-                    flog.error("No lyrics found or docs array empty for: \(self.currentSong.name)")
+                    flog.error("未找到歌词或返回的数组为空: \(self.currentSong.name)")
+                    // 可以考虑在这里设置 lyricsParser 为空或其他处理
+                    DispatchQueue.main.async { self.lyricsParser = LyricsParser() }
                     return
                 }
 
-                let myData = firstDoc.description // Assuming Lyrics has a suitable description
-                // Save to file
+                // 获取歌词数据 (假设 Lyrics 结构体有一个 description 属性包含 LRC 字符串)
+                let myData = firstDoc.description
+
+                // 将下载的歌词数据写入文件
                 do {
+                    // 使用 String 的 write 方法写入，原子操作保证文件完整性
                     try myData.write(to: URL(fileURLWithPath: lyricsFileName), atomically: true, encoding: .utf8)
-                    flog.debug("Lyrics data successfully written to file: \(lyricsFileName)")
-                    // Load after saving
+                    flog.debug("歌词数据已成功写入文件: \(lyricsFileName)")
+                    // 写入成功后，从该文件加载歌词
                     self.loadLyricsFromFile(path: lyricsFileName)
                 } catch {
-                    flog.error("Failed to write lyrics to file \(lyricsFileName): \(error)")
+                    flog.error("将歌词写入文件失败 \(lyricsFileName): \(error)")
+                    // 写入失败，重置歌词解析器
+                    DispatchQueue.main.async { self.lyricsParser = LyricsParser() }
                 }
 
-            }? // Make the call return optional AnyCancellable
-                .store(in: &cancellables) // Store the search subscription
+            }? // searchLyrics 返回的是 Optional<AnyCancellable>
+                .store(in: &cancellables) // 将订阅存储在 cancellables 集合中进行管理
         }
     }
 
-    // Helper to load lyrics
+    // 辅助方法：从文件加载歌词
     private func loadLyricsFromFile(path: String) {
         do {
-            let lyricsString = try ReadFile(named: path)
-            // Use async parsing if LyricsParser supports it or if parsing is heavy
-            DispatchQueue.main.async { // Ensure parser update happens on main thread
+            let lyricsString = try ReadFile(named: path) // 读取文件内容
+            // 解析歌词（确保在主线程更新 @Published 属性）
+            // 如果解析耗时，也可以考虑先在后台线程解析
+            DispatchQueue.main.async {
                 self.lyricsParser = LyricsParser(lyrics: lyricsString)
-                flog.debug("Lyrics loaded successfully from: \(path)")
+                flog.debug("歌词加载成功: \(path)")
+                // 加载后立即更新一次卡拉OK状态，以防音频已开始播放
+                self.updateKaraokeProgress(currentTime: self.CurrentTime())
             }
         } catch {
-            flog.error("Failed to read lyrics file \(path): \(error)")
+            flog.error("读取歌词文件失败 \(path): \(error)")
+            // 加载失败时重置解析器
             DispatchQueue.main.async {
-                self.lyricsParser = LyricsParser() // Reset parser on failure
+                self.lyricsParser = LyricsParser() // 重置为空解析器
             }
         }
     }
 
-    // Reset lyrics state
+    // 重置歌词相关的状态
     private func reset() {
-        offsetTime = 0
-        currentLyrics = ""
-        curLyricsIndex = -1 // Use -1 to indicate no line selected
-        // Reset parser on main thread
+        offsetTime = 0 // 重置偏移
+        currentLyrics = "" // 重置当前行文本
+        curLyricsIndex = -1 // 重置当前行索引 (使用 -1 表示没有选中任何行)
+        currentWordIndex = nil // 重置当前字索引
+        currentWordProgress = 0.0 // 重置当前字进度
+        // 在主线程重置解析器
         DispatchQueue.main.async {
-            self.lyricsParser = LyricsParser()
+            self.lyricsParser = LyricsParser() // 创建一个新的空解析器实例
         }
-        flog.debug("Lyrics state reset.")
+        flog.debug("歌词状态已重置。")
     }
 
-    // MARK: - Timer Management
+    // MARK: - 定时器管理
 
+    // 启动定时器以更新播放时间
     private func startUpdateTimer() {
-        guard updateTimer == nil else { return } // Prevent multiple timers
-        stopUpdateTimer() // Ensure no lingering timer exists
+        guard updateTimer == nil else { return } // 防止重复启动
+        stopUpdateTimer() // 先确保停止旧的定时器
 
-        updateTimer = Timer.scheduledTimer(timeInterval: 0.1,
+        // 创建定时器，每 0.1 秒触发一次 timerFired 方法
+        updateTimer = Timer.scheduledTimer(timeInterval: 0.1, // 更新频率 (0.1秒 = 10Hz) - 卡拉OK可能需要更高频率，如 0.05s
                                            target: self,
-                                           selector: #selector(timerFired),
+                                           selector: #selector(timerFired), // 要调用的方法
                                            userInfo: nil,
-                                           repeats: true)
-        // Add to common RunLoop mode
+                                           repeats: true) // 重复执行
+
+        // 将定时器添加到 RunLoop 的 .common 模式，确保在滚动等 UI 操作时也能更新
         RunLoop.current.add(updateTimer!, forMode: .common)
-        flog.debug("Update timer started.")
+        flog.debug("更新定时器已启动。")
     }
 
+    // 停止定时器
     private func stopUpdateTimer() {
         if updateTimer != nil {
-            updateTimer?.invalidate()
-            updateTimer = nil
-            flog.debug("Update timer stopped.")
+            updateTimer?.invalidate() // 使定时器失效
+            updateTimer = nil // 释放定时器对象
+            flog.debug("更新定时器已停止。")
         }
     }
 
+    // 定时器触发时调用的方法
     @objc private func timerFired() {
         guard let player = soudPlayer, isPlaying else {
-            stopUpdateTimer() // Stop timer if player gone or not playing
+            // 如果播放器不存在或未在播放，则停止定时器
+            stopUpdateTimer()
             return
         }
-        let currentTime = player.currentTime
-        // flog.debug("AudioPlayer timerFired: Sending currentTime = \(currentTime)") // Optional: Verbose logging
-        currentTimeSubject.send(currentTime)
+        let currentTime = player.currentTime // 获取播放器当前时间
+        // flog.debug("AudioPlayer timerFired: 发送 currentTime = \(currentTime)") // 可选：详细日志
+        currentTimeSubject.send(currentTime) // 通过 Subject 发布当前时间
+
+        // 2.--- 计算卡拉OK进度 ---
+        updateKaraokeProgress(currentTime: currentTime)
     }
 
-    // MARK: - Playlist Management (Basic stubs from user code)
+    // MARK: - 播放列表管理 (来自用户代码的基本存根)
 
+    // 更新播放列表中歌曲的播放状态标志
     func UpdatePlaying() {
         if playList.isEmpty { return }
         playList = playList.map { song in
             var mutableSong = song
+            // 如果歌曲的文件路径与当前歌曲相同，则标记为正在播放
             mutableSong.isPlaying = (song.filePath == currentSong.filePath)
             return mutableSong
         }
     }
 
+    // 更新播放列表中当前歌曲的“喜欢”状态
     func UpdateHeartChecked() {
         if let index = playList.firstIndex(where: { $0.filePath == currentSong.filePath }) {
             playList[index].isHeartChecked = currentSong.isHeartChecked
         }
     }
 
+    // 修改播放列表中某一首歌的元数据
     func ChangeMetaDataOneOfList(changeOne: Song) {
-        if let index = playList.firstIndex(where: { $0.id == changeOne.id }) {
-            playList[index] = changeOne
+        if let index = playList.firstIndex(where: { $0.id == changeOne.id }) { // 通过 ID 查找
+            playList[index] = changeOne // 替换为新的歌曲信息
         }
     }
 
-    // MARK: - AVAudioPlayerDelegate Methods
+    // MARK: - AVAudioPlayerDelegate 代理方法
 
+    // 音频播放完成时调用
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        flog.info("Playback finished (\(flag ? "successfully" : "unsuccessfully")): \(currentSong.filePath)")
-        // isfinished = true // Let UI react to isPlaying becoming false instead?
-        isPlaying = false
-        stopUpdateTimer()
-        PlayNext() // Delegate calls PlayNext automatically
+        flog.info("播放完成 (\(flag ? "成功" : "失败")): \(currentSong.filePath)")
+        // isfinished = true // 考虑是否需要，或者让 UI 响应 isPlaying 变为 false
+        isPlaying = false // 更新播放状态
+        stopUpdateTimer() // 停止定时器
+        PlayNext() // 自动播放下一首
         // isfinished = false
     }
 
+    // 音频解码出错时调用
     func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
-        flog.error("Audio player decode error: \(error?.localizedDescription ?? "Unknown error")")
-        isPlaying = false
-        stopUpdateTimer()
-        // Optionally play next or show error
+        flog.error("音频播放器解码错误: \(error?.localizedDescription ?? "未知错误")")
+        isPlaying = false // 更新播放状态
+        stopUpdateTimer() // 停止定时器
+        // 可选：播放下一首或显示错误信息给用户
     }
 
-    // MARK: - Cleanup
+    // MARK: - 清理
 
+    // 停止播放并清理所有相关资源
     func stopAndCleanup() {
-        flog.debug("Stopping and cleaning up player...")
-        soudPlayer?.stop() // Stop playback
-        isPlaying = false
-        stopUpdateTimer() // Stop the timer
-        soudPlayer = nil // Release the player instance
-        currentSongDuration = nil // Reset duration
-        reset() // Reset lyrics etc.
-        cancellables.forEach { $0.cancel() } // Cancel any other Combine subs
-        cancellables.removeAll()
+        flog.debug("正在停止并清理播放器...")
+        soudPlayer?.stop() // 停止播放
+        isPlaying = false // 更新状态
+        stopUpdateTimer() // 停止定时器
+        soudPlayer = nil // 释放播放器实例
+        currentSongDuration = nil // 重置时长
+        reset() // 重置歌词等状态
+        cancellables.forEach { $0.cancel() } // 取消所有 Combine 订阅
+        cancellables.removeAll() // 清空订阅集合
+        flog.debug("清理完成。")
     }
 }
