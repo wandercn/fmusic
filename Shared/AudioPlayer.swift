@@ -32,6 +32,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var curId = UUID()
     @Published var curLyricsIndex = 0
     @Published var lyricsDir = "/"+NSHomeDirectory().split(separator: "/")[0 ... 1].joined(separator: "/")+"/Music/Lyrics" // ~/Music
+    // AnyCancellable必须在对象中生命周期时间够长，如果在函数中还没等网络请求结束就取消了
     @Published var lyricsSearchCancellable: AnyCancellable?
     override init() {
         super.init()
@@ -96,7 +97,6 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     }
 
     func PlayAudio(path: String) {
-//        var cancellable: AnyCancellable?
         let searchTimeOut: Double = 2
         let url = URL(fileURLWithPath: path)
         do {
@@ -322,9 +322,9 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     }
 
     deinit {
-        // 取消订阅
+        // 这里显式调用取消订阅cancel()不是必须的，因为对象销毁会自动取消
         lyricsSearchCancellable?.cancel()
-        print("AudioPlayer deinit, cancelling search task.")
+        flog.debug("AudioPlayer deinit, cancelling lyricsSearchCancellable.")
     }
 }
 
