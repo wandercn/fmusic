@@ -156,17 +156,17 @@ struct ProgressBar: View {
                         progressWidth = progressWidth > progressMaxWidth ? progressMaxWidth : progressWidth
                         progressWidth = progressWidth >= 0 ? progressWidth : 0
                         let progress = progressWidth / progressMaxWidth
-                        print("progress1: \(progress)")
+                        flog.debug("progress1: \(progress)")
                         percentage = progress <= 1.0 ? progress : 1
-                        print("isEditing1: \(isEditing)")
+                        flog.debug("isEditing1: \(isEditing)")
                     }
                     .onEnded { _ in
                         progressWidth = progressWidth > progressMaxWidth ? progressMaxWidth : progressWidth
                         progressWidth = progressWidth >= 0 ? progressWidth : 0
                         lastDragValue = progressWidth
-                        print("isEditing2: \(isEditing)")
+                        flog.debug("isEditing2: \(isEditing)")
                         isEditing = false
-                        print("isEditing3: \(isEditing)")
+                        flog.debug("isEditing3: \(isEditing)")
                     }
                 )
                 .onReceive(timer) { _ in
