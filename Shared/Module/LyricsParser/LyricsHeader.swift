@@ -23,4 +23,6 @@ public struct LyricsHeader {
     public var editor: String?
     // ve
     public var version: String?
+    // length
+    public var longSec: TimeInterval = 0
 }

@@ -247,10 +247,10 @@ struct ProgressBar: View {
 
             // 显示时间文本
             Text("\(currentTimeText) / \(totalTimeText)")
-                .font(.system(.caption, design: .monospaced)) // macOS 11 兼容
-                .frame(minWidth: 90, alignment: .leading) // 给文本固定宽度
+                .font(.system(.title3, design: .default)) // macOS 11 兼容
+                .frame(minWidth: 90, alignment: .center) // 给文本固定宽度
         }
-        // .frame(width: progressMaxWidth + 100) // 根据需要调整总宽度
+        .frame(width: progressMaxWidth) // 根据需要调整总宽度
         .padding(.horizontal) // 左右内边距
         .onAppear {
             initializeProgressBarState() // 初始化状态

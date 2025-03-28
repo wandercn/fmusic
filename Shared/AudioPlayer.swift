@@ -156,7 +156,7 @@ private func prevSong(currentSong: Song, playList: [Song], playMode: PlayMode) -
 func searchLyrics(song: String, artist: String, timeout: Double, completion: @escaping ([Lyrics]?) -> Void) -> AnyCancellable? {
     flog.debug("正在为 \(song) - \(artist) 发起歌词搜索LyricsSearchRequest")
     let searchReq = LyricsSearchRequest(searchTerm: .info(title: song, artist: artist), duration: timeout)
-    let provider = LyricsProviders.Group(service: [.kugou, .syair, .gecimi, .netease, .qq])
+    let provider = LyricsProviders.Group(service: [.kugou, .qq, .netease, .gecimi])
     var lyricsList: [Lyrics] = []
     let limitedTimePublisher = provider.lyricsPublisher(request: searchReq)
         .timeout(.seconds(timeout), scheduler: DispatchQueue.main)
@@ -434,7 +434,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
             return
         }
 
-        let searchTimeOut: Double = 2 // 歌词搜索超时时间
+        let searchTimeOut: Double = 5 // 歌词搜索超时时间
         let url = URL(fileURLWithPath: path) // 创建文件 URL
 
         // 2. 停止并清理之前的播放器和定时器
@@ -505,7 +505,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
             // lyricsSearchCancellable?.cancel() // 取消上一个
 
             // 调用外部的 searchLyrics 函数
-            searchLyrics(song: currentSong.name, artist: currentSong.artist, timeout: searchTimeOut) { [weak self] docs in
+            searchLyrics(song: currentSong.name, artist: currentSong.artist, timeout: searchTimeOut) { [weak self] lyrics in
                 guard let self = self else { return } // 安全解包 weak self
 
                 // **检查当前歌曲是否已改变**
@@ -516,21 +516,67 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
                     return // 如果歌曲不匹配，则不处理下载的歌词
                 }
 
-                // 检查搜索结果
-                guard let firstDoc = docs?.first else {
-                    flog.error("未找到歌词或返回的数组为空: \(self.currentSong.name)")
-                    // 可以考虑在这里设置 lyricsParser 为空或其他处理
-                    DispatchQueue.main.async { self.lyricsParser = LyricsParser() }
-                    return
+                // 提取筛选逻辑到一个函数中
+
+                enum FilterMode {
+                    case FirstTime // 第一次精确搜索，精确匹配歌名和歌手姓名和筛选时间
+                    case SecondTime // 第二次模糊搜索，模糊匹配歌名和歌手姓名和筛选时间
+                    case ThirdTime // 第三次模糊搜索，只模糊匹配歌名和筛选时间
+                    case LastTime // 第四次模糊搜索，只匹配筛选时间
+                }
+                func filterLyrics(lyrics: [Lyrics]?, exactMatch: FilterMode) -> Lyrics? {
+                    lyrics?.first(where: { lyric in
+                        guard let longTimeStr = lyric.idTags[Lyrics.IDTagKey("length")],
+                              let title = lyric.idTags[Lyrics.IDTagKey("ti")],
+                              let author = lyric.idTags[Lyrics.IDTagKey("ar")],
+                              let duration = self.currentSongDuration,
+                              let longTime = TimeInterval(longTimeStr)
+                        else {
+                            return false
+                        }
+
+                        flog.debug("longTime:\(longTime) currentDuration:\(duration)")
+                        if longTime > duration * 0.95 {
+                            switch exactMatch {
+                            case .FirstTime:
+                                if title == self.currentSong.name, author.contains(self.currentSong.artist) {
+                                    return true
+                                }
+                            case .SecondTime:
+                                if title.contains(self.currentSong.name), author.contains(self.currentSong.artist) {
+                                    return true
+                                }
+                            case .ThirdTime:
+                                if title.contains(self.currentSong.name) {
+                                    return true
+                                }
+                            case .LastTime:
+                                return true
+                            }
+                        }
+                        return false
+                    })
                 }
 
-                // 获取歌词数据 (假设 Lyrics 结构体有一个 description 属性包含 LRC 字符串)
-                let myData = firstDoc.description
+                func findLyrics(in lyrics: [Lyrics]?) -> String? {
+                    for mode in [FilterMode.FirstTime, .SecondTime, .ThirdTime, .LastTime] {
+                        if let foundLyric = filterLyrics(lyrics: lyrics, exactMatch: mode) {
+                            return foundLyric.description
+                        } else {
+                            flog.debug("未找到歌词 (\(mode)): \(self.currentSong.name)")
+                        }
+                    }
 
+                    return nil
+                }
+                // 定义lrc歌词内容存储字符串
+                guard let lrcText: String = findLyrics(in: lyrics) else {
+                    return flog.debug("未找到歌词: \(self.currentSong.name)")
+                }
                 // 将下载的歌词数据写入文件
                 do {
                     // 使用 String 的 write 方法写入，原子操作保证文件完整性
-                    try myData.write(to: URL(fileURLWithPath: lyricsFileName), atomically: true, encoding: .utf8)
+                    try lrcText.write(to: URL(fileURLWithPath: lyricsFileName), atomically: true, encoding: .utf8)
                     flog.debug("歌词数据已成功写入文件: \(lyricsFileName)")
                     // 写入成功后，从该文件加载歌词
                     self.loadLyricsFromFile(path: lyricsFileName)
@@ -580,7 +626,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         flog.debug("歌词状态已重置。")
     }
 
-    // MARK: - 定时器管理
+    // 定时器管理
 
     // 启动定时器以更新播放时间
     private func startUpdateTimer() {
@@ -588,7 +634,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         stopUpdateTimer() // 先确保停止旧的定时器
 
         // 创建定时器，每 0.1 秒触发一次 timerFired 方法
-        updateTimer = Timer.scheduledTimer(timeInterval: 0.1, // 更新频率 (0.1秒 = 10Hz) - 卡拉OK可能需要更高频率，如 0.05s
+        updateTimer = Timer.scheduledTimer(timeInterval: 0.05, // 更新频率 (0.1秒 = 10Hz) - 卡拉OK可能需要更高频率，如 0.05s
                                            target: self,
                                            selector: #selector(timerFired), // 要调用的方法
                                            userInfo: nil,
@@ -623,7 +669,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         updateKaraokeProgress(currentTime: currentTime)
     }
 
-    // MARK: - 播放列表管理 (来自用户代码的基本存根)
+    // 播放列表管理
 
     // 更新播放列表中歌曲的播放状态标志
     func UpdatePlaying() {
@@ -650,7 +696,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         }
     }
 
-    // MARK: - AVAudioPlayerDelegate 代理方法
+    // AVAudioPlayerDelegate 代理方法
 
     // 音频播放完成时调用
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
@@ -670,7 +716,7 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         // 可选：播放下一首或显示错误信息给用户
     }
 
-    // MARK: - 清理
+    // 清理
 
     // 停止播放并清理所有相关资源
     func stopAndCleanup() {

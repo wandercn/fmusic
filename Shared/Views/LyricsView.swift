@@ -62,29 +62,6 @@ struct LyricsView: View {
     }
 }
 
-struct LineView: View {
-    @State var line: LyricsItem
-    @Binding var curId: UUID
-    var body: some View {
-        HStack {
-            if line.id == curId {
-                Text(line.text)
-                    .font(.title3)
-                    .foregroundColor(.white)
-                    .bold()
-                    .animation(.spring())
-                    .id(curId)
-            } else {
-                Text(line.text)
-                    .font(.title3)
-                    .foregroundColor(Color("lyfgColor"))
-                    .id(line.id)
-            }
-        }
-        .frame(height: 30)
-    }
-}
-
 struct KaraokeLineView: View {
     let line: LyricsItem
     let currentWordIndex: Int? // 当前高亮到哪个词的索引
@@ -94,7 +71,7 @@ struct KaraokeLineView: View {
     // 定义普通颜色和高亮颜色
     let normalColor: Color = .init("lyfgColor") // 未播放部分的颜色
     let highlightedColor: Color = .white // 已播放部分的颜色
-    let currentLineScale: CGFloat = 1.1  // 当前行放大效果 (可选)
+    let currentLineScale: CGFloat = 1 // 当前行放大效果 (可选)
     let otherLineScale: CGFloat = 1
 
     var body: some View {

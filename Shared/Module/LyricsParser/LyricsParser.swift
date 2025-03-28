@@ -70,7 +70,7 @@ public class LyricsParser {
                         info.ttContent = content
                         // flog.debug("Found TT content for time \(finalTime): \(content)")
                     } else {
-                        flog.debug("Duplicate TT content found for time \(finalTime), keeping first.")
+//                        flog.debug("Duplicate TT content found for time \(finalTime), keeping first.")
                     }
                 } else {
                     // 如果是普通歌词行，存储其文本
@@ -78,7 +78,7 @@ public class LyricsParser {
                         info.text = content
                         // flog.debug("Found Text content for time \(finalTime): \(content)")
                     } else {
-                        flog.debug("Duplicate Text content found for time \(finalTime), keeping first.")
+//                        flog.debug("Duplicate Text content found for time \(finalTime), keeping first.")
                     }
                 }
                 // 更新字典
@@ -110,9 +110,9 @@ public class LyricsParser {
                 // 如果解析 [tt] 失败或没有 [tt] 内容，可以选择创建一个包含整句的 WordInfo
                 if wordInfos.isEmpty {
                     // 创建一个覆盖整行的 WordInfo (可选，取决于是否要在无逐字信息时模拟)
-                    // let approxDuration = (lineInfosByTime.keys.sorted().first(where: { $0 > time }) ?? (time + 5)) - time // 估算时长
-                    // wordInfos.append(WordInfo(word: text, startTime: 0, duration: approxDuration > 0 ? approxDuration : 1.0))
-                    flog.debug("No valid word info parsed for line at time \(time), using plain text.")
+//                    let approxDuration = (lineInfosByTime.keys.sorted().first(where: { $0 > time }) ?? (time + 5)) - time // 估算时长
+//                    wordInfos.append(WordInfo(word: text, startTime: 0, duration: approxDuration > 0 ? approxDuration : 1.0))
+//                    flog.debug("No valid word info parsed for line at time \(time), using plain text.")
                 }
 
                 // 创建最终的 LyricsItem
@@ -252,6 +252,10 @@ public class LyricsParser {
         if let offsetStr = parseHeaderTag(prefix: "offset", line: line), let offsetVal = TimeInterval(offsetStr) {
             header.offset = offsetVal / 1000.0 // 毫秒转秒
             flog.debug("Parsed offset: \(offsetVal)ms -> \(header.offset)s")
+            return true
+        }
+        if let lengthStr = parseHeaderTag(prefix: "length", line: line), let length = TimeInterval(lengthStr) {
+            header.longSec = length
             return true
         }
         if let editor = parseHeaderTag(prefix: "re", line: line) { header.editor = editor; return true }
