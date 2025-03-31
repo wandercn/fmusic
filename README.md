@@ -29,6 +29,7 @@
 16. [x] 歌曲列表，增加了右键菜单-编辑元信息，增加字段音轨序号 track。元信息修改，同步修改列表的信息。（v1.0.4)
 17. [x] 歌曲列表，增加了右键菜单-文件详情，可以查看文件详细，文件路径。快速重命名文件的功能。(v1.0.4)
 18. [x] 增加了歌词显示，自动下载歌词功能. 歌词文件存储在～/Music/Lyrics目录中（v1.07)
+19. [x] 增加了歌词的卡啦ok效果(歌词有tt时间标签才能看到效果)(v1.0.9)
 
 # FAQ
 
@@ -39,3 +40,7 @@ sudo xattr -d com.apple.quarantine /Applications/xxxx.app，注意：/Applicatio
 # Screen
 
 ![](logo/player.jpg)
+
+## 卡啦ok
+
+![](logo/kalaok.jpg)
