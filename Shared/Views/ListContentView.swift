@@ -48,28 +48,7 @@ struct ListContentView: View {
                         )
                     }.padding(.leading, 10)
                 }
-//                .headerProminence(.increased)
 
-                Section(
-                    header: HStack {
-                        Text("播放列表")
-                        Image(systemName: "music.note.list")
-                    }
-                    .font(.headline)
-                    .foregroundColor(.orange)
-                ) {
-                    NavigationLink("所有播放列表", isActive: $showPlayList) {
-                        List {
-                            Text("播放列表1")
-                            Text("播放列表2")
-                        }
-
-                    }.padding(.leading, 10)
-                    NavigationLink("播放列表1") {
-                        Text("歌曲1")
-                        Text("歌曲1")
-                    }.padding(.leading, 10)
-                }
 //                .headerProminence(.increased)
 
                 Section(
