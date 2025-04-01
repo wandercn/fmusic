@@ -51,21 +51,37 @@ func OpenSelectFolderWindws(player: AudioPlayer) {
     openPanel.begin { response in
         //  异步函数无法return
         if response == .OK {
-            var songs = [Song]()
-            openPanel.urls.forEach { url in
-                let s = LoadFiles(dir: url.path)
-                songs.append(contentsOf: s)
-            }
-            player.playList.append(contentsOf: songs.sorted(by: { s1, s2 in
-                // 排序优先级 专辑> 艺术家 > 音轨序号
-                if s1.album == s2.album {
-                    if s1.artist == s2.artist {
-                        return s1.track < s2.track
-                    }
-                    return s1.artist < s2.artist
+            // 2. 将耗时操作派发到后台队列执行
+            // 使用 .userInitiated qos 比较合适，表示用户发起的、期望较快得到结果的任务
+            DispatchQueue.global(qos: .userInteractive).async {
+                var loadedSongs = [Song]() // 在后台线程收集歌曲
+                let urlsToProcess = openPanel.urls // 获取选中的 URL
+
+                // 在后台遍历选中的每个文件夹 URL
+                urlsToProcess.forEach { url in
+                    // 在后台调用 LoadFiles
+                    let songsFromFolder = LoadFiles(dir: url.path) // LoadFiles 内部的所有操作现在都在后台执行
+                    loadedSongs.append(contentsOf: songsFromFolder)
                 }
-                return s1.album < s2.album
-            }))
+
+                // 在后台进行排序
+                let sortedSongs = loadedSongs.sorted { s1, s2 in
+                    // 排序优先级 专辑 > 艺术家 > 音轨序号
+                    if s1.album == s2.album {
+                        if s1.artist == s2.artist {
+                            return s1.track < s2.track
+                        }
+                        return s1.artist < s2.artist
+                    }
+                    return s1.album < s2.album
+                }
+
+                // 3. 回到主线程更新 UI (player.playList) 和加载状态
+                DispatchQueue.main.async {
+                    player.playList.append(contentsOf: sortedSongs)
+                    // flog.info("成功加载并添加了 \(sortedSongs.count) 首歌曲到播放列表。")
+                }
+            }
         }
     }
 }
