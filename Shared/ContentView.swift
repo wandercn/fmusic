@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var player: AudioPlayer
-    @State var isShowLyrics: Bool = false
+    @State var isShowLyrics: Bool = true
     var body: some View {
         HSplitView {
             ZStack {
