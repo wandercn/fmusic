@@ -6,9 +6,9 @@
 
 
  <img src="logo/logo.png" width = "100" height = "100" alt="fmusic" align=center />
- 
 
-基于SwiftUI开发的本地音乐播放器,系统最低要求macos 11.0,开发环境Xcode Version 13.4.1 
+
+基于SwiftUI开发的本地音乐播放器,系统最低要求macos 11.0,开发环境Xcode Version 13.4.1
 1. [x] 能自动解析音频文件的，专辑信息和专辑封面图片
 2. [x] 经过测试支持 [".flac", ".mp3", ".wav", ".m4a", ".aif", ".m4r"]音乐文件的播放
 3. [x] 歌曲列表单行双击，切歌。
@@ -30,6 +30,11 @@
 17. [x] 歌曲列表，增加了右键菜单-文件详情，可以查看文件详细，文件路径。快速重命名文件的功能。(v1.0.4)
 18. [x] 增加了歌词显示，自动下载歌词功能. 歌词文件存储在～/Music/Lyrics目录中（v1.07)
 19. [x] 增加了歌词的卡啦ok效果(歌词有tt时间标签才能看到效果)(v1.0.9)
+20. [x] 最新版本已经提供签名公证过的dmg文件（v1.1.0 2025.10.20)
+
+# 致谢
+
+感谢@marsxcf 为v1.1.0提供了软件的签名公证，现在想使用本软件的所有人不需要本地编译，可以直接下载最新版本安装。
 
 # FAQ
 
@@ -44,3 +49,5 @@ sudo xattr -d com.apple.quarantine /Applications/xxxx.app，注意：/Applicatio
 ## 卡啦ok
 
 ![](logo/kalaok.jpg)
+
+##
