@@ -287,6 +287,7 @@
 				61E43B832A3C645B00FBF9BD /* Resources */,
 				61FEAF732A4D30BD001EB24F /* Embed Libraries */,
 				615C8AB72A52AEB900EF7859 /* Embed Libraries */,
+				61C01E3B2ED05FF300DB7101 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -350,6 +351,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		61C01E3B2ED05FF300DB7101 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# 自动签名所有 Frameworks 下的 dylib\nfor dylib in \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}\"/*.dylib; do\n    if [ -f \"$dylib\" ]; then\n        echo \"Ad-hoc signing: $dylib\"\n        codesign --force --sign - \"$dylib\"\n    fi\ndone\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		61E43B812A3C645B00FBF9BD /* Sources */ = {
