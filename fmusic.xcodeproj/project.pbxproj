@@ -16,35 +16,35 @@
 		613F7B4E2A4D76E000F26C1B /* deps in Resources */ = {isa = PBXBuildFile; fileRef = 613F7B4D2A4D76E000F26C1B /* deps */; };
 		613F7B9C2A4D862E00F26C1B /* ffmpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = 613F7B9B2A4D862E00F26C1B /* ffmpeg.c */; };
 		615C8AA92A52AEB900EF7859 /* libxcb-shm.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6137B3BC2A4ED19C00AD6553 /* libxcb-shm.0.dylib */; };
-		615C8AAA2A52AEB900EF7859 /* libxcb-shm.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 6137B3BC2A4ED19C00AD6553 /* libxcb-shm.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AAA2A52AEB900EF7859 /* libxcb-shm.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 6137B3BC2A4ED19C00AD6553 /* libxcb-shm.0.dylib */; };
 		615C8AAB2A52AEB900EF7859 /* libxcb-xfixes.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 6137B3992A4ED19B00AD6553 /* libxcb-xfixes.0.dylib */; };
-		615C8AAC2A52AEB900EF7859 /* libxcb-xfixes.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 6137B3992A4ED19B00AD6553 /* libxcb-xfixes.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AAC2A52AEB900EF7859 /* libxcb-xfixes.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 6137B3992A4ED19B00AD6553 /* libxcb-xfixes.0.dylib */; };
 		615C8AD32A52C60200EF7859 /* libX11.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AD22A52C60200EF7859 /* libX11.6.dylib */; };
-		615C8AD42A52C60200EF7859 /* libX11.6.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AD22A52C60200EF7859 /* libX11.6.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AD42A52C60200EF7859 /* libX11.6.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AD22A52C60200EF7859 /* libX11.6.dylib */; };
 		615C8AD62A52C7AD00EF7859 /* libxcb.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AD52A52C7AD00EF7859 /* libxcb.1.dylib */; };
-		615C8AD72A52C7AD00EF7859 /* libxcb.1.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AD52A52C7AD00EF7859 /* libxcb.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AD72A52C7AD00EF7859 /* libxcb.1.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AD52A52C7AD00EF7859 /* libxcb.1.dylib */; };
 		615C8AD92A52C7D200EF7859 /* libxcb-shape.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AD82A52C7D200EF7859 /* libxcb-shape.0.dylib */; };
-		615C8ADA2A52C7D200EF7859 /* libxcb-shape.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AD82A52C7D200EF7859 /* libxcb-shape.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8ADA2A52C7D200EF7859 /* libxcb-shape.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AD82A52C7D200EF7859 /* libxcb-shape.0.dylib */; };
 		615C8ADC2A52C7E500EF7859 /* libXau.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8ADB2A52C7E500EF7859 /* libXau.6.dylib */; };
-		615C8ADD2A52C7E500EF7859 /* libXau.6.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8ADB2A52C7E500EF7859 /* libXau.6.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8ADD2A52C7E500EF7859 /* libXau.6.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8ADB2A52C7E500EF7859 /* libXau.6.dylib */; };
 		615C8ADF2A52C7F800EF7859 /* libXdmcp.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8ADE2A52C7F800EF7859 /* libXdmcp.6.dylib */; };
-		615C8AE02A52C7F800EF7859 /* libXdmcp.6.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8ADE2A52C7F800EF7859 /* libXdmcp.6.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AE02A52C7F800EF7859 /* libXdmcp.6.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8ADE2A52C7F800EF7859 /* libXdmcp.6.dylib */; };
 		615C8AE12A55578700EF7859 /* libswresample.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AB92A52AEB900EF7859 /* libswresample.4.dylib */; };
-		615C8AE22A55578700EF7859 /* libswresample.4.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AB92A52AEB900EF7859 /* libswresample.4.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AE22A55578700EF7859 /* libswresample.4.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AB92A52AEB900EF7859 /* libswresample.4.dylib */; };
 		615C8AEA2A55578700EF7859 /* libavdevice.60.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AE32A55578700EF7859 /* libavdevice.60.dylib */; };
-		615C8AEB2A55578700EF7859 /* libavdevice.60.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE32A55578700EF7859 /* libavdevice.60.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AEB2A55578700EF7859 /* libavdevice.60.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE32A55578700EF7859 /* libavdevice.60.dylib */; };
 		615C8AEC2A55578700EF7859 /* libavcodec.60.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AE42A55578700EF7859 /* libavcodec.60.dylib */; };
-		615C8AED2A55578700EF7859 /* libavcodec.60.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE42A55578700EF7859 /* libavcodec.60.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AED2A55578700EF7859 /* libavcodec.60.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE42A55578700EF7859 /* libavcodec.60.dylib */; };
 		615C8AEE2A55578700EF7859 /* libavformat.60.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AE52A55578700EF7859 /* libavformat.60.dylib */; };
-		615C8AEF2A55578700EF7859 /* libavformat.60.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE52A55578700EF7859 /* libavformat.60.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AEF2A55578700EF7859 /* libavformat.60.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE52A55578700EF7859 /* libavformat.60.dylib */; };
 		615C8AF02A55578700EF7859 /* libavfilter.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AE62A55578700EF7859 /* libavfilter.9.dylib */; };
-		615C8AF12A55578700EF7859 /* libavfilter.9.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE62A55578700EF7859 /* libavfilter.9.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AF12A55578700EF7859 /* libavfilter.9.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE62A55578700EF7859 /* libavfilter.9.dylib */; };
 		615C8AF22A55578700EF7859 /* libswscale.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AE72A55578700EF7859 /* libswscale.7.dylib */; };
-		615C8AF32A55578700EF7859 /* libswscale.7.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE72A55578700EF7859 /* libswscale.7.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AF32A55578700EF7859 /* libswscale.7.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE72A55578700EF7859 /* libswscale.7.dylib */; };
 		615C8AF42A55578700EF7859 /* libavutil.58.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AE82A55578700EF7859 /* libavutil.58.dylib */; };
-		615C8AF52A55578700EF7859 /* libavutil.58.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE82A55578700EF7859 /* libavutil.58.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AF52A55578700EF7859 /* libavutil.58.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE82A55578700EF7859 /* libavutil.58.dylib */; };
 		615C8AF62A55578700EF7859 /* libopenjp2.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 615C8AE92A55578700EF7859 /* libopenjp2.7.dylib */; };
-		615C8AF72A55578700EF7859 /* libopenjp2.7.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE92A55578700EF7859 /* libopenjp2.7.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		615C8AF72A55578700EF7859 /* libopenjp2.7.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 615C8AE92A55578700EF7859 /* libopenjp2.7.dylib */; };
 		617083A62A6798FC00D87AC8 /* ModifiersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617083A52A6798FC00D87AC8 /* ModifiersView.swift */; };
 		617083A82A67E6D300D87AC8 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617083A72A67E6D300D87AC8 /* AudioPlayer.swift */; };
 		617083AA2A68E80A00D87AC8 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617083A92A68E80A00D87AC8 /* FavoritesView.swift */; };
@@ -287,6 +287,7 @@
 				61E43B832A3C645B00FBF9BD /* Resources */,
 				61FEAF732A4D30BD001EB24F /* Embed Libraries */,
 				615C8AB72A52AEB900EF7859 /* Embed Libraries */,
+				61C01E3B2ED05FF300DB7101 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -350,6 +351,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		61C01E3B2ED05FF300DB7101 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# 自动签名所有 Frameworks 下的 dylib\nfor dylib in \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}\"/*.dylib; do\n    if [ -f \"$dylib\" ]; then\n        echo \"Ad-hoc signing: $dylib\"\n        codesign --force --sign - \"$dylib\"\n    fi\ndone\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		61E43B812A3C645B00FBF9BD /* Sources */ = {
@@ -501,10 +522,12 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = F6AF2Z7N97;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
@@ -519,6 +542,7 @@
 				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rustpub.fmusic;
 				PRODUCT_NAME = fmusic;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Shared/music (macOS)-Bridging-Header.h";
@@ -536,10 +560,12 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = F6AF2Z7N97;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
@@ -554,6 +580,7 @@
 				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rustpub.fmusic;
 				PRODUCT_NAME = fmusic;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Shared/music (macOS)-Bridging-Header.h";
