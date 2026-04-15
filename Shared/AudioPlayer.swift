@@ -181,12 +181,34 @@ func searchLyrics(song: String, artist: String, timeout: Double, completion: @es
 }
 
 class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
+    // --- 持久化存储的目录列表 ---
+    private let savedMusicDirsKey = "SavedMusicDirectories"
+    @Published var savedDirectories: [String] = [] {
+        didSet {
+            // 自动保存到 UserDefaults
+            saveDirectories()
+        }
+    }
+    
+    // --- 播放列表管理 ---
+    private let playlistsKey = "SavedPlaylists"
+    @Published var playlists: [Playlist] = [] {
+        didSet {
+            savePlaylists()
+        }
+    }
+    @Published var currentPlaylistIndex: Int = -1  // 当前选中的播放列表索引
+    
+    // 当前激活的播放列表（可能是曲库或某个自定义播放列表）
+    @Published var activePlayList: [Song] = .init()  // 当前实际播放的列表
+    @Published var isPlayingFromPlaylist = false  // 是否从播放列表播放
+
     // --- 播放器实例 ---
     // @Published private var soudPlayer: AVAudioPlayer? // 直接发布 AVAudioPlayer 可能会有问题，设为 private
     private var soudPlayer: AVAudioPlayer?
 
     // --- 播放状态与信息 ---
-    @Published var playList: [Song] = .init() // 播放列表
+    @Published var playList: [Song] = .init() // 播放列表（曲库）
     @Published var isPlaying: Bool = false // 是否正在播放
     @Published var isfinished: Bool = false // 考虑是否需要，委托方法会处理播放完成
     @Published var currentSong = Song() // 当前播放的歌曲
@@ -226,6 +248,8 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     // --- 初始化 ---
     override init() {
         super.init()
+        loadSavedDirectories()  // 加载已保存的目录
+        loadPlaylists()  // 加载已保存的播放列表
     }
 
     init(path: String) {
@@ -240,6 +264,169 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     deinit {
         flog.debug("AudioPlayer 析构。")
         stopAndCleanup() // 在析构时确保清理
+    }
+
+    // MARK: - 目录持久化管理
+    
+    /// 从 UserDefaults 加载已保存的目录
+    private func loadSavedDirectories() {
+        if let dirs = UserDefaults.standard.array(forKey: savedMusicDirsKey) as? [String] {
+            savedDirectories = dirs
+            flog.debug("已加载 \(dirs.count) 个保存的目录")
+        }
+    }
+    
+    /// 保存目录列表到 UserDefaults
+    private func saveDirectories() {
+        UserDefaults.standard.set(savedDirectories, forKey: savedMusicDirsKey)
+        flog.debug("已保存 \(savedDirectories.count) 个目录")
+    }
+    
+    /// 添加新目录（自动去重）
+    func addDirectory(_ path: String) {
+        if !savedDirectories.contains(path) {
+            savedDirectories.append(path)
+            flog.debug("添加新目录: \(path)")
+        }
+    }
+    
+    /// 移除指定目录
+    func removeDirectory(at index: Int) {
+        guard index >= 0, index < savedDirectories.count else { return }
+        let removed = savedDirectories.remove(at: index)
+        flog.debug("移除目录: \(removed)")
+    }
+    
+    /// 重新加载所有已保存的目录（合并到播放列表）
+    func reloadAllSavedDirectories() {
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            guard let self = self else { return }
+            var loadedSongs = [Song]()
+            
+            for dir in self.savedDirectories {
+                let songsFromFolder = LoadFiles(dir: dir)
+                loadedSongs.append(contentsOf: songsFromFolder)
+            }
+            
+            // 排序
+            let sortedSongs = loadedSongs.sorted { s1, s2 in
+                if s1.album == s2.album {
+                    if s1.artist == s2.artist {
+                        return s1.track < s2.track
+                    }
+                    return s1.artist < s2.artist
+                }
+                return s1.album < s2.album
+            }
+            
+            // 去重（基于 filePath）
+            let uniqueSongs = sortedSongs.reduce(into: [Song]()) { result, song in
+                if !result.contains(where: { $0.filePath == song.filePath }) {
+                    result.append(song)
+                }
+            }
+            
+            DispatchQueue.main.async {
+                self.playList = uniqueSongs
+                flog.info("重新加载完成，共 \(uniqueSongs.count) 首歌曲")
+            }
+        }
+    }
+
+    // MARK: - 播放列表管理
+    
+    /// 创建新的播放列表
+    @discardableResult
+    func createPlaylist(name: String) -> Playlist {
+        let newPlaylist = Playlist(name: name)
+        playlists.append(newPlaylist)
+        flog.debug("创建播放列表: \(name)")
+        return newPlaylist
+    }
+    
+    /// 删除播放列表
+    func deletePlaylist(at index: Int) {
+        guard index >= 0, index < playlists.count else { return }
+        let removed = playlists.remove(at: index)
+        flog.debug("删除播放列表: \(removed.name)")
+        
+        // 如果删除的是当前选中的播放列表，重置状态
+        if currentPlaylistIndex == index {
+            currentPlaylistIndex = -1
+            isPlayingFromPlaylist = false
+        } else if currentPlaylistIndex > index {
+            currentPlaylistIndex -= 1
+        }
+    }
+    
+    /// 重命名播放列表
+    func renamePlaylist(at index: Int, newName: String) {
+        guard index >= 0, index < playlists.count else { return }
+        playlists[index].rename(to: newName)
+    }
+    
+    /// 添加歌曲到指定播放列表
+    func addSongToPlaylist(_ song: Song, playlistIndex: Int) {
+        guard playlistIndex >= 0, playlistIndex < playlists.count else { return }
+        playlists[playlistIndex].addSong(song)
+    }
+    
+    /// 添加多首歌曲到指定播放列表
+    func addSongsToPlaylist(_ songs: [Song], playlistIndex: Int) {
+        guard playlistIndex >= 0, playlistIndex < playlists.count else { return }
+        playlists[playlistIndex].addSongs(songs)
+    }
+    
+    /// 从播放列表移除歌曲
+    func removeSongFromPlaylist(playlistIndex: Int, songIndex: Int) {
+        guard playlistIndex >= 0, playlistIndex < playlists.count else { return }
+        playlists[playlistIndex].removeSong(at: songIndex)
+    }
+    
+    /// 选中播放列表（加载到活动列表）
+    func selectPlaylist(at index: Int) {
+        guard index >= 0, index < playlists.count else { return }
+        currentPlaylistIndex = index
+        activePlayList = playlists[index].songs
+        isPlayingFromPlaylist = true
+        flog.debug("选中播放列表: \(playlists[index].name), 共 \(activePlayList.count) 首歌曲")
+    }
+    
+    /// 切换到曲库模式
+    func selectLibrary() {
+        currentPlaylistIndex = -1
+        activePlayList = playList
+        isPlayingFromPlaylist = false
+    }
+    
+    // MARK: - 播放列表持久化
+    
+    /// 保存播放列表到 UserDefaults
+    private func savePlaylists() {
+        do {
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .secondsSince1970
+            let data = try encoder.encode(playlists)
+            UserDefaults.standard.set(data, forKey: playlistsKey)
+            flog.debug("已保存 \(playlists.count) 个播放列表")
+        } catch {
+            flog.error("保存播放列表失败: \(error)")
+        }
+    }
+    
+    /// 从 UserDefaults 加载播放列表
+    private func loadPlaylists() {
+        if let data = UserDefaults.standard.data(forKey: playlistsKey) {
+            do {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .secondsSince1970
+                playlists = try decoder.decode([Playlist].self, from: data)
+                flog.debug("已加载 \(playlists.count) 个播放列表")
+            } catch {
+                flog.error("加载播放列表失败: \(error)")
+                playlists = []
+            }
+        }
     }
 
     // 计算卡拉OK进度的方法 ---

@@ -22,6 +22,7 @@ struct MainMenuView: Commands {
             }).keyboardShortcut("o")
             Button(action: {
                 player.playList.removeAll()
+                player.savedDirectories.removeAll()  // 同时清空保存的目录
             }, label: {
                 Text("清空资料库")
             }).keyboardShortcut("d")
@@ -62,6 +63,11 @@ func OpenSelectFolderWindws(player: AudioPlayer) {
                     // 在后台调用 LoadFiles
                     let songsFromFolder = LoadFiles(dir: url.path) // LoadFiles 内部的所有操作现在都在后台执行
                     loadedSongs.append(contentsOf: songsFromFolder)
+                    
+                    // 保存目录路径
+                    DispatchQueue.main.async {
+                        player.addDirectory(url.path)
+                    }
                 }
 
                 // 在后台进行排序

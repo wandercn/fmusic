@@ -10,14 +10,13 @@ import SwiftUI
 
 struct ListContentView: View {
     @ObservedObject var player: AudioPlayer
-    @State private var showLibrary = true
-    @State private var showPlayList = false
-    @State private var showFavorites = false
     @Binding var isShowLyrics: Bool
     @State var searchText = ""
-    @State private var favorites: [Song] = [Song()]
+    @State private var selectedPlaylist: Int = -1  // -1 表示曲库，>=0 表示播放列表索引
+    
     var body: some View {
         NavigationView {
+            // 第一个视图：侧边栏
             List {
                 HStack {
                     TextField("搜索", text: $searchText)
@@ -28,10 +27,10 @@ struct ListContentView: View {
                                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .trailing)
                                 .padding(.trailing, 5)
                         )
-
-                        .textFieldStyle(.roundedBorder)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
                 }
 
+                // 播放列表管理
                 Section(
                     header:
                     HStack {
@@ -41,109 +40,103 @@ struct ListContentView: View {
                     .font(.headline)
                     .foregroundColor(.red)
                 ) {
-                    NavigationLink("歌曲", isActive: $showLibrary) {
-                        LibraryView(
-                            player: player,
-                            searchText: $searchText
-                        )
-                    }.padding(.leading, 10)
+                    PlaylistSidebarView(
+                        player: player,
+                        selectedPlaylist: $selectedPlaylist
+                    )
+                    .padding(.leading, 10)
                 }
 
-//                .headerProminence(.increased)
-
-                Section(
-                    header: HStack {
-                        Text("我的收藏")
-                        Image(systemName: "suit.heart")
-                    }
-                    .font(.headline)
-                    .foregroundColor(.purple)
-                ) {
-                    NavigationLink("我的收藏", isActive: $showFavorites) {
-                        if #available(macOS 12.0, *) {
-                            FavoritesView(player: player, favoritesList: $favorites, searchText: $searchText)
-                                .task {
-                                    favorites = player.playList.filter { song in
-                                        song.isHeartChecked == true
-                                    }
-                                }
-                        } else {
-                            FavoritesView(player: player, favoritesList: $favorites, searchText: $searchText)
-                                .onAppear {
-                                    favorites = player.playList.filter { song in
-                                        song.isHeartChecked == true
-                                    }
-                                }
+                // 已保存的目录列表
+                if !player.savedDirectories.isEmpty {
+                    Section(
+                        header: HStack {
+                            Text("已保存的目录 (\(player.savedDirectories.count))")
+                            Image(systemName: "folder.fill")
                         }
-                    }.padding(.leading, 10)
+                        .font(.headline)
+                        .foregroundColor(.blue)
+                    ) {
+                        ForEach(Array(player.savedDirectories.enumerated()), id: \.offset) { index, dir in
+                            HStack {
+                                Image(systemName: "folder")
+                                    .foregroundColor(.blue)
+                                Text(URL(fileURLWithPath: dir).lastPathComponent)
+                                    .font(.subheadline)
+                                    .lineLimit(1)
+                                Spacer()
+                                Button(action: {
+                                    player.removeDirectory(at: index)
+                                    player.reloadAllSavedDirectories()
+                                }) {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundColor(.red)
+                                }
+                                .buttonStyle(BorderlessButtonStyle())
+                                .help("移除该目录")
+                            }
+                            .padding(.vertical, 2)
+                            .contextMenu {
+                                Button(action: {
+                                    NSWorkspace.shared.selectFile(dir, inFileViewerRootedAtPath: URL(fileURLWithPath: dir).deletingLastPathComponent().path)
+                                }) {
+                                    Text("在 Finder 中显示")
+                                    Image(systemName: "folder")
+                                }
+                            }
+                        }
+                    }
                 }
-//                .headerProminence(.increased)
+                
                 Spacer()
             }
+            .listStyle(SidebarListStyle())
+            .frame(minWidth: 200)
 
-//            .searchable(text: $searchText, placement: .sidebar, prompt: "搜索")
-            // 侧边搜索x栏
+            // 第二个视图：主内容区域
+            ZStack {
+                if selectedPlaylist == -1 {
+                    // 显示曲库
+                    LibraryView(
+                        player: player,
+                        searchText: $searchText
+                    )
+                } else {
+                    // 显示播放列表
+                    PlaylistsView(
+                        player: player,
+                        searchText: $searchText
+                    )
+                }
+            }
+            .navigationTitle(selectedPlaylist == -1 ? "所有歌曲" : (selectedPlaylist < player.playlists.count ? player.playlists[selectedPlaylist].name : "播放列表"))
         }
-        .navigationTitle("music")
-        .toolbar(content: {
+        .toolbar {
             ToolbarItemGroup(placement: .automatic) {
                 Button(action: {
                     OpenSelectFolderWindws(player: player)
-                }, label: {
-                    Image(systemName: "folder.badge.plus")
-                })
-                .help("导入音乐文件夹")
+                }) {
+                    Image(systemName: "plus.rectangle.on.folder")
+                }
+                .help("添加本地文件夹")
 
                 Button(action: {
                     player.playList.removeAll()
-                }, label: {
+                    player.Stop()
+                }) {
                     Image(systemName: "trash")
-                })
+                }
                 .help("清空资料库")
+                
                 Spacer()
-                Button {
+                
+                Button(action: {
                     isShowLyrics.toggle()
-                } label: {
+                }) {
                     Image(systemName: "text.bubble")
                 }
-
-//                Button(action: toggleSidebar, label: {
-//                    Image(systemName: "sidebar.left")
-//                })
-//                .help("隐藏左侧导航栏")
+                .help(isShowLyrics ? "隐藏歌词" : "显示歌词")
             }
-
-        })
-
-        .navigationViewStyle(.automatic)
-    }
-}
-
-func toggleSidebar() {
-    #if os(macOS)
-    flog.debug("隐藏侧边栏")
-    NSApp.keyWindow?.initialFirstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
-
-    #endif
-}
-
-struct SearchView: View {
-    @Binding var searched: Bool
-    @Binding var searchText: String
-    var body: some View {
-        VStack {
-            HStack {
-                ZStack(alignment: .trailing) {
-                    TextField("请输入搜索内容", text: $searchText)
-                        .frame(width: 300)
-                    Button {} label: {
-                        Image(systemName: "magnifyingglass")
-                    }
-                    .buttonStyle(.borderless)
-                }
-                Spacer()
-            }
-            Spacer()
         }
     }
 }
@@ -153,57 +146,57 @@ struct LibraryView: View {
     @Binding var searchText: String
 
     let titles = ["歌曲名", "艺术家", "专辑", "时长"]
-    // 列表显示搜索结果
     var searchResults: [Song] {
         if searchText.isEmpty {
             return player.playList
         } else {
             return player.playList.filter { x in
-                x.name.contains(searchText) || x.album.contains(searchText) || x.artist.contains(searchText)
+                x.name.localizedCaseInsensitiveContains(searchText) || 
+                x.album.localizedCaseInsensitiveContains(searchText) || 
+                x.artist.localizedCaseInsensitiveContains(searchText)
             }
         }
     }
 
     var body: some View {
-        HStack {
-            Group {
+        VStack(spacing: 0) {
+            HStack {
                 ForEach(titles, id: \.self) { title in
                     Text(title)
-                        .font(.headline) // 字C体
-                        .fontWeight(.semibold) // 字体粗细
+                        .font(.headline)
+                        .fontWeight(.semibold)
                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                         .padding(.leading, title == "歌曲名" ? 28 : 0)
                         .padding(.leading, title == "艺术家" ? 10 : 0)
                 }
             }
-        }
-        .border(.gray, width: 0.5)
-        .background(Color.white)
-        .padding(.bottom, -9)
-        if searchResults.isEmpty {
-            EmpetyListView()
-        } else {
-            List {
-                ForEach(searchResults, id: \.self) { song in
-                    let index = searchResults.firstIndex(of: song)!
-                    RowView(player: player, song: song, index: index)
+            .border(Color.gray, width: 0.5)
+            .background(Color.white)
+            .padding(.bottom, -9)
+
+            if searchResults.isEmpty {
+                EmpetyListView()
+            } else {
+                List {
+                    ForEach(searchResults, id: \.self) { song in
+                        if let index = searchResults.firstIndex(of: song) {
+                            RowView(player: player, song: song, index: index)
+                        }
+                    }
                 }
             }
         }
-//        .listStyle(.bordered(alternatesRowBackgrounds: true))
     }
-    //    func deleteItem(offsets: IndexSet){
-    //        libraryList.remove(atOffsets: offsets)
-    //    }
 }
 
 struct RowView: View {
     @ObservedObject var player: AudioPlayer
     @State var song: Song
     private let rowHeight = 20.0
-    @State var index: Int
+    var index: Int
     @State var isShowMeta = false
     @State var isShowDetails = false
+
     var body: some View {
         ZStack {
             HStack {
@@ -218,21 +211,9 @@ struct RowView: View {
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: rowHeight, alignment: .leading)
                 .padding(.horizontal, 10)
                 .onTapGesture(count: 2) {
-                    flog.debug("onTapGesture2 .......")
-                    // 双击行切换歌曲播放
                     player.currentSong = song
-                }
-                .onTapGesture(count: 1) {
-                    flog.debug("onTapGesture1 .......")
-                    // 选中行改变背景色
-                    if player.playList.count > 0 {
-                        for index in 0 ..< player.playList.count {
-                            if player.playList[index].id == song.id {
-                                player.playList[index].isSelected.toggle()
-                                return
-                            }
-                        }
-                    }
+                    player.playList = player.playList
+                    player.isPlayingFromPlaylist = false
                 }
             }
 
@@ -244,9 +225,7 @@ struct RowView: View {
                         .frame(width: 20, height: rowHeight, alignment: .leading)
                         .scaledToFit()
                 }
-
                 Spacer()
-
                 if song.isHeartChecked {
                     Image(systemName: "heart.circle.fill")
                         .resizable()
@@ -254,76 +233,42 @@ struct RowView: View {
                         .frame(width: 20, height: rowHeight, alignment: .leading)
                         .scaledToFill()
                 }
-//                Image(systemName: "ellipsis")
-//                    .foregroundColor(song.isSelected ? Color.white : Color.red)
-//                    .scaledToFill()
-//                    .contextMenu {
-//                        Button {
-//                            isShowMeta = true
-//                            flog.debug("song: \(song)")
-//                        } label: {
-//                            HStack {
-//                                Text("编辑元信息")
-//                                Image(systemName: "square.and.pencil")
-//                            }
-//                        }
-//                        Button {
-//                            isShowDetails = true
-//                            flog.debug("song: \(song)")
-//                        } label: {
-//                            HStack {
-//                                Text("文件详情")
-//                                Image(systemName: "info.circle")
-//                            }
-//                        }
-//                    }
             }
         }
         .contextMenu {
-            Button {
-                isShowMeta = true
-                flog.debug("song: \(song)")
-            } label: {
-                HStack {
-                    Text("编辑元信息")
-                    Image(systemName: "square.and.pencil")
-                }
+            Button(action: { isShowMeta = true }) {
+                Text("编辑元信息")
+                Image(systemName: "square.and.pencil")
             }
-            Button {
-                isShowDetails = true
-                flog.debug("song: \(song)")
-            } label: {
-                HStack {
-                    Text("文件详情")
-                    Image(systemName: "info.circle")
+            Button(action: { isShowDetails = true }) {
+                Text("文件详情")
+                Image(systemName: "info.circle")
+            }
+            
+            Divider()
+            
+            // 使用显式的类型包装解决 macOS 11 下的 Menu 推断问题
+            Menu("添加到播放列表") {
+                ForEach(player.playlists, id: \.id) { playlist in
+                    Button(action: {
+                        if let pIndex = player.playlists.firstIndex(where: { $0.id == playlist.id }) {
+                            player.addSongToPlaylist(song, playlistIndex: pIndex)
+                        }
+                    }) {
+                        Text(playlist.name)
+                    }
+                }
+                if player.playlists.isEmpty {
+                    Text("暂无播放列表")
                 }
             }
         }
-        .sheet(isPresented: $isShowMeta, content: {
-            MetaDataView(player: player, song: $song, isShowMeta: $isShowMeta)
-        })
-        .sheet(isPresented: $isShowDetails, content: {
-            DetailsView(player: player, song: $song, isShowDetails: $isShowDetails)
-        })
-
-        .foregroundColor(song.isSelected ? Color.white : Color.black) // 前景颜色
+        .sheet(isPresented: $isShowMeta) { MetaDataView(player: player, song: $song, isShowMeta: $isShowMeta) }
+        .sheet(isPresented: $isShowDetails) { DetailsView(player: player, song: $song, isShowDetails: $isShowDetails) }
+        .foregroundColor(song.isSelected ? Color.white : Color.black)
         .background(song.isSelected ? Color.purple : Color.clear)
-        // 隔行变化背景颜色
         .background(index % 2 == 0 ? Color("lightGrey") : Color.clear)
         .itemBackgroundOnHover()
-
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: rowHeight, alignment: .leading)
-    }
-
-    func openInPreview() {}
-
-    func saveAsPDF() {}
-}
-
-// 双击按钮
-struct DoubleTapButtonStyle: PrimitiveButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .gesture(TapGesture(count: 2).onEnded { configuration.trigger() })
     }
 }

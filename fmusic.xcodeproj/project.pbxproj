@@ -56,6 +56,8 @@
 		61E43B992A3C660600FBF9BD /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E43B972A3C660600FBF9BD /* Song.swift */; };
 		61E43B9D2A3C67F900FBF9BD /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E43B9B2A3C67F900FBF9BD /* PlayerView.swift */; };
 		61E43BA02A3C686A00FBF9BD /* ListContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E43B9E2A3C686A00FBF9BD /* ListContentView.swift */; };
+		61EC9AA12F8FEACF003D0D70 /* PlaylistsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EC9AA02F8FEACF003D0D70 /* PlaylistsView.swift */; };
+		61EC9AA32F8FEAF2003D0D70 /* Playlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EC9AA22F8FEAF2003D0D70 /* Playlist.swift */; };
 		61F03E1F2A9332B70024CA07 /* DetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61F03E1E2A9332B70024CA07 /* DetailsView.swift */; };
 		61F03E232A95FCF30024CA07 /* AboutDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61F03E222A95FCF30024CA07 /* AboutDelegate.swift */; };
 		61F03E252A95FD920024CA07 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61F03E242A95FD920024CA07 /* AboutView.swift */; };
@@ -138,6 +140,8 @@
 		61E43B972A3C660600FBF9BD /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
 		61E43B9B2A3C67F900FBF9BD /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		61E43B9E2A3C686A00FBF9BD /* ListContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListContentView.swift; sourceTree = "<group>"; };
+		61EC9AA02F8FEACF003D0D70 /* PlaylistsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistsView.swift; sourceTree = "<group>"; };
+		61EC9AA22F8FEAF2003D0D70 /* Playlist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Playlist.swift; sourceTree = "<group>"; };
 		61F03E1E2A9332B70024CA07 /* DetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsView.swift; sourceTree = "<group>"; };
 		61F03E222A95FCF30024CA07 /* AboutDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutDelegate.swift; sourceTree = "<group>"; };
 		61F03E242A95FD920024CA07 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
@@ -252,6 +256,7 @@
 		61E43B962A3C64FD00FBF9BD /* Module */ = {
 			isa = PBXGroup;
 			children = (
+				61EC9AA22F8FEAF2003D0D70 /* Playlist.swift */,
 				612493EF2A975CA6000662AB /* LyricsParser */,
 				61E43B972A3C660600FBF9BD /* Song.swift */,
 			);
@@ -261,6 +266,7 @@
 		61E43B9A2A3C67B000FBF9BD /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				61EC9AA02F8FEACF003D0D70 /* PlaylistsView.swift */,
 				61F9D1492A8C9FB300F41970 /* MetaDataView.swift */,
 				61E43B9B2A3C67F900FBF9BD /* PlayerView.swift */,
 				61E43B9E2A3C686A00FBF9BD /* ListContentView.swift */,
@@ -387,12 +393,14 @@
 				61F03E1F2A9332B70024CA07 /* DetailsView.swift in Sources */,
 				617083A62A6798FC00D87AC8 /* ModifiersView.swift in Sources */,
 				612493F92A985CC9000662AB /* LyricsView.swift in Sources */,
+				61EC9AA12F8FEACF003D0D70 /* PlaylistsView.swift in Sources */,
 				61F03E232A95FCF30024CA07 /* AboutDelegate.swift in Sources */,
 				613F7B9C2A4D862E00F26C1B /* ffmpeg.c in Sources */,
 				61E43B892A3C645B00FBF9BD /* musicApp.swift in Sources */,
 				612493F12A975CC5000662AB /* LyricsHeader.swift in Sources */,
 				6118689D2A7274AB006335DD /* EmpetyListView.swift in Sources */,
 				61E43B9D2A3C67F900FBF9BD /* PlayerView.swift in Sources */,
+				61EC9AA32F8FEAF2003D0D70 /* Playlist.swift in Sources */,
 				61E43BA02A3C686A00FBF9BD /* ListContentView.swift in Sources */,
 				612493F52A975D11000662AB /* LyricsParser.swift in Sources */,
 				612493F32A975CF0000662AB /* LyricsItem.swift in Sources */,

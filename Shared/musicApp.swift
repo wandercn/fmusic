@@ -15,9 +15,16 @@ var flog = Logger(label: "org.ffactory.fmusic")
 struct musicApp: App {
     @NSApplicationDelegateAdaptor(AboutDelegate.self) var aboutDelegate
     @StateObject var player = AudioPlayer()
+    
     var body: some Scene {
         WindowGroup {
             ContentView(player: player)
+                .onAppear {
+                    // 启动时自动加载已保存的目录
+                    if !player.savedDirectories.isEmpty {
+                        player.reloadAllSavedDirectories()
+                    }
+                }
         }
         .windowStyle(.hiddenTitleBar)
         .commands {
