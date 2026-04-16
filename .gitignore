@@ -88,3 +88,4 @@ fastlane/test_output
 # https://github.com/johnno1962/injectionforxcode
 
 iOSInjectionProject/
+\n# Temporary and AI config files\n.qwen/\n.gemini/\nbuild_log.txt
