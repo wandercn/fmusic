@@ -20,7 +20,21 @@ struct PlaylistsView: View {
         let filteredSongs = searchText.isEmpty ? songs : songs.filter { $0.name.localizedCaseInsensitiveContains(searchText) || $0.artist.localizedCaseInsensitiveContains(searchText) }
 
         VStack(spacing: 0) {
-            header
+            HStack {
+                Group {
+                    ForEach(titles, id: \.self) { title in
+                        Text(title)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                            .padding(.leading, title == "歌曲名" ? 28 : (title == "艺术家" ? 10 : 0))
+                    }
+                }
+            }
+            .border(Color.gray, width: 0.5)
+            .background(Color.white)
+            .padding(.bottom, -1)
+
             if filteredSongs.isEmpty {
                 EmpetyListView()
             } else {
@@ -31,21 +45,8 @@ struct PlaylistsView: View {
                 }
             }
         }
+        .background(Color.white)
         .navigationTitle(playlistIndex >= 0 && playlistIndex < player.playlists.count ? player.playlists[playlistIndex].name : "播放列表")
-    }
-
-    private var header: some View {
-        HStack {
-            ForEach(titles, id: \.self) { title in
-                Text(title)
-                    .font(.headline)
-                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                    .padding(.leading, title == "歌曲名" ? 28 : (title == "艺术家" ? 10 : 0))
-            }
-        }
-        .padding(.vertical, 8)
-        .background(Color(NSColor.windowBackgroundColor))
-        .overlay(Divider(), alignment: .bottom)
     }
 }
 
@@ -74,7 +75,7 @@ struct PlaylistRowView: View {
                 .onTapGesture(count: 2) { player.play(song: song, in: queue) }
             }
 
-            if player.currentSong.id == song.id {
+            if player.currentSong.filePath == song.filePath {
                 HStack {
                     Image(systemName: "livephoto.play").resizable().foregroundColor(song.isSelected ? .white : .red).frame(width: 20, height: 20)
                     Spacer()
@@ -99,7 +100,7 @@ struct PlaylistRowView: View {
 /// 侧边栏播放列表管理视图
 struct PlaylistSidebarView: View {
     @ObservedObject var player: AudioPlayer
-    @Binding var selectedPlaylist: Int
+    @Binding var selectedPlaylist: Int?
     @State private var showingCreateSheet = false
     @State private var editingIndex: Int? = nil
     
@@ -141,7 +142,7 @@ struct SidebarPlaylistItemView: View {
     @ObservedObject var player: AudioPlayer
     let index: Int
     let playlist: Playlist
-    @Binding var selectedPlaylist: Int
+    @Binding var selectedPlaylist: Int?
     @Binding var editingIndex: Int?
     
     var body: some View {
@@ -158,7 +159,7 @@ struct SidebarPlaylistItemView: View {
             .buttonStyle(BorderlessButtonStyle())
             .blueBackgroundOnSelect(isSelected: selectedPlaylist == index)
             
-            Button(action: { player.deletePlaylist(at: index); if selectedPlaylist == index { selectedPlaylist = -1 } }) {
+            Button(action: { player.deletePlaylist(at: index); if selectedPlaylist == index { selectedPlaylist = nil } }) {
                 Image(systemName: "xmark.circle.fill").foregroundColor(.red).font(.caption)
             }
             .buttonStyle(BorderlessButtonStyle())
@@ -167,7 +168,7 @@ struct SidebarPlaylistItemView: View {
         .padding(.vertical, 2)
         .contextMenu {
             Button(action: { editingIndex = index }) { Text("重命名") }
-            Button(action: { player.deletePlaylist(at: index); if selectedPlaylist == index { selectedPlaylist = -1 } }) { Text("删除") }
+            Button(action: { player.deletePlaylist(at: index); if selectedPlaylist == index { selectedPlaylist = nil } }) { Text("删除") }
         }
     }
 }

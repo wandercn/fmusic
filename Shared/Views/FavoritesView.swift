@@ -33,7 +33,21 @@ struct FavoritesView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            header
+            HStack {
+                Group {
+                    ForEach(titles, id: \.self) { title in
+                        Text(title)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                            .padding(.leading, title == "歌曲名" ? 28 : (title == "艺术家" ? 10 : 0))
+                    }
+                }
+            }
+            .border(Color.gray, width: 0.5)
+            .background(Color.white)
+            .padding(.bottom, -1)
+
             if searchResults.isEmpty {
                 EmpetyListView()
             } else {
@@ -46,20 +60,7 @@ struct FavoritesView: View {
                 }
             }
         }
+        .background(Color.white)
         .navigationTitle("我的收藏")
-    }
-
-    private var header: some View {
-        HStack {
-            ForEach(titles, id: \.self) { title in
-                Text(title)
-                    .font(.headline)
-                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                    .padding(.leading, title == "歌曲名" ? 28 : (title == "艺术家" ? 10 : 0))
-            }
-        }
-        .padding(.vertical, 8)
-        .background(Color(NSColor.windowBackgroundColor))
-        .overlay(Divider(), alignment: .bottom)
     }
 }

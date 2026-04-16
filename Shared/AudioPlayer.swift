@@ -309,21 +309,30 @@ private func updateKaraokeProgress(currentTime: TimeInterval) {
     
     func addSongToPlaylist(_ song: Song, playlistIndex: Int) {
         if playlistIndex >= 0 && playlistIndex < playlists.count {
-            playlists[playlistIndex].addSong(song)
+            var playlist = playlists[playlistIndex]
+            playlist.addSong(song)
+            playlists[playlistIndex] = playlist // 关键：重新赋值触发 @Published
+            objectWillChange.send() // 双重保险
             savePlaylists()
         }
     }
 
     func removeSongFromPlaylist(playlistIndex: Int, songIndex: Int) {
         if playlistIndex >= 0 && playlistIndex < playlists.count {
-            playlists[playlistIndex].removeSong(at: songIndex)
+            var playlist = playlists[playlistIndex]
+            playlist.removeSong(at: songIndex)
+            playlists[playlistIndex] = playlist // 重新赋值
+            objectWillChange.send()
             savePlaylists()
         }
     }
 
     func renamePlaylist(at index: Int, newName: String) {
         if index >= 0 && index < playlists.count {
-            playlists[index].name = newName
+            var playlist = playlists[index]
+            playlist.name = newName
+            playlists[index] = playlist // 重新赋值
+            objectWillChange.send()
             savePlaylists()
         }
     }
