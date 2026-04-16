@@ -12,11 +12,11 @@ struct ListContentView: View {
     @ObservedObject var player: AudioPlayer
     @Binding var isShowLyrics: Bool
     @State var searchText = ""
-    @State private var selectedPlaylist: Int = -1  // -1 表示曲库，>=0 表示播放列表索引
-    
+    @State private var selectedPlaylist: Int = -1 // -1 表示曲库，>=0 表示播放列表索引
+
     var body: some View {
         NavigationView {
-            // Sidebar
+//            Sidebar
             List {
                 HStack {
                     TextField("搜索", text: $searchText)
@@ -31,6 +31,18 @@ struct ListContentView: View {
                 }
 
                 Section(header: Text("资料库").foregroundColor(.red)) {
+                    Button(action: { player.selectLibrary(); selectedPlaylist = -1 }) {
+                        Label("所有歌曲", systemImage: "music.note.list")
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                    .blueBackgroundOnSelect(isSelected: selectedPlaylist == -1)
+
+                    Button(action: { selectedPlaylist = -2 }) {
+                        Label("我的收藏", systemImage: "heart.fill")
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                    .blueBackgroundOnSelect(isSelected: selectedPlaylist == -2)
+
                     PlaylistSidebarView(player: player, selectedPlaylist: $selectedPlaylist)
                 }
 
@@ -45,6 +57,7 @@ struct ListContentView: View {
                                     Image(systemName: "xmark.circle.fill").foregroundColor(.red)
                                 }
                                 .buttonStyle(BorderlessButtonStyle())
+                                .help("移除此目录")
                             }
                             .contextMenu {
                                 Button(action: { NSWorkspace.shared.selectFile(dir, inFileViewerRootedAtPath: URL(fileURLWithPath: dir).deletingLastPathComponent().path) }) {
@@ -61,31 +74,45 @@ struct ListContentView: View {
             // Detail view
             detailView
         }
+        .navigationViewStyle(DoubleColumnNavigationViewStyle())
         .toolbar {
             ToolbarItemGroup(placement: .automatic) {
                 Button(action: { OpenSelectFolderWindws(player: player) }) {
                     Image(systemName: "plus.rectangle.on.folder")
                 }
+                .help("添加本地文件夹")
+                .pinkBackgroundOnHover()
+
                 Button(action: { player.librarySongs.removeAll(); player.Stop() }) {
                     Image(systemName: "trash")
                 }
+                .help("清空资料库")
+                .pinkBackgroundOnHover()
+
                 Spacer()
                 Button(action: { isShowLyrics.toggle() }) {
                     Image(systemName: "text.bubble")
                 }
+                .help(isShowLyrics ? "隐藏歌词" : "显示歌词")
+                .pinkBackgroundOnHover()
             }
         }
     }
 
     @ViewBuilder
     private var detailView: some View {
-        if selectedPlaylist == -1 {
-            LibraryView(player: player, searchText: $searchText)
-        } else if selectedPlaylist < player.playlists.count {
-            PlaylistsView(player: player, searchText: $searchText, playlistIndex: selectedPlaylist)
-        } else {
-            Text("请选择播放列表")
+        Group {
+            if selectedPlaylist == -1 {
+                LibraryView(player: player, searchText: $searchText)
+            } else if selectedPlaylist == -2 {
+                FavoritesView(player: player, searchText: $searchText)
+            } else if selectedPlaylist < player.playlists.count {
+                PlaylistsView(player: player, searchText: $searchText, playlistIndex: selectedPlaylist)
+            } else {
+                Text("请选择播放列表")
+            }
         }
+        .background(Color.white)
     }
 }
 
@@ -103,8 +130,8 @@ struct LibraryView: View {
         VStack(spacing: 0) {
             header
             List {
-                ForEach(searchResults, id: \.id) { song in
-                    if let index = searchResults.firstIndex(where: { $0.id == song.id }) {
+                ForEach(searchResults, id: \.filePath) { song in
+                    if let index = searchResults.firstIndex(where: { $0.filePath == song.filePath }) {
                         RowView(player: player, song: song, index: index, queue: searchResults)
                     }
                 }

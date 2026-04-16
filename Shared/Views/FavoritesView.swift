@@ -9,48 +9,57 @@ import SwiftUI
 
 struct FavoritesView: View {
     @ObservedObject var player: AudioPlayer
-    @Binding var favoritesList: [Song]
     @Binding var searchText: String
 
     let titles = ["歌曲名", "艺术家", "专辑", "时长"]
+    
+    // 过滤出所有已收藏的歌曲
+    var favorites: [Song] {
+        player.librarySongs.filter { $0.isHeartChecked }
+    }
+    
     // 列表显示搜索结果
     var searchResults: [Song] {
         if searchText.isEmpty {
-            return favoritesList
+            return favorites
         } else {
-            return favoritesList.filter { x in
-                x.name.contains(searchText) || x.album.contains(searchText) || x.artist.contains(searchText)
+            return favorites.filter { x in
+                x.name.localizedCaseInsensitiveContains(searchText) || 
+                x.album.localizedCaseInsensitiveContains(searchText) || 
+                x.artist.localizedCaseInsensitiveContains(searchText)
             }
         }
     }
 
     var body: some View {
-        HStack {
-            Group {
-                ForEach(titles, id: \.self) { title in
-                    Text(title)
-                        .font(.headline) // 字C体
-                        .fontWeight(.semibold) // 字体粗细
-                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                        .padding(.leading, title == "歌曲名" ? 28 : 0)
-                        .padding(.leading, title == "艺术家" ? 10 : 0)
+        VStack(spacing: 0) {
+            header
+            if searchResults.isEmpty {
+                EmpetyListView()
+            } else {
+                List {
+                    ForEach(searchResults, id: \.filePath) { song in
+                        if let index = searchResults.firstIndex(where: { $0.filePath == song.filePath }) {
+                            RowView(player: player, song: song, index: index, queue: searchResults)
+                        }
+                    }
                 }
             }
         }
-        .border(.gray, width: 0.5)
-        .padding(.bottom, -9)
-        if searchResults.isEmpty {
-            EmpetyListView()
-        } else {
-            List {
-                ForEach(searchResults, id: \.self) { song in
-                    let index = searchResults.firstIndex(of: song)!
-                    RowView(player: player, song: song, index: index, queue: searchResults)
-                }
-            }
-        }
+        .navigationTitle("我的收藏")
     }
-    //    func deleteItem(offsets: IndexSet){
-    //        libraryList.remove(atOffsets: offsets)
-    //    }
+
+    private var header: some View {
+        HStack {
+            ForEach(titles, id: \.self) { title in
+                Text(title)
+                    .font(.headline)
+                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, title == "歌曲名" ? 28 : (title == "艺术家" ? 10 : 0))
+            }
+        }
+        .padding(.vertical, 8)
+        .background(Color(NSColor.windowBackgroundColor))
+        .overlay(Divider(), alignment: .bottom)
+    }
 }

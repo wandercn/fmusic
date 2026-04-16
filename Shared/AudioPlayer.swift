@@ -29,9 +29,11 @@ func durationFormat(timeInterval: TimeInterval) -> String {
 class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     private let savedMusicDirsKey = "SavedMusicDirectories"
     private let playlistsKey = "SavedPlaylists"
+    private let favoriteSongsKey = "FavoriteSongs"
     
     @Published var savedDirectories: [String] = [] { didSet { saveDirectories() } }
     @Published var playlists: [Playlist] = [] { didSet { savePlaylists() } }
+    @Published var favoriteFilePaths: Set<String> = [] { didSet { saveFavorites() } }
     
     @Published var librarySongs: [Song] = []
     @Published var playbackQueue: [Song] = []
@@ -54,20 +56,82 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     @Published var currentWordIndex: Int? = nil
     @Published var currentWordProgress: Double = 0.0
     @Published var lyricsDir = NSHomeDirectory() + "/Music/Lyrics"
+// --- Combine ---
+private var updateTimer: Timer?
+private let currentTimeSubject = PassthroughSubject<TimeInterval, Never>()
+private var cancellables = Set<AnyCancellable>()
+var currentTimePublisher: AnyPublisher<TimeInterval, Never> {
+    currentTimeSubject.receive(on: DispatchQueue.main).eraseToAnyPublisher()
+}
 
-    private var updateTimer: Timer?
-    private let currentTimeSubject = PassthroughSubject<TimeInterval, Never>()
-    private var cancellables = Set<AnyCancellable>()
-    var currentTimePublisher: AnyPublisher<TimeInterval, Never> {
-        currentTimeSubject.receive(on: DispatchQueue.main).eraseToAnyPublisher()
+override init() {
+    super.init()
+    loadDirectories()
+    loadPlaylists()
+    loadFavorites()
+    reloadAllSavedDirectories()
+    setupLyricsObserver()
+}
+private func setupLyricsObserver() {
+    currentTimeSubject
+        .receive(on: DispatchQueue.main)
+        .sink { [weak self] time in
+            self?.updateKaraokeProgress(currentTime: time)
+        }
+        .store(in: &cancellables)
+}
+
+// 计算卡拉OK进度的方法 ---
+private func updateKaraokeProgress(currentTime: TimeInterval) {
+    let currentLineIndex = curLyricsIndex
+    guard
+        currentLineIndex >= 0,
+        currentLineIndex < lyricsParser.lyrics.count
+    else {
+        if currentWordIndex != nil || currentWordProgress != 0.0 {
+            currentWordIndex = nil
+            currentWordProgress = 0.0
+        }
+        return
     }
 
-    override init() {
-        super.init()
-        loadDirectories()
-        loadPlaylists()
-        reloadAllSavedDirectories()
+    let currentLine = lyricsParser.lyrics[currentLineIndex]
+
+    // 确保 curId 同步，LyricsView 依赖 curId
+    if curId != currentLine.id {
+        curId = currentLine.id
     }
+
+    let wordInfos = currentLine.wordInfos
+    guard !wordInfos.isEmpty else {
+        if currentWordIndex != nil || currentWordProgress != 0.0 {
+            currentWordIndex = nil
+            currentWordProgress = 0.0
+        }
+        return
+    }
+
+    let timeWithinLine = currentTime - currentLine.time + offsetTime
+    var newWordIndex: Int? = nil
+    var newWordProgress = 0.0
+
+    if let foundIndex = wordInfos.lastIndex(where: { $0.startTime <= timeWithinLine }) {
+        newWordIndex = foundIndex
+        let currentWordInfo = wordInfos[foundIndex]
+        if currentWordInfo.duration > 0 {
+            let timeInWord = timeWithinLine - currentWordInfo.startTime
+            newWordProgress = min(max(0.0, timeInWord / currentWordInfo.duration), 1.0)
+        } else {
+            newWordProgress = timeWithinLine >= currentWordInfo.startTime ? 1.0 : 0.0
+        }
+    }
+
+    if currentWordIndex != newWordIndex || abs(currentWordProgress - newWordProgress) > 0.01 {
+        currentWordIndex = newWordIndex
+        currentWordProgress = newWordProgress
+    }
+}
+
     
     convenience init(path: String) {
         self.init()
@@ -167,8 +231,15 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     }
 
     func UpdateHeartChecked() {
-        // 更新所有列表中该歌曲的收藏状态
+        // 记录或移除收藏路径
+        if currentSong.isHeartChecked {
+            favoriteFilePaths.insert(currentSong.filePath)
+        } else {
+            favoriteFilePaths.remove(currentSong.filePath)
+        }
+        // 更新所有列表中该歌曲的状态，并保存播放列表
         ChangeMetaDataOneOfList(changeOne: currentSong)
+        savePlaylists()
     }
 
     func UpdatePlaying() {
@@ -203,11 +274,15 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
         if let enumerator = fm.enumerator(at: url, includingPropertiesForKeys: [.isRegularFileKey], options: [.skipsHiddenFiles]) {
             for case let fileURL as URL in enumerator {
                 if ["mp3", "m4a", "flac", "wav"].contains(fileURL.pathExtension.lowercased()) {
-                    if let song = GetMetadata(path: fileURL.path) {
-                        results.append(song)
+                    var song: Song
+                    if let s = GetMetadata(path: fileURL.path) {
+                        song = s
                     } else {
-                        results.append(Song(name: fileURL.deletingPathExtension().lastPathComponent, filePath: fileURL.path))
+                        song = Song(name: fileURL.deletingPathExtension().lastPathComponent, filePath: fileURL.path)
                     }
+                    // 恢复收藏状态
+                    song.isHeartChecked = favoriteFilePaths.contains(song.filePath)
+                    results.append(song)
                 }
             }
         }
@@ -268,6 +343,17 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
             playlists = decoded
         }
     }
+    
+    private func saveFavorites() {
+        let array = Array(favoriteFilePaths)
+        UserDefaults.standard.set(array, forKey: favoriteSongsKey)
+    }
+    
+    private func loadFavorites() {
+        if let array = UserDefaults.standard.stringArray(forKey: favoriteSongsKey) {
+            favoriteFilePaths = Set(array)
+        }
+    }
 
     private func startUpdateTimer() {
         stopUpdateTimer()
@@ -281,11 +367,33 @@ class AudioPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
     
     private func loadLyrics(songName: String) {
         let fm = FileManager.default
-        let path = lyricsDir + "/" + songName + ".lrc"
-        if fm.fileExists(atPath: path) {
-            if let content = try? String(contentsOfFile: path, encoding: .utf8) {
-                lyricsParser.parse(lyrics: content)
-            }
+        let songUrl = URL(fileURLWithPath: currentSong.filePath)
+        let localLrcPath = songUrl.deletingPathExtension().path + ".lrc"
+        let globalLrcxPath = lyricsDir + "/" + songName + " - " + currentSong.artist + ".lrcx"
+        let globalLrcPath = lyricsDir + "/" + songName + ".lrc"
+
+        var content: String? = nil
+        var loadedPath = ""
+
+        if fm.fileExists(atPath: localLrcPath) {
+            content = try? String(contentsOfFile: localLrcPath, encoding: .utf8)
+            loadedPath = localLrcPath
+        } else if fm.fileExists(atPath: globalLrcxPath) {
+            content = try? String(contentsOfFile: globalLrcxPath, encoding: .utf8)
+            loadedPath = globalLrcxPath
+        } else if fm.fileExists(atPath: globalLrcPath) {
+            content = try? String(contentsOfFile: globalLrcPath, encoding: .utf8)
+            loadedPath = globalLrcPath
+        }
+
+        if let content = content {
+            lyricsParser.parse(lyrics: content)
+            flog.debug("歌词加载成功: \(loadedPath)")
+            // 加载后立即触发一次进度更新
+            updateKaraokeProgress(currentTime: CurrentTime())
+        } else {
+            lyricsParser = LyricsParser() // 加载失败，重置为空
+            flog.debug("未找到歌词文件")
         }
     }
     

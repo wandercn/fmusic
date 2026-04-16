@@ -105,21 +105,16 @@ struct PlaylistSidebarView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            Button(action: { player.selectLibrary(); selectedPlaylist = -1 }) {
-                Label("所有歌曲", systemImage: "music.note.list")
-            }
-            .buttonStyle(BorderlessButtonStyle())
-            .foregroundColor(selectedPlaylist == -1 ? .accentColor : .primary)
-            
-            Divider()
-            
             HStack {
                 Text("播放列表").font(.caption).foregroundColor(.secondary)
                 Spacer()
                 Button(action: { showingCreateSheet = true }) { Image(systemName: "plus.circle.fill") }
                 .buttonStyle(BorderlessButtonStyle())
+                .help("新建播放列表")
+                .pinkBackgroundOnHover()
             }
             .padding(.horizontal, 5)
+            .padding(.top, 5)
             
             ForEach(Array(player.playlists.enumerated()), id: \.offset) { index, playlist in
                 SidebarPlaylistItemView(player: player, index: index, playlist: playlist, selectedPlaylist: $selectedPlaylist, editingIndex: $editingIndex)
@@ -154,19 +149,20 @@ struct SidebarPlaylistItemView: View {
             Button(action: { player.selectPlaylist(at: index); selectedPlaylist = index }) {
                 HStack {
                     Image(systemName: selectedPlaylist == index ? "music.playlist.fill" : "music.playlist")
-                        .foregroundColor(selectedPlaylist == index ? .accentColor : .secondary)
+                        .foregroundColor(selectedPlaylist == index ? .white : .secondary)
                     Text(playlist.name).font(.subheadline).lineLimit(1)
-                    Text("(\(playlist.songs.count))").font(.caption2).foregroundColor(.secondary)
+                    Text("(\(playlist.songs.count))").font(.caption2).foregroundColor(selectedPlaylist == index ? .white.opacity(0.8) : .secondary)
                     Spacer()
                 }
             }
             .buttonStyle(BorderlessButtonStyle())
-            .foregroundColor(selectedPlaylist == index ? .accentColor : .primary)
+            .blueBackgroundOnSelect(isSelected: selectedPlaylist == index)
             
             Button(action: { player.deletePlaylist(at: index); if selectedPlaylist == index { selectedPlaylist = -1 } }) {
                 Image(systemName: "xmark.circle.fill").foregroundColor(.red).font(.caption)
             }
             .buttonStyle(BorderlessButtonStyle())
+            .help("删除播放列表")
         }
         .padding(.vertical, 2)
         .contextMenu {

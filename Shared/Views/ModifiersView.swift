@@ -95,6 +95,25 @@ extension View {
     }
 }
 
+struct BlueBackgroundOnSelect: ViewModifier {
+    var isSelected: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .padding(.horizontal, 10)
+            .padding(.vertical, 4)
+            .background(isSelected ? Color.blue : Color.clear)
+            .foregroundColor(isSelected ? Color.white : .primary)
+            .clipShape(Capsule())
+    }
+}
+
+extension View {
+    func blueBackgroundOnSelect(isSelected: Bool) -> some View {
+        modifier(BlueBackgroundOnSelect(isSelected: isSelected))
+    }
+}
+
 struct CircleImage: ViewModifier {
     func body(content: Content) -> some View {
         content
