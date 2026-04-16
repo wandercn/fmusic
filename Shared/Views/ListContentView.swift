@@ -10,77 +10,116 @@ import SwiftUI
 
 struct ListContentView: View {
     @ObservedObject var player: AudioPlayer
+    @State private var showLibrary = true
+    @State private var showPlayList = false
+    @State private var showFavorites = false
     @Binding var isShowLyrics: Bool
     @State var searchText = ""
-    @State private var selectedPlaylist: Int = -1 // -1 表示曲库，>=0 表示播放列表索引
+
+    // 用于管理播放列表的选中状态
+    @State private var selectedPlaylist: Int = -1
 
     var body: some View {
         NavigationView {
-//            Sidebar
-            List {
-                HStack {
-                    TextField("搜索", text: $searchText)
+            // Sidebar
+            ZStack {
+                Color.white // 强制背景为白色
+                List {
+                    HStack {
+                        TextField("搜索", text: $searchText)
+                            .font(.headline)
+                            .overlay(
+                                Image(systemName: "magnifyingglass")
+                                    .foregroundColor(Color.gray)
+                                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .trailing)
+                                    .padding(.trailing, 5)
+                            )
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                    }
+                    .listRowBackground(Color.white)
+
+                    Section(
+                        header: HStack {
+                            Text("资料库")
+                            Image(systemName: "flame.fill")
+                        }
                         .font(.headline)
-                        .overlay(
-                            Image(systemName: "magnifyingglass")
-                                .foregroundColor(Color.gray)
-                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .trailing)
-                                .padding(.trailing, 5)
-                        )
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                }
-
-                Section(header: Text("资料库").foregroundColor(.red)) {
-                    Button(action: { player.selectLibrary(); selectedPlaylist = -1 }) {
-                        Label("所有歌曲", systemImage: "music.note.list")
+                        .foregroundColor(.red)
+                    ) {
+                        NavigationLink(destination: LibraryView(player: player, searchText: $searchText), isActive: $showLibrary) {
+                            Label("所有歌曲", systemImage: "music.note.list")
+                        }
+                        .padding(.leading, 10)
                     }
-                    .buttonStyle(BorderlessButtonStyle())
-                    .blueBackgroundOnSelect(isSelected: selectedPlaylist == -1)
+                    .listRowBackground(Color.white)
 
-                    Button(action: { selectedPlaylist = -2 }) {
-                        Label("我的收藏", systemImage: "heart.fill")
+                    Section(
+                        header: HStack {
+                            Text("我的收藏")
+                            Image(systemName: "suit.heart")
+                        }
+                        .font(.headline)
+                        .foregroundColor(.purple)
+                    ) {
+                        NavigationLink(destination: FavoritesView(player: player, searchText: $searchText), isActive: $showFavorites) {
+                            Label("我的收藏", systemImage: "heart.fill")
+                        }
+                        .padding(.leading, 10)
                     }
-                    .buttonStyle(BorderlessButtonStyle())
-                    .blueBackgroundOnSelect(isSelected: selectedPlaylist == -2)
+                    .listRowBackground(Color.white)
 
-                    PlaylistSidebarView(player: player, selectedPlaylist: $selectedPlaylist)
-                }
+                    Section(
+                        header: HStack {
+                            Text("播放列表")
+                            Image(systemName: "music.note.list")
+                        }
+                        .font(.headline)
+                        .foregroundColor(.orange)
+                    ) {
+                        PlaylistSidebarView(player: player, selectedPlaylist: $selectedPlaylist)
+                            .padding(.leading, 10)
+                    }
+                    .listRowBackground(Color.white)
 
-                if !player.savedDirectories.isEmpty {
-                    Section(header: Text("已保存的目录").foregroundColor(.blue)) {
-                        ForEach(Array(player.savedDirectories.enumerated()), id: \.offset) { index, dir in
-                            HStack {
-                                Image(systemName: "folder").foregroundColor(.blue)
-                                Text(URL(fileURLWithPath: dir).lastPathComponent).lineLimit(1)
-                                Spacer()
-                                Button(action: { player.removeDirectory(at: index); player.reloadAllSavedDirectories() }) {
-                                    Image(systemName: "xmark.circle.fill").foregroundColor(.red)
+                    if !player.savedDirectories.isEmpty {
+                        Section(header: Text("已保存的目录").foregroundColor(.blue)) {
+                            ForEach(Array(player.savedDirectories.enumerated()), id: \.offset) { index, dir in
+                                HStack {
+                                    Image(systemName: "folder").foregroundColor(.blue)
+                                    Text(URL(fileURLWithPath: dir).lastPathComponent).lineLimit(1)
+                                    Spacer()
+                                    Button(action: { player.removeDirectory(at: index); player.reloadAllSavedDirectories() }) {
+                                        Image(systemName: "xmark.circle.fill").foregroundColor(.red)
+                                    }
+                                    .buttonStyle(BorderlessButtonStyle())
+                                    .help("移除此目录")
                                 }
-                                .buttonStyle(BorderlessButtonStyle())
-                                .help("移除此目录")
-                            }
-                            .contextMenu {
-                                Button(action: { NSWorkspace.shared.selectFile(dir, inFileViewerRootedAtPath: URL(fileURLWithPath: dir).deletingLastPathComponent().path) }) {
-                                    Text("在 Finder 中显示")
+                                .contextMenu {
+                                    Button(action: { NSWorkspace.shared.selectFile(dir, inFileViewerRootedAtPath: URL(fileURLWithPath: dir).deletingLastPathComponent().path) }) {
+                                        Text("在 Finder 中显示")
+                                    }
                                 }
                             }
+                            .listRowBackground(Color.white)
                         }
                     }
                 }
+                .listStyle(SidebarListStyle())
             }
-            .listStyle(SidebarListStyle())
             .frame(minWidth: 200)
+            .background(Color.white)
 
-            // Detail view
-            detailView
+            // 默认视图
+            LibraryView(player: player, searchText: $searchText)
         }
-        .navigationViewStyle(DoubleColumnNavigationViewStyle())
+        .background(Color.white)
+        .navigationTitle("music")
         .toolbar {
             ToolbarItemGroup(placement: .automatic) {
                 Button(action: { OpenSelectFolderWindws(player: player) }) {
-                    Image(systemName: "plus.rectangle.on.folder")
+                    Image(systemName: "folder.badge.plus")
                 }
-                .help("添加本地文件夹")
+                .help("导入音乐文件夹")
                 .pinkBackgroundOnHover()
 
                 Button(action: { player.librarySongs.removeAll(); player.Stop() }) {
@@ -97,22 +136,7 @@ struct ListContentView: View {
                 .pinkBackgroundOnHover()
             }
         }
-    }
-
-    @ViewBuilder
-    private var detailView: some View {
-        Group {
-            if selectedPlaylist == -1 {
-                LibraryView(player: player, searchText: $searchText)
-            } else if selectedPlaylist == -2 {
-                FavoritesView(player: player, searchText: $searchText)
-            } else if selectedPlaylist < player.playlists.count {
-                PlaylistsView(player: player, searchText: $searchText, playlistIndex: selectedPlaylist)
-            } else {
-                Text("请选择播放列表")
-            }
-        }
-        .background(Color.white)
+        .navigationViewStyle(.automatic)
     }
 }
 
@@ -137,6 +161,7 @@ struct LibraryView: View {
                 }
             }
         }
+        .background(Color.white)
         .navigationTitle("所有歌曲")
     }
 
@@ -150,8 +175,8 @@ struct LibraryView: View {
             }
         }
         .padding(.vertical, 8)
-        .background(Color(NSColor.windowBackgroundColor))
-        .overlay(Divider(), alignment: .bottom)
+//        .background(Color(NSColor.windowBackgroundColor))
+//        .overlay(Divider(), alignment: .bottom)
     }
 }
 
@@ -178,7 +203,7 @@ struct RowView: View {
                 .onTapGesture(count: 2) { player.play(song: song, in: queue) }
             }
 
-            if player.currentSong.id == song.id {
+            if player.currentSong.filePath == song.filePath {
                 HStack {
                     Image(systemName: "livephoto.play")
                         .resizable()
