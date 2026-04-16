@@ -45,7 +45,7 @@ struct FavoritesView: View {
             List {
                 ForEach(searchResults, id: \.self) { song in
                     let index = searchResults.firstIndex(of: song)!
-                    RowView(player: player, song: song, index: index)
+                    RowView(player: player, song: song, index: index, queue: searchResults)
                 }
             }
         }

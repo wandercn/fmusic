@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct Song: Identifiable, Hashable, Codable {
-    let id = UUID()
+    let id: UUID
 
     var name: String
     var artist: String
@@ -21,25 +21,27 @@ struct Song: Identifiable, Hashable, Codable {
     var isHeartChecked: Bool
     var track: Int
 
-    init() {
-        name = ""
-        artist = ""
-        album = ""
-        duration = TimeInterval(0)
-        filePath = ""
-        isSelected = false
-        isPlaying = false
-        isHeartChecked = false
-        track = 0
+    init(id: UUID = UUID(), name: String = "", artist: String = "", album: String = "", duration: TimeInterval = 0, filePath: String = "", isSelected: Bool = false, isPlaying: Bool = false, isHeartChecked: Bool = false, track: Int = 0) {
+        self.id = id
+        self.name = name
+        self.artist = artist
+        self.album = album
+        self.duration = duration
+        self.filePath = filePath
+        self.isSelected = isSelected
+        self.isPlaying = isPlaying
+        self.isHeartChecked = isHeartChecked
+        self.track = track
     }
     
     // MARK: - Codable
     enum CodingKeys: String, CodingKey {
-        case name, artist, album, duration, filePath, isSelected, isPlaying, isHeartChecked, track
+        case id, name, artist, album, duration, filePath, isSelected, isPlaying, isHeartChecked, track
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
         name = try container.decode(String.self, forKey: .name)
         artist = try container.decode(String.self, forKey: .artist)
         album = try container.decode(String.self, forKey: .album)
@@ -53,6 +55,7 @@ struct Song: Identifiable, Hashable, Codable {
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
         try container.encode(name, forKey: .name)
         try container.encode(artist, forKey: .artist)
         try container.encode(album, forKey: .album)

@@ -42,7 +42,7 @@ public class LyricsParser {
     }
 
     /// 新的解析方法，处理关联行和 [tt] 标签
-    private func parse(lyrics: String) {
+    public func parse(lyrics: String) {
         let lines = lyrics
             .replacingOccurrences(of: "\\n", with: "\n")
             .components(separatedBy: .newlines)
