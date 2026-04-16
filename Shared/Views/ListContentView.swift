@@ -18,8 +18,9 @@ struct ListContentView: View {
     @State private var favorites: [Song] = [Song()]
     
     // 用于管理播放列表的选中状态
-    @State private var selectedPlaylist: Int? = -1 
-    
+    @State private var selectedPlaylist: Int? = -1
+    @State private var showingCreatePlaylistSheet = false
+
     var body: some View {
         NavigationView {
             List {
@@ -67,12 +68,24 @@ struct ListContentView: View {
                     header: HStack {
                         Text("播放列表")
                         Image(systemName: "music.note.list")
+                        Spacer()
+                        Button(action: { showingCreatePlaylistSheet = true }) {
+                            Image(systemName: "plus.circle.fill")
+                        }
+                        .buttonStyle(BorderlessButtonStyle())
+                        .help("新建播放列表")
+                        .pinkBackgroundOnHover()
                     }
                     .font(.headline)
                     .foregroundColor(.orange)
                 ) {
-                    PlaylistSidebarView(player: player, selectedPlaylist: $selectedPlaylist)
-                        .padding(.leading, 10)
+                    PlaylistSidebarView(
+                        player: player,
+                        selectedPlaylist: $selectedPlaylist,
+                        showingCreateSheet: $showingCreatePlaylistSheet,
+                        searchText: $searchText // 增加搜索文本传递
+                    )
+                    .padding(.leading, 10)
                 }
 
                 if !player.savedDirectories.isEmpty {

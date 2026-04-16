@@ -101,25 +101,14 @@ struct PlaylistRowView: View {
 struct PlaylistSidebarView: View {
     @ObservedObject var player: AudioPlayer
     @Binding var selectedPlaylist: Int?
-    @State private var showingCreateSheet = false
+    @Binding var showingCreateSheet: Bool
+    @Binding var searchText: String
     @State private var editingIndex: Int? = nil
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            HStack {
-                Text("播放列表").font(.caption).foregroundColor(.secondary)
-                Spacer()
-                Button(action: { showingCreateSheet = true }) { Image(systemName: "plus.circle.fill") }
-                .buttonStyle(BorderlessButtonStyle())
-                .help("新建播放列表")
-                .pinkBackgroundOnHover()
-            }
-            .padding(.horizontal, 5)
-            .padding(.top, 5)
-            
-            ForEach(Array(player.playlists.enumerated()), id: \.offset) { index, playlist in
-                SidebarPlaylistItemView(player: player, index: index, playlist: playlist, selectedPlaylist: $selectedPlaylist, editingIndex: $editingIndex)
-            }
+        // 移除了 VStack，让 ForEach 的子项直接作为 List 的行展开
+        ForEach(Array(player.playlists.enumerated()), id: \.offset) { index, playlist in
+            SidebarPlaylistItemView(player: player, index: index, playlist: playlist, selectedPlaylist: $selectedPlaylist, editingIndex: $editingIndex, searchText: $searchText)
         }
         .sheet(isPresented: $showingCreateSheet) {
             PlaylistEditSheet(title: "创建播放列表", name: "") { name in
@@ -144,20 +133,23 @@ struct SidebarPlaylistItemView: View {
     let playlist: Playlist
     @Binding var selectedPlaylist: Int?
     @Binding var editingIndex: Int?
+    @Binding var searchText: String
     
     var body: some View {
         HStack {
-            Button(action: { player.selectPlaylist(at: index); selectedPlaylist = index }) {
+            // 使用 NavigationLink 替代 Button 获得系统原生选中样式
+            NavigationLink(
+                destination: PlaylistsView(player: player, searchText: $searchText, playlistIndex: index),
+                tag: index,
+                selection: $selectedPlaylist
+            ) {
                 HStack {
                     Image(systemName: selectedPlaylist == index ? "music.playlist.fill" : "music.playlist")
-                        .foregroundColor(selectedPlaylist == index ? .white : .secondary)
                     Text(playlist.name).font(.subheadline).lineLimit(1)
-                    Text("(\(playlist.songs.count))").font(.caption2).foregroundColor(selectedPlaylist == index ? .white.opacity(0.8) : .secondary)
+                    Text("(\(playlist.songs.count))").font(.caption2).opacity(0.8)
                     Spacer()
                 }
             }
-            .buttonStyle(BorderlessButtonStyle())
-            .blueBackgroundOnSelect(isSelected: selectedPlaylist == index)
             
             Button(action: { player.deletePlaylist(at: index); if selectedPlaylist == index { selectedPlaylist = nil } }) {
                 Image(systemName: "xmark.circle.fill").foregroundColor(.red).font(.caption)
